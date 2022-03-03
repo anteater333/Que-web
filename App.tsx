@@ -7,6 +7,8 @@ import * as Font from "expo-font";
 
 export default function App() {
     const [appIsReady, setAppIsReady] = useState(false);
+    const [userLoggedIn, setUserLoggedIn] = useState(true);
+
     useEffect(() => {
     /**
      * Splash screen 함수
@@ -42,6 +44,13 @@ export default function App() {
 
     if (!appIsReady) {
         return null;
+    }
+
+    let firstPage;
+    if (userLoggedIn) {
+        // firstPage = TimelineScene
+    }else {
+        // firstPage = OnBoardingScene
     }
 
     return (
