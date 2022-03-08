@@ -19,14 +19,30 @@ export const bColors = {
   primary: "#0073F5",
   secondary: "#52A5FF",
   tetiary: "#0DF9FA",
-  font: "#000000",
-  fontR: "#FFFFFF",
+  white: "#FFFFFF",
+  black: "#000000",
+  /** 투명도 추가 80% */
+  tpPrimary: "CC",
+  /** 투명도 추가 60% */
+  tpSecondary: "99",
+  /** 투명도 추가 40% */
+  tpTetiary: "66",
+};
+
+/**
+ * 컴포넌트 내부 여백 스타일
+ */
+export const bPadding = {
+  small: 4,
+  middle: 8,
+  large: 12,
+  xlarge: 16,
 };
 
 /**
  * 컴포넌트 간 간격 스타일
  */
-export const bPadding = {
+export const bMargin = {
   small: 4,
   middle: 8,
   large: 12,
