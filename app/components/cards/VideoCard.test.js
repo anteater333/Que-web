@@ -1,9 +1,8 @@
 import React from "react";
-import { cleanup, render } from "@testing-library/react-native";
+import { cleanup, fireEvent, render } from "@testing-library/react-native";
 import { toHaveStyle } from "@testing-library/jest-native";
 
 import VideoCard from "./VideoCard";
-import { Image, Text } from "react-native";
 
 let component = render(<VideoCard />);
 let componentJSON = component.toJSON();
@@ -23,7 +22,12 @@ describe("VideoCard", () => {
     expect(componentJSON.children[1].type).toBe("View");
   });
 
-  it("카드를 누를 시 VideoScene으로 이동한다.", () => {});
+  it("카드를 누를 시 VideoScreen으로 이동한다.", async () => {
+    fireEvent.press(component.getByTestId("videoCard"));
+
+    const newScreen = await component.findByTestId("videoScreen");
+    expect(newScreen).toBeTruthy();
+  });
 
   describe("첫 번째 View 영역", () => {
     it("이미지, 시간, 추가 옵션 버튼으로 이루어진다.", () => {
@@ -34,20 +38,52 @@ describe("VideoCard", () => {
 
       expect(view.children.length).toBe(3);
       expect(image.props.source.uri).not.toBe("");
+      expect(time).not.toBeNull();
+      expect(button).not.toBeNull();
     });
 
-    const cardThumbnailStyle = {};
-    it("cardThumbnailStyle을 따른다.", () => {});
-
-    it("버튼을 누를 시 추가 메뉴 모달을 출력한다.", () => {});
+    it("버튼을 누를 시 추가 메뉴 모달을 출력한다.", async () => {
+      fireEvent.press(component.getByTestId("cardThumbnailButton"));
+      const menuModal = await component.findByTestId("videoCardMenuModal");
+      expect(menuModal).toBeTruthy();
+    });
   });
 
   describe("두 번재 view 영역", () => {
-    it("프로필 사진, 제목, 사용자 이름, 시청 수, 좋아요, 평가점수로 이루어진다.", () => {});
+    it("프로필 사진, 제목, 사용자 이름, 시청 수, 좋아요, 평가점수로 이루어진다.", () => {
+      const profilePic = component.getByTestId("cardInfoProfilePic");
+      const title = component.getByTestId("cardInfoTitleText");
+      const singer = component.getByTestId("cardInfoSingerText");
+      const views = component.getByTestId("cardInfoViewCount");
+      const likes = component.getByTestId("cardInfoLikeCount");
+      const stars = component.getByTestId("cardInfoStarCount");
 
-    const cardInfoStyle = {};
-    it("cardInfoStyle을 따른다.", () => {});
+      expect(profilePic).toBeTruthy();
+      expect(title).toBeTruthy();
+      expect(singer).toBeTruthy();
+      expect(views).toBeTruthy();
+      expect(likes).toBeTruthy();
+      expect(stars).toBeTruthy();
+    });
 
-    it("프로필 사진을 누르면 StudioScene으로 이동한다.", () => {});
+    it("프로필 사진을 누르면 StudioScene으로 이동한다.", async () => {
+      fireEvent.press(component.getByTestId("cardInfoProfilePic"));
+
+      const newScreen = await component.findByTestId("userPageScreen");
+    });
+
+    it("좋아요 아이콘을 누르면 좋아한다.", async () => {
+      fireEvent.press(component.getByTestId("cardInfoLikeButton"));
+
+      const changed = await component.findByTestId("cardInfoLikeButton");
+      expect(changed.props.liked).toBe(true);
+    });
+
+    it("평가 아이콘을 누르면 평가 화면으로 이동한다.", async () => {
+      fireEvent.press(component.getByTestId("cardInfoStarButton"));
+
+      const newScreen = await component.findByTestId("starScreen");
+      expect(newScreen).toBeTruthy();
+    });
   });
 });
