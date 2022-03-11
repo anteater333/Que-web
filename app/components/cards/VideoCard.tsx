@@ -26,7 +26,9 @@ export default function VideoCard(props: {}) {
   useEffect(() => {}, []);
 
   const onPressCard = useCallback(async () => {
-    navigation.navigate("Video", {});
+    navigation.navigate("Video", {
+      url: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    });
   }, [url]);
 
   return (
