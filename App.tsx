@@ -94,5 +94,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-AppRegistry.registerComponent("QUE", () => App);
