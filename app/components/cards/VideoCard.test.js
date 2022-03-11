@@ -1,8 +1,22 @@
 import React from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react-native";
-import { toHaveStyle } from "@testing-library/jest-native";
 
 import VideoCard from "./VideoCard";
+import { NavigationContainer } from "@react-navigation/native";
+
+/** 네비게이션 모의 함수 */
+const mockedNavigate = jest.fn();
+
+/** Mocking React navigation */
+jest.mock("@react-navigation/native", () => {
+  const actualNav = jest.requireActual("@react-navigation/native");
+  return {
+    ...actualNav,
+    useNavigation: () => ({
+      navigate: mockedNavigate,
+    }),
+  };
+});
 
 let component = render(<VideoCard />);
 let componentJSON = component.toJSON();
@@ -14,19 +28,17 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("VideoCard", () => {
-  expect.extend({ toHaveStyle });
-
   it("두 View 영역으로 나뉜다.", () => {
     expect(componentJSON.children.length).toBe(2);
     expect(componentJSON.children[0].type).toBe("View");
     expect(componentJSON.children[1].type).toBe("View");
   });
 
-  it("카드를 누를 시 VideoScreen으로 이동한다.", async () => {
+  it("카드를 누를 시 Navigation이 진행된다.", async () => {
     fireEvent.press(component.getByTestId("videoCard"));
 
-    const newScreen = await component.findByTestId("videoScreen");
-    expect(newScreen).toBeTruthy();
+    /** mockedNavigate 총 호출 수에 대해서 주의 */
+    expect(mockedNavigate).toHaveBeenCalledTimes(1);
   });
 
   describe("첫 번째 View 영역", () => {
@@ -66,7 +78,7 @@ describe("VideoCard", () => {
       expect(stars).toBeTruthy();
     });
 
-    it("프로필 사진을 누르면 StudioScene으로 이동한다.", async () => {
+    it("프로필 사진을 누르면 Navigation이 진행된다.", async () => {
       fireEvent.press(component.getByTestId("cardInfoProfilePic"));
 
       const newScreen = await component.findByTestId("userPageScreen");
@@ -79,7 +91,7 @@ describe("VideoCard", () => {
       expect(changed.props.liked).toBe(true);
     });
 
-    it("평가 아이콘을 누르면 평가 화면으로 이동한다.", async () => {
+    it("평가 아이콘을 누르면 Navigation이 진행된다.", async () => {
       fireEvent.press(component.getByTestId("cardInfoStarButton"));
 
       const newScreen = await component.findByTestId("starScreen");

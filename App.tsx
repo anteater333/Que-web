@@ -1,13 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, AppRegistry } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import VideoCard from "./app/components/cards/VideoCard";
+import { RootStackParamList } from "./app/screens/RootStackParamList";
+import VideoScreen from "./app/screens/VideoScreen";
 
-export default function App() {
+function AppScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(true);
 
@@ -56,12 +60,28 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <View
+      testID="appScreen"
+      style={styles.container}
+      onLayout={onLayoutRootView}
+    >
       <VideoCard />
       <VideoCard />
-      <VideoCard />
-      <StatusBar style="auto" />
+      {/* <StatusBar style="auto" /> */}
     </View>
+  );
+}
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <RootStack.Navigator>
+        <RootStack.Screen name="App" component={AppScreen} />
+        <RootStack.Screen name="Video" component={VideoScreen} />
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -74,3 +94,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+AppRegistry.registerComponent("QUE", () => App);

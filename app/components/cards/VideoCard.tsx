@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import styles from "./VideoCard.style";
+import { RootStackParamList } from "../../screens/RootStackParamList";
+
+type videoCardProp = NativeStackNavigationProp<RootStackParamList>;
 
 /**
  *
@@ -15,13 +21,23 @@ import styles from "./VideoCard.style";
  * @returns
  */
 export default function VideoCard(props: {}) {
+  const [url, setUrl] = useState<String>("test");
+  const navigation = useNavigation<videoCardProp>();
   useEffect(() => {}, []);
 
+  const onPressCard = useCallback(async () => {
+    navigation.navigate("Video", {});
+  }, [url]);
+
   return (
-    <View style={styles.cardView}>
+    <TouchableOpacity
+      testID="videoCard"
+      style={styles.cardView}
+      onPress={onPressCard}
+    >
       <CardThumbnailView uri="../../../potato/placeholders/cardImage.png" />
       <CardInfoView></CardInfoView>
-    </View>
+    </TouchableOpacity>
   );
 }
 
