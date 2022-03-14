@@ -65,8 +65,20 @@ function AppScreen() {
       style={styles.container}
       onLayout={onLayoutRootView}
     >
-      <VideoCard />
-      <VideoCard />
+      <VideoCard
+        videoInfo={{
+          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+          thumbnailUrl:
+            "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+        }}
+      />
+      <VideoCard
+        videoInfo={{
+          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+          thumbnailUrl:
+            "gs://que-backend-dev.appspot.com/videos/thumbnail/image 2.png",
+        }}
+      />
       {/* <StatusBar style="auto" /> */}
     </View>
   );

@@ -37,7 +37,26 @@ export default function VideoCard(props: {}) {
       style={styles.cardView}
       onPress={onPressCard}
     >
-      <CardThumbnailView uri="../../../potato/placeholders/cardImage.png" />
+      <MenuModal
+        visible={menuModalVisible}
+        setModalVisible={setMenuModalVisible}
+      >
+        <MenuModalItem
+          iconName="share"
+          menuText="공유"
+          onMenuPress={() => alert("menu1")}
+        />
+        <MenuModalItem
+          iconName="flag"
+          menuText="신고"
+          onMenuPress={() => alert("menu2")}
+        />
+      </MenuModal>
+      <CardThumbnailView
+        uri="../../../potato/placeholders/cardImage.png"
+        direction="horizontal"
+        onMenuButtonPress={() => setMenuModalVisible(true)}
+      />
       <CardInfoView></CardInfoView>
     </TouchableOpacity>
   );
@@ -48,20 +67,35 @@ export default function VideoCard(props: {}) {
  * @param props
  * @returns
  */
-function CardThumbnailView(props: { uri: string }) {
+function CardThumbnailView(props: {
+  uri: string;
+  direction: "horizontal" | "vertical";
+  onMenuButtonPress: () => void;
+}) {
+  /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
+  const [thumbnail, setThumbnail] = useState(
+    require("../../../potato/placeholders/cardImage.png")
+  );
+  /** 썸네일 이미지의 비율에 따라 resize 모드 결정 */
+  const [resizeMode, setResizeMode] =
+    props.direction == "horizontal"
+      ? useState<"stretch" | "contain">("stretch")
+      : useState<"stretch" | "contain">("contain");
+
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
       <Image
         testID="cardThumbnailImage"
         style={styles.videoThumbnailImage}
-        source={require("../../../potato/placeholders/cardImage.png")}
+        resizeMode={resizeMode}
+        source={thumbnail}
       ></Image>
       <Text testID="cardThumbnailTime" style={styles.videoTime}>
         0:00
       </Text>
       <TouchableOpacity
         testID="cardThumbnailButton"
-        onPress={() => 0}
+        onPress={props.onMenuButtonPress}
         style={styles.optionButton}
       >
         <Text style={styles.optionButtonText}>...</Text>

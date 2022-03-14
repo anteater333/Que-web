@@ -15,6 +15,7 @@ const videoCardStyles = StyleSheet.create({
   // 썸네일 영역
   thumbnailView: {
     height: thumbnailHeight,
+    backgroundColor: bColors.black,
   },
   videoThumbnailImage: {
     width: "100%",
