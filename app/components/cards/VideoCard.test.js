@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render } from "@testing-library/react-native";
 
 import VideoCard from "./VideoCard";
 import { NavigationContainer } from "@react-navigation/native";
+import { Modal } from "react-native";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -28,17 +29,21 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("VideoCard", () => {
-  it("두 View 영역으로 나뉜다.", () => {
-    expect(componentJSON.children.length).toBe(2);
-    expect(componentJSON.children[0].type).toBe("View");
+  it("두 View 영역과 MenuModal 으로 나뉜다.", () => {
+    expect(componentJSON.children.length).toBe(3);
+    expect(componentJSON.children[0].type).toBe("Modal");
     expect(componentJSON.children[1].type).toBe("View");
+    expect(componentJSON.children[2].type).toBe("View");
   });
 
-  it("카드를 누를 시 Navigation이 진행된다.", async () => {
+  it("카드를 누를 시 Video 화면으로 Navigation이 진행된다.", async () => {
     fireEvent.press(component.getByTestId("videoCard"));
+
+    const navigated = mockedNavigate.mock.calls[0][0];
 
     /** mockedNavigate 총 호출 수에 대해서 주의 */
     expect(mockedNavigate).toHaveBeenCalledTimes(1);
+    expect(navigated).toBe("Video");
   });
 
   describe("첫 번째 View 영역", () => {
@@ -55,9 +60,14 @@ describe("VideoCard", () => {
     });
 
     it("버튼을 누를 시 추가 메뉴 모달을 출력한다.", async () => {
+      const menuModal = await component.findByTestId("menuModal");
+
+      // 초기 상태엔 드러나지 않는다.
+      expect(menuModal.props.visible).toBe(false);
+      // onPress 발생
       fireEvent.press(component.getByTestId("cardThumbnailButton"));
-      const menuModal = await component.findByTestId("videoCardMenuModal");
-      expect(menuModal).toBeTruthy();
+      // 모달이 드러난다.
+      expect(menuModal.props.visible).toBe(true);
     });
   });
 

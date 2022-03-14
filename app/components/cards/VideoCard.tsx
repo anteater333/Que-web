@@ -1,35 +1,42 @@
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import Modal from "react-native-modal";
 import React, { useEffect, useState, useCallback } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
 import { RootStackParamList } from "../../screens/RootStackParamList";
+import MenuModal, { MenuModalItem } from "../modals/MenuModal";
+import Video from "../../types/Video";
 
-type videoCardProp = NativeStackNavigationProp<RootStackParamList>;
+type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
+
+type VideoCardProps = {
+  videoInfo: Video;
+};
 
 /**
- *
+ * 기본 비디오 정보 카드 컴포넌트
  * @param props
  * @returns
  */
-export default function VideoCard(props: {}) {
-  const [url, setUrl] = useState<String>("test");
-  const navigation = useNavigation<videoCardProp>();
+export default function VideoCard(props: VideoCardProps) {
+  const [videoUrl, setVideoUrl] = useState<String>("test");
+  const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
+
+  const navigation = useNavigation<VideoCardNavProps>();
+
   useEffect(() => {}, []);
 
+  /**
+   * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
+   * 해당 비디오 카드가 가지고 있는 url을 기반으로 해서 VideoScreen으로 Navigation 합니다.
+   */
   const onPressCard = useCallback(async () => {
     navigation.navigate("Video", {
       url: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     });
-  }, [url]);
+  }, [videoUrl]);
 
   return (
     <TouchableOpacity
