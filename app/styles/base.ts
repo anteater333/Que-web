@@ -21,6 +21,9 @@ export const bColors = {
   tetiary: "#0DF9FA",
   white: "#FFFFFF",
   black: "#000000",
+  greyPrimary: "#787878",
+  greySecondary: "#C4C4C4",
+  greyTetiary: "#E5E5E5",
   /** 투명도 추가 80% */
   tpPrimary: "CC",
   /** 투명도 추가 60% */
