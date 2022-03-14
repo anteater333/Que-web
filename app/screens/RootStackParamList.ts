@@ -5,4 +5,5 @@ export type RootStackParamList = {
   App: undefined;
   Timeline: undefined;
   Video: { url: string };
+  UserProfile: undefined;
 };

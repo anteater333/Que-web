@@ -88,10 +88,13 @@ describe("VideoCard", () => {
       expect(stars).toBeTruthy();
     });
 
-    it("프로필 사진을 누르면 Navigation이 진행된다.", async () => {
+    it("프로필 사진을 누르면 Profile 화면으로 Navigation이 진행된다.", async () => {
       fireEvent.press(component.getByTestId("cardInfoProfilePic"));
 
-      const newScreen = await component.findByTestId("userPageScreen");
+      const navigated = mockedNavigate.mock.calls[1][0];
+
+      expect(mockedNavigate).toHaveBeenCalledTimes(2);
+      expect(navigated).toBe("UserProfile");
     });
 
     it("좋아요 아이콘을 누르면 좋아한다.", async () => {

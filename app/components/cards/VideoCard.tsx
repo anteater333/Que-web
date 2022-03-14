@@ -1,4 +1,4 @@
-import {
+import { Text, View, Image, TouchableOpacity, Pressable } from "react-native";
 import Modal from "react-native-modal";
 import React, { useEffect, useState, useCallback } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
@@ -111,40 +111,67 @@ function CardThumbnailView(props: {
   );
 }
 
+type VideoCardInfoProps = {};
+
 /**
  * 카드 컴포넌트의 정보 영역
  * @returns
  */
-function CardInfoView() {
+function CardInfoView(props: VideoCardInfoProps) {
   const [title, setTitle] = useState<string>("그리움만 쌓이네");
   const [singer, setSinger] = useState<string>("John Doe");
   const [viewCount, setViewCount] = useState<string>("10.3k");
   const [likeCount, setLikeCount] = useState<string>("2.6k");
+
+  const navigation = useNavigation<VideoCardNavProps>();
+
+  /**
+   * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
+   * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
+   */
+  const onPressProfile = useCallback(async () => {
+    navigation.navigate("UserProfile");
+  }, []);
+
   return (
     <View style={styles.cardInfoView}>
-      <View style={styles.profilePicView}>
+      <Pressable
+        testID="cardInfoProfilePic"
+        style={styles.profilePicView}
+        onPress={onPressProfile}
+      >
         <View style={styles.profilePic} />
-      </View>
+      </Pressable>
       <View style={styles.infoTitleView}>
-        <Text style={styles.infoTitleText}>{title}</Text>
-        <Text style={styles.infoSingerText}>{singer}</Text>
+        <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
+          {title}
+        </Text>
+        <Text testID="cardInfoSingerText" style={styles.infoSingerText}>
+          {singer}
+        </Text>
       </View>
       <View style={styles.reactionView}>
         <View style={styles.reactionChildView}>
           <TouchableOpacity style={styles.upperCountText}>
             <Text style={styles.upperCountText}>Th</Text>
           </TouchableOpacity>
-          <Text style={styles.lowerCountText}>{likeCount}</Text>
+          <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
+            {likeCount}
+          </Text>
         </View>
         <View style={styles.reactionChildView}>
           <TouchableOpacity style={styles.upperCountText}>
             <Text style={styles.upperCountText}>St</Text>
           </TouchableOpacity>
-          <Text style={styles.lowerCountText}>{likeCount}</Text>
+          <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
+            {likeCount}
+          </Text>
         </View>
         <View style={styles.reactionChildView}>
           <Text style={styles.upperCountText}>{viewCount}</Text>
-          <Text style={styles.lowerCountText}>시청</Text>
+          <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
+            시청
+          </Text>
         </View>
       </View>
     </View>
