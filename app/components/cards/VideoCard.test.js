@@ -1,9 +1,15 @@
 import React from "react";
-import { cleanup, fireEvent, render } from "@testing-library/react-native";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react-native";
 
 import VideoCard from "./VideoCard";
 import { NavigationContainer } from "@react-navigation/native";
 import { Modal } from "react-native";
+import { act } from "react-test-renderer";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -99,16 +105,21 @@ describe("VideoCard", () => {
 
     it("좋아요 아이콘을 누르면 좋아한다.", async () => {
       fireEvent.press(component.getByTestId("cardInfoLikeButton"));
+      let changed = await component.findByTestId("cardInfoLikedButton");
+      expect(changed).toBeTruthy();
 
-      const changed = await component.findByTestId("cardInfoLikeButton");
-      expect(changed.props.liked).toBe(true);
+      // 한 번 더 누르면 좋아하지 않는다.
+      fireEvent.press(component.getByTestId("cardInfoLikedButton"));
+      changed = component.queryByTestId("cardInfoLikeButton");
+      expect(changed).toBeTruthy();
     });
 
     it("평가 아이콘을 누르면 Navigation이 진행된다.", async () => {
       fireEvent.press(component.getByTestId("cardInfoStarButton"));
 
-      const newScreen = await component.findByTestId("starScreen");
-      expect(newScreen).toBeTruthy();
+      expect(mockedNavigate).toHaveBeenCalledTimes(3);
+      const navigated = mockedNavigate.mock.calls[2][0];
+      expect(navigated).toBe("Evaluation");
     });
   });
 });

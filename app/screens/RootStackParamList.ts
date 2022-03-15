@@ -6,4 +6,5 @@ export type RootStackParamList = {
   Timeline: undefined;
   Video: { url: string };
   UserProfile: undefined;
+  Evaluation: undefined;
 };

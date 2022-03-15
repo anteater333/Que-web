@@ -69,7 +69,9 @@ const videoCardStyles = StyleSheet.create({
     marginTop: bMargin.large,
   },
   infoTitleText: {
+    height: bFont.middle + 4,
     fontSize: bFont.middle,
+    marginBottom: bMargin.small,
   },
   infoSingerText: {
     fontSize: bFont.small,
@@ -83,8 +85,17 @@ const videoCardStyles = StyleSheet.create({
     marginRight: bMargin.large,
   },
   upperCountText: {
+    height: bFont.middle + 4,
     alignSelf: "center",
-    fontSize: bFont.middle,
+    fontSize: bFont.middle + 2,
+    marginBottom: bMargin.small,
+    lineHeight: 16,
+  },
+  reactionButtonEnabled: {
+    color: bColors.primary,
+  },
+  reactionButtonDisabled: {
+    color: bColors.black,
   },
   lowerCountText: {
     alignSelf: "center",

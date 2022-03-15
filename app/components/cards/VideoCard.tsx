@@ -1,5 +1,12 @@
-import { Text, View, Image, TouchableOpacity, Pressable } from "react-native";
-import Modal from "react-native-modal";
+import {
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Pressable,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState, useCallback } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,10 +30,35 @@ type VideoCardProps = {
 export default function VideoCard(props: VideoCardProps) {
   const [videoUrl, setVideoUrl] = useState<String>("test");
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
+  const [videoLiked, setVideoLiked] = useState<boolean>(false);
 
   const navigation = useNavigation<VideoCardNavProps>();
 
   useEffect(() => {}, []);
+
+  /**
+   * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
+   * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
+   */
+  const navigateToUserProfile = useCallback(async () => {
+    navigation.navigate("UserProfile");
+  }, []);
+
+  /**
+   * 카드 컴포넌트의 좋아요 버튼을 눌렀을 때 실행됩니다.
+   */
+  const likeThisVideo = useCallback(async () => {
+    // TBD 요청 보내기!
+
+    setVideoLiked(!videoLiked);
+  }, [videoLiked]);
+
+  /**
+   * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
+   */
+  const navigateToEvalutaion = useCallback(async () => {
+    navigation.navigate("Evaluation");
+  }, []);
 
   /**
    * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
@@ -62,23 +94,30 @@ export default function VideoCard(props: VideoCardProps) {
       <CardThumbnailView
         uri="../../../potato/placeholders/cardImage.png"
         direction="horizontal"
-        onMenuButtonPress={() => setMenuModalVisible(true)}
+        onPressMenuButton={() => setMenuModalVisible(true)}
       />
-      <CardInfoView></CardInfoView>
+      <CardInfoView
+        onPressProfile={navigateToUserProfile}
+        onPressLike={likeThisVideo}
+        onPressStar={navigateToEvalutaion}
+        liked={videoLiked}
+      ></CardInfoView>
     </TouchableOpacity>
   );
 }
+
+type CardThumbnailProps = {
+  uri: string;
+  direction: "horizontal" | "vertical";
+  onPressMenuButton: () => void;
+};
 
 /**
  * 카드 컴포넌트의 썸네일 영역
  * @param props
  * @returns
  */
-function CardThumbnailView(props: {
-  uri: string;
-  direction: "horizontal" | "vertical";
-  onMenuButtonPress: () => void;
-}) {
+function CardThumbnailView(props: CardThumbnailProps) {
   /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
   const [thumbnail, setThumbnail] = useState(
     require("../../../potato/placeholders/cardImage.png")
@@ -102,7 +141,7 @@ function CardThumbnailView(props: {
       </Text>
       <TouchableOpacity
         testID="cardThumbnailButton"
-        onPress={props.onMenuButtonPress}
+        onPress={props.onPressMenuButton}
         style={styles.optionButton}
       >
         <Text style={styles.optionButtonText}>...</Text>
@@ -111,7 +150,15 @@ function CardThumbnailView(props: {
   );
 }
 
-type VideoCardInfoProps = {};
+type VideoCardInfoProps = {
+  onPressProfile: () => void;
+  onPressStar: () => void;
+  onPressLike: () => void;
+  liked?: boolean;
+  starred?: boolean;
+  likeCount?: number;
+  viewCount?: number;
+};
 
 /**
  * 카드 컴포넌트의 정보 영역
@@ -123,22 +170,54 @@ function CardInfoView(props: VideoCardInfoProps) {
   const [viewCount, setViewCount] = useState<string>("10.3k");
   const [likeCount, setLikeCount] = useState<string>("2.6k");
 
-  const navigation = useNavigation<VideoCardNavProps>();
+  let likeButton;
+  let starButton;
+  if (props.liked) {
+    likeButton = (
+      <Ionicons
+        testID="cardInfoLikedButton"
+        name="heart"
+        style={styles.upperCountText}
+        color={styles.reactionButtonEnabled.color}
+      ></Ionicons>
+    );
+  } else {
+    likeButton = (
+      <Ionicons
+        testID="cardInfoLikeButton"
+        name="heart-outline"
+        style={styles.upperCountText}
+        color={styles.reactionButtonDisabled.color}
+      ></Ionicons>
+    );
+  }
 
-  /**
-   * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
-   * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
-   */
-  const onPressProfile = useCallback(async () => {
-    navigation.navigate("UserProfile");
-  }, []);
+  if (props.starred) {
+    starButton = (
+      <Ionicons
+        testID="cardInfoStarredButton"
+        name="star"
+        style={styles.upperCountText}
+        color={styles.reactionButtonEnabled.color}
+      ></Ionicons>
+    );
+  } else {
+    starButton = (
+      <Ionicons
+        testID="cardInfoStarButton"
+        name="star-outline"
+        style={styles.upperCountText}
+        color={styles.reactionButtonDisabled.color}
+      ></Ionicons>
+    );
+  }
 
   return (
     <View style={styles.cardInfoView}>
       <Pressable
         testID="cardInfoProfilePic"
         style={styles.profilePicView}
-        onPress={onPressProfile}
+        onPress={props.onPressProfile}
       >
         <View style={styles.profilePic} />
       </Pressable>
@@ -150,30 +229,34 @@ function CardInfoView(props: VideoCardInfoProps) {
           {singer}
         </Text>
       </View>
-      <View style={styles.reactionView}>
-        <View style={styles.reactionChildView}>
-          <TouchableOpacity style={styles.upperCountText}>
-            <Text style={styles.upperCountText}>Th</Text>
-          </TouchableOpacity>
-          <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
-            {likeCount}
-          </Text>
+      {/* 좋아요, 평가점수, 시청 수 */}
+      {/* 이 영역은 터치 해도 Video로 넘어가지 않도록 설정함 */}
+      <TouchableWithoutFeedback>
+        <View style={styles.reactionView}>
+          <View style={styles.reactionChildView}>
+            <TouchableOpacity onPress={props.onPressLike}>
+              {likeButton}
+              <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
+                {likeCount}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.reactionChildView}>
+            <TouchableOpacity onPress={props.onPressStar}>
+              {starButton}
+              <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
+                {likeCount}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.reactionChildView}>
+            <Text style={styles.upperCountText}>{viewCount}</Text>
+            <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
+              Views
+            </Text>
+          </View>
         </View>
-        <View style={styles.reactionChildView}>
-          <TouchableOpacity style={styles.upperCountText}>
-            <Text style={styles.upperCountText}>St</Text>
-          </TouchableOpacity>
-          <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
-            {likeCount}
-          </Text>
-        </View>
-        <View style={styles.reactionChildView}>
-          <Text style={styles.upperCountText}>{viewCount}</Text>
-          <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
-            시청
-          </Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 }
