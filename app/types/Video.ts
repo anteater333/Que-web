@@ -6,6 +6,8 @@ import User from "./User";
  * 영상에 대한 정보 객체 형식
  */
 export default interface Video {
+  /** 영상 고유 ID */
+  videoId: string;
   /** 영상 제목 */
   title?: string;
   /** 영상 설명 */

@@ -10,6 +10,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import VideoCard from "./app/components/cards/VideoCard";
 import { RootStackParamList } from "./app/screens/RootStackParamList";
 import VideoScreen from "./app/screens/VideoScreen";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import VideoCardList from "./app/components/Lists/VideoCardList";
 
 function AppScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -60,13 +62,16 @@ function AppScreen() {
   }
 
   return (
-    <View
-      testID="appScreen"
-      style={styles.container}
-      onLayout={onLayoutRootView}
-    >
-      <VideoCard
+    <SafeAreaView>
+      <View
+        style={styles.container}
+        testID="appScreen"
+        onLayout={onLayoutRootView}
+      >
+        <VideoCardList />
+        {/* <VideoCard
         videoInfo={{
+          videoId: "1",
           sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
           thumbnailUrl:
             "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
@@ -74,13 +79,15 @@ function AppScreen() {
       />
       <VideoCard
         videoInfo={{
+          videoId: "2",
           sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
           thumbnailUrl:
             "gs://que-backend-dev.appspot.com/videos/thumbnail/image 2.png",
         }}
-      />
-      {/* <StatusBar style="auto" /> */}
-    </View>
+      /> */}
+        {/* <StatusBar style="auto" /> */}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -88,12 +95,14 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator>
-        <RootStack.Screen name="App" component={AppScreen} />
-        <RootStack.Screen name="Video" component={VideoScreen} />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <RootStack.Navigator>
+          <RootStack.Screen name="App" component={AppScreen} />
+          <RootStack.Screen name="Video" component={VideoScreen} />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 

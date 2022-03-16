@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Pressable,
   TouchableWithoutFeedback,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState, useCallback } from "react";
@@ -18,8 +20,10 @@ import Video from "../../types/Video";
 
 type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
 
-type VideoCardProps = {
+export type VideoCardProps = {
   videoInfo: Video;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
 };
 
 /**
@@ -33,6 +37,8 @@ export default function VideoCard(props: VideoCardProps) {
   const [videoLiked, setVideoLiked] = useState<boolean>(false);
 
   const navigation = useNavigation<VideoCardNavProps>();
+
+  let inheritedTestID = props.testID ? props.testID : "videoCard";
 
   useEffect(() => {}, []);
 
@@ -72,8 +78,8 @@ export default function VideoCard(props: VideoCardProps) {
 
   return (
     <TouchableOpacity
-      testID="videoCard"
-      style={styles.cardView}
+      testID={inheritedTestID}
+      style={(styles.cardView, props.style)}
       onPress={onPressCard}
     >
       <MenuModal
