@@ -19,7 +19,7 @@ export default interface Video {
   /** 영상 썸네일 주소 */
   thumbnailUrl?: string;
   /** 영상 길이 */
-  length?: string;
+  length?: number;
   /** 영상 노래 정보 */
   song?: Partial<Song>;
   /** 업로드 한 사용자 */
@@ -29,11 +29,11 @@ export default interface Video {
   /** 총 좋아요 수 */
   likeCount?: number;
   /** 좋아요 한 사람 목록 */
-  likedList?: Array<Partial<User>>;
+  likedList?: { [userId: string]: boolean };
   /** 총 평가 수 */
   starCount?: number;
   /** 평가 한 사람 목록 */
-  starredList?: Array<Partial<User>>;
+  starredList?: { [userId: string]: boolean };
   /** 업로드한 날짜 */
   uploadedAt?: Date;
 }

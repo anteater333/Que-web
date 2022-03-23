@@ -18,9 +18,9 @@ export default interface User {
   /** 사용자 소개글 */
   description?: string;
   /** 사용자 팔로워 리스트 */
-  follower?: Array<Partial<User>>;
+  follower?: { [userId: string]: Partial<User> };
   /** 사용자 팔로잉 리스트 */
-  following?: Array<Partial<User>>;
+  following?: { [userId: string]: Partial<User> };
   /** 사용자 개인화 정보 */
   personality?: Partial<UserPersonality>;
   /** 사용자 페이지(Studio) 정보*/

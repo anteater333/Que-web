@@ -40,7 +40,7 @@ export default function VideoCardList(props: VideoCardListProps) {
         keyExtractor={(videoCard) => {
           return videoCard.videoInfo.videoId;
         }}
-      ></FlatList>
+      />
     </View>
   );
 }
