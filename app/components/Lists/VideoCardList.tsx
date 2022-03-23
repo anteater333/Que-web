@@ -1,5 +1,6 @@
 import { FlatList, View } from "react-native";
 import Video from "../../types/Video";
+import mockVideoCardData from "../../../potato/mockData/VideoCardData";
 import VideoCard, { VideoCardProps } from "../cards/VideoCard";
 
 import styles from "./VideoCardList.style";
@@ -7,19 +8,10 @@ import styles from "./VideoCardList.style";
 /**
  * 마이 포테이토 서버
  */
-const DATA: VideoCardProps[] = [
-  { videoInfo: { videoId: "1" } },
-  { videoInfo: { videoId: "2" } },
-  { videoInfo: { videoId: "3" } },
-  { videoInfo: { videoId: "4" } },
-  { videoInfo: { videoId: "5" } },
-  { videoInfo: { videoId: "6" } },
-  { videoInfo: { videoId: "7" } },
-  { videoInfo: { videoId: "8" } },
-  { videoInfo: { videoId: "9" } },
-];
 
-type VideoCardListProps = {};
+type VideoCardListProps = {
+  initialData: VideoCardProps[];
+};
 
 /**
  * 비디오 카드 컴포넌트를 담는 스크롤 가능한 리스트 컴포넌트
@@ -29,14 +21,19 @@ type VideoCardListProps = {};
  */
 export default function VideoCardList(props: VideoCardListProps) {
   const renderItem = ({ item }: { item: VideoCardProps }) => {
-    return <VideoCard videoInfo={item.videoInfo} />;
+    return <VideoCard testID={"videoCardItem"} videoInfo={item.videoInfo} />;
   };
 
   return (
-    <View style={styles.cardListConatiner}>
+    <View testID="videoCardListContainer" style={styles.cardListConatiner}>
       <FlatList
-        data={DATA}
+        testID="videoCardList"
+        data={props.initialData ? props.initialData : mockVideoCardData}
         renderItem={renderItem}
+        onEndReached={() => {
+          console.log("뵹");
+        }}
+        onEndReachedThreshold={0.2}
         keyExtractor={(videoCard) => {
           return videoCard.videoInfo.videoId;
         }}

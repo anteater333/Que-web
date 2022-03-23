@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState, useCallback } from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
@@ -32,12 +32,13 @@ export type VideoCardProps = {
  * @returns
  */
 export default function VideoCard(props: VideoCardProps) {
-  const [videoUrl, setVideoUrl] = useState<String>("test");
+  const [videoUrl, setVideoUrl] = useState<string>("test");
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const [videoLiked, setVideoLiked] = useState<boolean>(false);
 
   const navigation = useNavigation<VideoCardNavProps>();
 
+  // 상위 컴포넌트의 UnitTest를 위한 testID가 주어진 경우
   let inheritedTestID = props.testID ? props.testID : "videoCard";
 
   useEffect(() => {}, []);
@@ -72,7 +73,7 @@ export default function VideoCard(props: VideoCardProps) {
    */
   const onPressCard = useCallback(async () => {
     navigation.navigate("Video", {
-      url: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+      url: videoUrl,
     });
   }, [videoUrl]);
 
