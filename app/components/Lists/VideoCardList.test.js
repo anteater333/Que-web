@@ -1,8 +1,9 @@
 import React from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react-native";
 import VideoCardList from "./VideoCardList";
-import mockVideoCardData from "../../../potato/mockData/VideoCardData";
-import formatCount from "../../utils/formatCount";
+import mockVideoCardData, {
+  mockVideoCardData2,
+} from "../../../potato/mockData/VideoCardData";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -42,7 +43,7 @@ describe("VideoCardList", () => {
     expect(cardListItems.length).toBeGreaterThanOrEqual(testDataLength);
   });
 
-  it("아래 끝 까지 스크롤 시 데이터가 추가된다.", () => {
+  it("아래 끝 까지 스크롤 시 데이터가 추가된다.", async () => {
     const eventData = {
       nativeEvent: {
         contentOffset: {
@@ -63,7 +64,10 @@ describe("VideoCardList", () => {
     const list = component.getByTestId("videoCardList");
     fireEvent.scroll(list, eventData);
 
-    const cardListItems = component.getAllByTestId("videoCardItem");
-    expect(cardListItems.length).toBeGreaterThan(testDataLength);
+    const newItem = await component.findByText(
+      mockVideoCardData2[0].videoInfo.title
+    );
+
+    expect(newItem).toBeTruthy();
   });
 });

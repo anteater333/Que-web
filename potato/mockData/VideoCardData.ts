@@ -133,4 +133,139 @@ const mockVideoCardData: VideoCardProps[] = [
   },
 ];
 
+const mockVideoCardData2: VideoCardProps[] = [
+  {
+    videoInfo: {
+      videoId: "11",
+      title: "additional test",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "12",
+      title: "test2",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "13",
+      title: "test3",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "14",
+      title: "test4",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "15",
+      title: "test5",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "16",
+      title: "test6",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "17",
+      title: "test7",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "18",
+      title: "test8",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "19",
+      title: "test9",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+  {
+    videoInfo: {
+      videoId: "20",
+      title: "test10",
+      uploader: { nickname: "nobody" },
+      viewCount: 4567890,
+      starCount: 123,
+      likeCount: 0,
+      thumbnailUrl:
+        "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
+      sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
+    },
+  },
+];
+
 export default mockVideoCardData;
+
+export { mockVideoCardData2 };

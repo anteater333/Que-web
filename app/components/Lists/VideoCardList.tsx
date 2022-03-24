@@ -1,16 +1,14 @@
 import { FlatList, View } from "react-native";
-import Video from "../../types/Video";
-import mockVideoCardData from "../../../potato/mockData/VideoCardData";
+import mockVideoCardData, {
+  mockVideoCardData2,
+} from "../../../potato/mockData/VideoCardData";
 import VideoCard, { VideoCardProps } from "../cards/VideoCard";
 
 import styles from "./VideoCardList.style";
-
-/**
- * 마이 포테이토 서버
- */
+import { useCallback, useEffect, useState } from "react";
 
 type VideoCardListProps = {
-  initialData: VideoCardProps[];
+  initialData?: VideoCardProps[];
 };
 
 /**
@@ -20,24 +18,39 @@ type VideoCardListProps = {
  * @returns
  */
 export default function VideoCardList(props: VideoCardListProps) {
+  const [cardItemData, setCardItemData] = useState<VideoCardProps[]>(
+    props.initialData ? props.initialData : mockVideoCardData
+  );
+
+  useEffect(() => {}, [cardItemData]);
+
   /**
-   * 카드 리스트 아이템 렌더링
+   * 카드 리스트 아이템 렌더링 함수
    * @param param0
    * @returns
    */
-  const renderItem = ({ item }: { item: VideoCardProps }) => {
-    return <VideoCard testID={"videoCardItem"} videoInfo={item.videoInfo} />;
-  };
+  const handleRenderItem = useCallback(
+    ({ item }: { item: VideoCardProps }) => {
+      return <VideoCard testID={"videoCardItem"} videoInfo={item.videoInfo} />;
+    },
+    [cardItemData]
+  );
+
+  /**
+   * 스크롤이 끝까지 내려갔을 때 처리 함수
+   * 데이터를 더 불러온다.
+   */
+  const handleEndReached = useCallback(() => {
+    setCardItemData((prev) => [...prev, ...mockVideoCardData2]);
+  }, [cardItemData]);
 
   return (
     <View testID="videoCardListContainer" style={styles.cardListConatiner}>
       <FlatList
         testID="videoCardList"
-        data={props.initialData ? props.initialData : mockVideoCardData}
-        renderItem={renderItem}
-        onEndReached={() => {
-          console.log("뵹");
-        }}
+        data={cardItemData}
+        renderItem={handleRenderItem}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.2}
         keyExtractor={(videoCard) => {
           return videoCard.videoInfo.videoId;
