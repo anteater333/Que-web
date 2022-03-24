@@ -20,6 +20,11 @@ type VideoCardListProps = {
  * @returns
  */
 export default function VideoCardList(props: VideoCardListProps) {
+  /**
+   * 카드 리스트 아이템 렌더링
+   * @param param0
+   * @returns
+   */
   const renderItem = ({ item }: { item: VideoCardProps }) => {
     return <VideoCard testID={"videoCardItem"} videoInfo={item.videoInfo} />;
   };

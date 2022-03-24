@@ -17,6 +17,7 @@ import styles from "./VideoCard.style";
 import { RootStackParamList } from "../../screens/RootStackParamList";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import Video from "../../types/Video";
+import formatCount from "../../utils/formatCount";
 
 type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -32,16 +33,42 @@ export type VideoCardProps = {
  * @returns
  */
 export default function VideoCard(props: VideoCardProps) {
-  const [videoUrl, setVideoUrl] = useState<string>("test");
+  /** 메뉴 모달 표시 여부 toggle */
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
+  /** 형식 변환된 시청 수 */
+  const [strViewCount, setStrViewCount] = useState<string>(
+    formatCount(props.videoInfo.viewCount!)
+  );
+  /** 형식 변환된 좋아요 수 */
+  const [strLikeCount, setStrLikeCount] = useState<string>(
+    formatCount(props.videoInfo.likeCount!)
+  );
+  /** 형식 변환된 평가 수 */
+  const [strStarCount, setStrStarCount] = useState<string>(
+    formatCount(props.videoInfo.starCount!)
+  );
+  /** 사용자의 좋아요 여부 */
   const [videoLiked, setVideoLiked] = useState<boolean>(false);
-
-  const navigation = useNavigation<VideoCardNavProps>();
+  /** 사용자의 평가 여부 */
+  const [videoStarred, setVideoStarred] = useState<boolean>(false);
 
   // 상위 컴포넌트의 UnitTest를 위한 testID가 주어진 경우
   let inheritedTestID = props.testID ? props.testID : "videoCard";
 
   useEffect(() => {}, []);
+
+  /** 네비게이션 객체 사용 */
+  const navigation = useNavigation<VideoCardNavProps>();
+
+  /**
+   * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
+   * 해당 비디오 카드가 가지고 있는 url을 기반으로 해서 VideoScreen으로 Navigation 합니다.
+   */
+  const onPressCard = useCallback(async () => {
+    navigation.navigate("Video", {
+      url: props.videoInfo.sourceUrl!,
+    });
+  }, [props.videoInfo.sourceUrl]);
 
   /**
    * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
@@ -52,15 +79,6 @@ export default function VideoCard(props: VideoCardProps) {
   }, []);
 
   /**
-   * 카드 컴포넌트의 좋아요 버튼을 눌렀을 때 실행됩니다.
-   */
-  const likeThisVideo = useCallback(async () => {
-    // TBD 요청 보내기!
-
-    setVideoLiked(!videoLiked);
-  }, [videoLiked]);
-
-  /**
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
@@ -68,14 +86,13 @@ export default function VideoCard(props: VideoCardProps) {
   }, []);
 
   /**
-   * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
-   * 해당 비디오 카드가 가지고 있는 url을 기반으로 해서 VideoScreen으로 Navigation 합니다.
+   * 카드 컴포넌트의 좋아요 버튼을 눌렀을 때 실행됩니다.
    */
-  const onPressCard = useCallback(async () => {
-    navigation.navigate("Video", {
-      url: videoUrl,
-    });
-  }, [videoUrl]);
+  const likeThisVideo = useCallback(async () => {
+    // TBD 요청 보내기!
+
+    setVideoLiked(!videoLiked);
+  }, [videoLiked]);
 
   return (
     <TouchableOpacity
@@ -108,6 +125,12 @@ export default function VideoCard(props: VideoCardProps) {
         onPressLike={likeThisVideo}
         onPressStar={navigateToEvalutaion}
         liked={videoLiked}
+        starred={videoStarred}
+        title={props.videoInfo.title}
+        uploaderName={props.videoInfo.uploader?.nickname}
+        viewCount={strViewCount}
+        likeCount={strLikeCount}
+        starCount={strStarCount}
       ></CardInfoView>
     </TouchableOpacity>
   );
@@ -161,10 +184,13 @@ type VideoCardInfoProps = {
   onPressProfile: () => void;
   onPressStar: () => void;
   onPressLike: () => void;
+  title?: string;
+  uploaderName?: string;
   liked?: boolean;
   starred?: boolean;
-  likeCount?: number;
-  viewCount?: number;
+  likeCount?: string;
+  starCount?: string;
+  viewCount?: string;
 };
 
 /**
@@ -172,11 +198,7 @@ type VideoCardInfoProps = {
  * @returns
  */
 function CardInfoView(props: VideoCardInfoProps) {
-  const [title, setTitle] = useState<string>("그리움만 쌓이네");
-  const [singer, setSinger] = useState<string>("John Doe");
-  const [viewCount, setViewCount] = useState<string>("10.3k");
-  const [likeCount, setLikeCount] = useState<string>("2.6k");
-
+  // 좋아요 / 평가 여부에 따라 버튼 표시 변경
   let likeButton;
   let starButton;
   if (props.liked) {
@@ -230,10 +252,10 @@ function CardInfoView(props: VideoCardInfoProps) {
       </Pressable>
       <View style={styles.infoTitleView}>
         <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
-          {title}
+          {props.title}
         </Text>
         <Text testID="cardInfoSingerText" style={styles.infoSingerText}>
-          {singer}
+          {props.uploaderName}
         </Text>
       </View>
       {/* 좋아요, 평가점수, 시청 수 */}
@@ -244,7 +266,7 @@ function CardInfoView(props: VideoCardInfoProps) {
             <TouchableOpacity onPress={props.onPressLike}>
               {likeButton}
               <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
-                {likeCount}
+                {props.likeCount}
               </Text>
             </TouchableOpacity>
           </View>
@@ -252,12 +274,12 @@ function CardInfoView(props: VideoCardInfoProps) {
             <TouchableOpacity onPress={props.onPressStar}>
               {starButton}
               <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
-                {likeCount}
+                {props.starCount}
               </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.reactionChildView}>
-            <Text style={styles.upperCountText}>{viewCount}</Text>
+            <Text style={styles.upperCountText}>{props.viewCount}</Text>
             <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
               Views
             </Text>
