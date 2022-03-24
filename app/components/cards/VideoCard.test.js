@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  waitFor,
-} from "@testing-library/react-native";
+import { cleanup, fireEvent, render } from "@testing-library/react-native";
 
 import VideoCard from "./VideoCard";
-import { NavigationContainer } from "@react-navigation/native";
-import { Modal } from "react-native";
-import { act } from "react-test-renderer";
+import mockVideoCardData from "../../../potato/mockData/VideoCardData";
+import formatCount from "../../utils/formatCount";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -25,11 +19,13 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-let component = render(<VideoCard />);
+let component = render(
+  <VideoCard videoInfo={mockVideoCardData[0].videoInfo} />
+);
 let componentJSON = component.toJSON();
 
 beforeEach(() => {
-  component = render(<VideoCard />);
+  component = render(<VideoCard videoInfo={mockVideoCardData[0].videoInfo} />);
 });
 
 afterEach(cleanup);
@@ -40,6 +36,21 @@ describe("VideoCard", () => {
     expect(componentJSON.children[0].type).toBe("Modal");
     expect(componentJSON.children[1].type).toBe("View");
     expect(componentJSON.children[2].type).toBe("View");
+  });
+
+  it("테스트 데이터 중 단순 텍스트와 같은 1차적 요소가 카드에 반영된다.", () => {
+    const sample = mockVideoCardData[0].videoInfo;
+    const wannabeVideoTitle = sample.title;
+    const wannabeVideoUploader = sample.uploader.nickname;
+    const wannabeVideoLikeCount = formatCount(sample.likeCount);
+    const wannabeVideoStarCount = formatCount(sample.starCount);
+    const wannabeVideoViewCount = formatCount(sample.viewCount);
+
+    expect(component.getByText(wannabeVideoTitle)).toBeTruthy();
+    expect(component.getByText(wannabeVideoUploader)).toBeTruthy();
+    expect(component.getByText(wannabeVideoLikeCount)).toBeTruthy();
+    expect(component.getByText(wannabeVideoStarCount)).toBeTruthy();
+    expect(component.getByText(wannabeVideoViewCount)).toBeTruthy();
   });
 
   it("카드를 누를 시 Video 화면으로 Navigation이 진행된다.", async () => {

@@ -36,25 +36,10 @@ describe("VideoCardList", () => {
     expect(cardList).toBeTruthy();
   });
 
-  it("리스트는 카드 아이템을 10개 가지고 있다. <= 수정 필요", () => {
+  it("리스트는 카드 아이템을 10개 이상 가지고 있다. <= 수정 필요", () => {
     const cardListItems = component.getAllByTestId("videoCardItem");
 
     expect(cardListItems.length).toBeGreaterThanOrEqual(testDataLength);
-  });
-
-  it("테스트 데이터가 카드에 반영된다.", () => {
-    const sample = mockVideoCardData[0].videoInfo;
-    const wannabeVideoTitle = sample.title;
-    const wannabeVideoUploader = sample.uploader.nickname;
-    const wannabeVideoLikeCount = formatCount(sample.likeCount);
-    const wannabeVideoStarCount = formatCount(sample.starCount);
-    const wannabeVideoViewCount = formatCount(sample.viewCount);
-
-    expect(component.getByText(wannabeVideoTitle)).toBeTruthy();
-    expect(component.getByText(wannabeVideoUploader)).toBeTruthy();
-    expect(component.getByText(wannabeVideoLikeCount)).toBeTruthy();
-    expect(component.getByText(wannabeVideoStarCount)).toBeTruthy();
-    expect(component.getByText(wannabeVideoViewCount)).toBeTruthy();
   });
 
   it("아래 끝 까지 스크롤 시 데이터가 추가된다.", () => {
