@@ -2,6 +2,7 @@ import React from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react-native";
 import VideoCardList from "./VideoCardList";
 import mockVideoCardData from "../../../potato/mockData/VideoCardData";
+import formatCount from "../../utils/formatCount";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -45,9 +46,9 @@ describe("VideoCardList", () => {
     const sample = mockVideoCardData[0].videoInfo;
     const wannabeVideoTitle = sample.title;
     const wannabeVideoUploader = sample.uploader.nickname;
-    const wannabeVideoLikeCount = sample.likeCount;
-    const wannabeVideoStarCount = sample.starCount;
-    const wannabeVideoViewCount = sample.viewCount;
+    const wannabeVideoLikeCount = formatCount(sample.likeCount);
+    const wannabeVideoStarCount = formatCount(sample.starCount);
+    const wannabeVideoViewCount = formatCount(sample.viewCount);
 
     expect(component.getByText(wannabeVideoTitle)).toBeTruthy();
     expect(component.getByText(wannabeVideoUploader)).toBeTruthy();
