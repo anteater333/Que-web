@@ -1,11 +1,11 @@
 import Place from "./Place";
 import Song from "./Song";
-import User from "./User";
+import UserType from "./User";
 
 /**
  * 영상에 대한 정보 객체 형식
  */
-export default interface Video {
+export default interface VideoType {
   /** 영상 고유 ID */
   videoId: string;
   /** 영상 제목 */
@@ -23,7 +23,7 @@ export default interface Video {
   /** 영상 노래 정보 */
   song?: Partial<Song>;
   /** 업로드 한 사용자 */
-  uploader?: Partial<User>;
+  uploader?: Partial<UserType>;
   /** 총 시청 수 */
   viewCount?: number;
   /** 총 좋아요 수 */

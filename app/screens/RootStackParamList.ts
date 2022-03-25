@@ -1,4 +1,4 @@
-import Video from "../types/Video";
+import VideoType from "../types/Video";
 
 export type RootStackParamList = {
   /** 임시 */

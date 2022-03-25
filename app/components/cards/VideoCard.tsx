@@ -16,13 +16,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import styles from "./VideoCard.style";
 import { RootStackParamList } from "../../screens/RootStackParamList";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
-import Video from "../../types/Video";
+import VideoType from "../../types/Video";
 import formatCount from "../../utils/formatCount";
 
 type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
 
 export type VideoCardProps = {
-  videoInfo: Video;
+  videoInfo: VideoType;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 };

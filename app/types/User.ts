@@ -6,7 +6,7 @@ import UserStatus from "./UserStatus";
 /**
  * 사용자 정보 객체 형식
  */
-export default interface User {
+export default interface UserType {
   /** 사용자 고유 식별자 */
   userId?: number;
   /** 사용자 Email */
@@ -18,9 +18,9 @@ export default interface User {
   /** 사용자 소개글 */
   description?: string;
   /** 사용자 팔로워 리스트 */
-  follower?: { [userId: string]: Partial<User> };
+  follower?: { [userId: string]: Partial<UserType> };
   /** 사용자 팔로잉 리스트 */
-  following?: { [userId: string]: Partial<User> };
+  following?: { [userId: string]: Partial<UserType> };
   /** 사용자 개인화 정보 */
   personality?: Partial<UserPersonality>;
   /** 사용자 페이지(Studio) 정보*/
