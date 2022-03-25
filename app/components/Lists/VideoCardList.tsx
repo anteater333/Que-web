@@ -41,7 +41,8 @@ export default function VideoCardList(props: VideoCardListProps) {
    * 데이터를 더 불러온다.
    */
   const handleEndReached = useCallback(() => {
-    setCardItemData((prev) => [...prev, ...mockVideoCardData2]);
+    // 이 상태로 놔두니까 컴퓨터가 터질라해요
+    // setCardItemData((prev) => [...prev, ...mockVideoCardData2]);
   }, [cardItemData]);
 
   return (
