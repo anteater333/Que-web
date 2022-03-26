@@ -1,6 +1,4 @@
-import VideoType from "../types/Video";
-
-import FirebaseResourceClient from "./firebase/firebaseClient";
+import VideoType from "../../types/Video";
 
 /**
  * 리소스 서버 접근 관련 인터페이스 입니다.
@@ -20,10 +18,3 @@ export interface QueResourceAPI {
    */
   getVideoCardData(page: number): Promise<VideoType[]>;
 }
-
-/**
- * 서버 리소스 접근 메소드 묶음 입니다. 자세한 정보는 인텔리센스의 도움을.
- */
-const QueResourceUtils: QueResourceAPI = new FirebaseResourceClient(); // => 백엔드 구현체에 따라 인스턴스를 변경하면 됩니다.
-
-export { QueResourceUtils };

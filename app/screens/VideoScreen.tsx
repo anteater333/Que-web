@@ -1,8 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Video } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
-import { QueResourceUtils } from "../api/APIUtils";
+import { Button, StyleSheet, View } from "react-native";
+import { getVideoDownloadURL } from "../api/QueResourceUtils";
 import { RootStackParamList } from "./RootStackParamList";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Video">;
@@ -13,9 +13,7 @@ const VideoScreen = ({ route, navigation }: Props) => {
 
   useEffect(() => {
     async function fetchVideo() {
-      const httpDownloadUrl = await QueResourceUtils.getVideoDownloadURL(
-        route.params.url
-      );
+      const httpDownloadUrl = await getVideoDownloadURL(route.params.url);
       setVideoUrl(httpDownloadUrl);
     }
 
