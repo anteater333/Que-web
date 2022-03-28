@@ -14,7 +14,7 @@ export default interface UserType {
   /** 사용자 표시명 */
   nickname?: string;
   /** 프로필 사진 URL */
-  profilePicureUrl?: string;
+  profilePictureUrl?: string;
   /** 사용자 소개글 */
   description?: string;
   /** 사용자 팔로워 리스트 */

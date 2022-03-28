@@ -63,7 +63,7 @@ describe("QueResourceUtils", () => {
       expect(typeof result[0]).toBe("object");
     });
 
-    it(`배열의 길이는 매개변수 per(${per}) 만큼 가진다.`, () => {
+    it(`배열의 길이는 매개변수 per 만큼 가진다.`, () => {
       expect(result.length).toEqual(per);
     });
 
@@ -73,18 +73,18 @@ describe("QueResourceUtils", () => {
       expect(result).not.toEqual(newResultWithNewPage);
     });
 
-    it("각 데이터는 카드를 표시하는데 필요한 데이터를 가지고 있다.", () => {
+    it("각 데이터는 카드를 표시하는데 필요한 속성을 가지고 있다.", () => {
       result.forEach((data) => {
-        expect(data.title).toBeTruthy();
-        expect(data.uploader?.nickname).toBeTruthy();
-        expect(data.uploader?.profilePicureUrl).toBeTruthy();
-        expect(data.uploadedAt).toBeTruthy();
-        expect(data.viewCount).toBeTruthy();
-        expect(data.likeCount).toBeTruthy();
-        expect(data.starCount).toBeTruthy();
-        expect(data.viewd).toBeTruthy();
-        expect(data.liked).toBeTruthy();
-        expect(data.starred).toBeTruthy();
+        expect(data.title).not.toBeUndefined();
+        expect(data.uploader?.nickname).not.toBeUndefined();
+        expect(data.uploader?.profilePictureUrl).not.toBeUndefined();
+        expect(data.uploadedAt).not.toBeUndefined();
+        expect(data.viewCount).not.toBeUndefined();
+        expect(data.likeCount).not.toBeUndefined();
+        expect(data.starCount).not.toBeUndefined();
+        expect(data.viewed).not.toBeUndefined();
+        expect(data.likedData).not.toBeUndefined();
+        expect(data.starredData).not.toBeUndefined();
       });
     });
   });
