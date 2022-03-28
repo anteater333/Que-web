@@ -1,7 +1,37 @@
 import VideoType from "../../../types/Video";
 
+import {
+  query,
+  orderBy,
+  startAt,
+  getDocs,
+  getDoc,
+  DocumentData,
+  CollectionReference,
+} from "firebase/firestore";
+import { VideoCollection } from "./collections";
+import UserType from "../../../types/User";
+
 export async function getVideoCardDataFromFirestore(
   page: number
 ): Promise<VideoType[]> {
-  throw new Error("요 브로, 디스 메소드 낫 임플리멘티드 옛.");
+  const querySnapshot = await getDocs(VideoCollection);
+
+  const rtDataset: VideoType[] = [];
+  for await (const doc of querySnapshot.docs) {
+    const filteredData = { ...doc.data() };
+    filteredData.videoId = doc.id;
+    if (filteredData.uploader) {
+      const uploaderData = await getDoc<UserType>(filteredData.uploader);
+      filteredData.uploader = uploaderData.data();
+    }
+    filteredData.viewed = false;
+    filteredData.likedData = [];
+    filteredData.starredData = {};
+    rtDataset.push(filteredData);
+  }
+
+  // console.log(rtDataset[0]);
+
+  return rtDataset;
 }
