@@ -4,7 +4,6 @@
  * 서버 리소스 접근 메소드 묶음 입니다. 자세한 정보는 인텔리센스의 도움을.
  */
 
-import VideoType from "../types/Video";
 import { QueResourceAPI } from "./interfaces";
 
 import FirebaseResourceClient from "./firebase/firebaseClient";

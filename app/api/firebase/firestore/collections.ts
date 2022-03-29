@@ -7,10 +7,12 @@ import {
   getFirestore,
 } from "firebase/firestore";
 import UserType from "../../../types/User";
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import firebaseConfig from "../config";
 
-initializeApp(firebaseConfig);
+if (!getApps().length) {
+  initializeApp(firebaseConfig);
+}
 
 /**
  * Helper to add the type to the db responses. kind of ODM

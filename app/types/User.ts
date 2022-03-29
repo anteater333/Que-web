@@ -7,8 +7,8 @@ import UserStatus from "./UserStatus";
  * 사용자 정보 객체 형식
  */
 export default interface UserType {
-  /** 사용자 고유 식별자 */
-  userId?: number;
+  /** 사용자 고유 ID */
+  userId?: string;
   /** 사용자 Email */
   email?: string;
   /** 사용자 표시명 */
