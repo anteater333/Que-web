@@ -1,7 +1,7 @@
 import { getApps, initializeApp } from "firebase/app";
 import { QueResourceAPI } from "../interfaces";
 import firebaseConfig from "./config";
-import { getImageFromStorage, getVideoFromStorage } from "./storage/storage";
+import { getMediaFromStorage } from "./storage/storage";
 import { getVideoCardDataFromFirestore } from "./firestore/firestore";
 
 // initializing firebase client
@@ -10,8 +10,8 @@ if (!getApps().length) {
 }
 
 class QueResourceClient implements QueResourceAPI {
-  public getVideoDownloadURL = getVideoFromStorage;
-  public getImageDownloadURL = getImageFromStorage;
+  public getVideoDownloadURL = getMediaFromStorage;
+  public getImageDownloadURL = getMediaFromStorage;
   public getVideoCardData = getVideoCardDataFromFirestore;
 }
 

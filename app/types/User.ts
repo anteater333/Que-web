@@ -7,14 +7,14 @@ import UserStatus from "./UserStatus";
  * 사용자 정보 객체 형식
  */
 export default interface UserType {
-  /** 사용자 고유 식별자 */
-  userId?: number;
+  /** 사용자 고유 ID */
+  userId?: string;
   /** 사용자 Email */
   email?: string;
   /** 사용자 표시명 */
   nickname?: string;
   /** 프로필 사진 URL */
-  profilePicureUrl?: string;
+  profilePictureUrl?: string;
   /** 사용자 소개글 */
   description?: string;
   /** 사용자 팔로워 리스트 */

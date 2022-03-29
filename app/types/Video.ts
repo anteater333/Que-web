@@ -1,5 +1,7 @@
+import LikeType from "./Like";
 import Place from "./Place";
 import Song from "./Song";
+import StarType from "./Star";
 import UserType from "./User";
 
 /**
@@ -23,7 +25,7 @@ export default interface VideoType {
   /** 영상 노래 정보 */
   song?: Partial<Song>;
   /** 업로드 한 사용자 */
-  uploader?: Partial<UserType>;
+  uploader?: Partial<UserType> | any;
   /** 총 시청 수 */
   viewCount?: number;
   /** 총 좋아요 수 */
@@ -39,7 +41,7 @@ export default interface VideoType {
   /** 사용자 시청 정보 */
   viewed?: boolean;
   /** 사용자 좋아요 정보 */
-  liked?: boolean;
+  likedData?: LikeType[];
   /** 사용자 평가 정보 */
-  starred?: number;
+  starredData?: StarType;
 }
