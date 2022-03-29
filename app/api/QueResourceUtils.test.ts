@@ -72,11 +72,11 @@ describe("QueResourceUtils", () => {
       const newResultWithNewPage = await getVideoCardData(per, newPage);
       expect(result).not.toEqual(newResultWithNewPage);
 
-      // 추후 테스트 슈트 분리 필요
-      // 현재 테스트 DB에 들어있는 데이터 수가 6개라서 수행 가능
-      // 페이지 끝에 도달해 더 읽을 데이터가 없는 경우 빈 배열을 반환한다.
-      const noMoreData = await getVideoCardData(per, newPage);
-      expect(noMoreData.length).toEqual(0);
+      // // 추후 테스트 슈트 분리 필요
+      // // 현재 테스트 DB에 들어있는 데이터 수가 6개라서 수행 가능
+      // // 페이지 끝에 도달해 더 읽을 데이터가 없는 경우 빈 배열을 반환한다.
+      // const noMoreData = await getVideoCardData(per, newPage);
+      // expect(noMoreData.length).toEqual(0);
     });
 
     it("각 데이터는 카드를 표시하는데 필요한 속성을 가지고 있다.", () => {

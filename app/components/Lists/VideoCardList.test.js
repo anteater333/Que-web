@@ -1,9 +1,6 @@
 import React from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react-native";
 import VideoCardList from "./VideoCardList";
-import mockVideoCardData, {
-  mockVideoCardData2,
-} from "../../../potato/mockData/VideoCardData";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -19,16 +16,17 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-let component = render(<VideoCardList initialData={mockVideoCardData} />);
+let component = render(<VideoCardList />);
 beforeEach(() => {
-  component = render(<VideoCardList initialData={mockVideoCardData} />);
+  component = render(<VideoCardList />);
   componentJSON = component.toJSON();
 });
 
 afterEach(cleanup);
 
 describe("VideoCardList", () => {
-  const testDataLength = mockVideoCardData.length;
+  let initialListLength = 0;
+
   it("리스트 컴포넌트가 잘 렌더링 된다.", () => {
     const cardListContainer = component.getByTestId("videoCardListContainer");
     const cardList = component.getByTestId("videoCardList");
@@ -37,10 +35,11 @@ describe("VideoCardList", () => {
     expect(cardList).toBeTruthy();
   });
 
-  it("리스트는 카드 아이템을 10개 이상 가지고 있다. <= 수정 필요", () => {
+  it("리스트는 카드 아이템을 1개 이상 가지고 있다.", () => {
     const cardListItems = component.getAllByTestId("videoCardItem");
 
-    expect(cardListItems.length).toBeGreaterThanOrEqual(testDataLength);
+    initialListLength = cardListItems.length;
+    expect(cardListItems.length).toBeGreaterThanOrEqual(1);
   });
 
   it("아래 끝 까지 스크롤 시 데이터가 추가된다.", async () => {
@@ -64,10 +63,8 @@ describe("VideoCardList", () => {
     const list = component.getByTestId("videoCardList");
     fireEvent.scroll(list, eventData);
 
-    const newItem = await component.findByText(
-      mockVideoCardData2[0].videoInfo.title
-    );
+    const cardListItems = await component.findAllByTestId("videoCardItem");
 
-    expect(newItem).toBeTruthy();
+    expect(cardListItems.length).toBeGreaterThan(initialListLength);
   });
 });
