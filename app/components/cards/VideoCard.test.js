@@ -19,13 +19,11 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-let component = render(
-  <VideoCard videoInfo={mockVideoCardData[0].videoInfo} />
-);
+let component = render(<VideoCard videoInfo={mockVideoCardData[0]} />);
 let componentJSON = component.toJSON();
 
 beforeEach(() => {
-  component = render(<VideoCard videoInfo={mockVideoCardData[0].videoInfo} />);
+  component = render(<VideoCard videoInfo={mockVideoCardData[0]} />);
 });
 
 afterEach(cleanup);
@@ -39,7 +37,7 @@ describe("VideoCard", () => {
   });
 
   it("테스트 데이터 중 단순 텍스트와 같은 1차적 요소가 카드에 반영된다.", () => {
-    const sample = mockVideoCardData[0].videoInfo;
+    const sample = mockVideoCardData[0];
     const wannabeVideoTitle = sample.title;
     const wannabeVideoUploader = sample.uploader.nickname;
     const wannabeVideoLikeCount = formatCount(sample.likeCount);

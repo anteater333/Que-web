@@ -7,11 +7,19 @@
 import { QueResourceAPI } from "./interfaces";
 
 import FirebaseResourceClient from "./firebase/firebaseClient";
+import TestApiClient from "./testApi/testApiClient";
 
 /**
  * Concrete API Instance
  */
-const QueResourceClient: QueResourceAPI = new FirebaseResourceClient(); // => 백엔드 구현체에 따라 인스턴스를 변경하면 됩니다.
+let QueResourceClient: QueResourceAPI;
+if (process.env.NODE_ENV !== "test")
+  // 백엔드 구현체에 따라 인스턴스를 변경하면 됩니다.
+  QueResourceClient = new FirebaseResourceClient();
+else {
+  // 테스트용 Mock API
+  QueResourceClient = new TestApiClient();
+}
 
 export const getVideoDownloadURL = QueResourceClient.getVideoDownloadURL;
 
