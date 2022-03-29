@@ -30,42 +30,53 @@ export async function getVideoCardDataFromFirestore(
   let videoCardQuery;
   if (page == 0) {
     // pagination 초기화
-    videoCardQuery = query(VideoCollection, orderBy("uploadedAt"), limit(per));
+    videoCardQuery = query(
+      VideoCollection,
+      orderBy("uploadedAt", "desc"),
+      limit(per)
+    );
   } else {
     // 다음 페이지
     videoCardQuery = query(
       VideoCollection,
-      orderBy("uploadedAt"),
+      orderBy("uploadedAt", "desc"),
       limit(per),
       startAfter(lastDocument)
     );
   }
 
-  // 쿼리를 통해 문서 스냅샷 생성
-  const querySnapshot = await getDocs(videoCardQuery);
-  lastDocument = querySnapshot.docs[querySnapshot.docs.length - 1]; // 마지막 문서 업데이트
+  try {
+    // 쿼리를 통해 문서 스냅샷 생성
+    const querySnapshot = await getDocs(videoCardQuery);
+    if (querySnapshot.docs.length)
+      lastDocument = querySnapshot.docs[querySnapshot.docs.length - 1]; // 마지막 문서 업데이트
 
-  // 반환할 데이터셋 제작
-  const rtDataset: VideoType[] = [];
-  for await (const doc of querySnapshot.docs) {
-    const filteredData = { ...doc.data() };
-    filteredData.videoId = doc.id;
+    // 반환할 데이터셋 제작
+    const rtDataset: VideoType[] = [];
+    for await (const doc of querySnapshot.docs) {
+      const filteredData = { ...doc.data() };
+      filteredData.videoId = doc.id;
 
-    // 사용자 데이터 생성
-    if (filteredData.uploader) {
-      const uploaderData = await getDoc<UserType>(filteredData.uploader);
-      filteredData.uploader = uploaderData.data();
-      (filteredData.uploader as Partial<UserType>).userId = uploaderData.id;
+      // 사용자 데이터 생성
+      if (filteredData.uploader) {
+        const uploaderData = await getDoc<UserType>(filteredData.uploader);
+        filteredData.uploader = uploaderData.data();
+        (filteredData.uploader as Partial<UserType>).userId = uploaderData.id;
+      }
+
+      // 리액션 관련 데이터 생성 (TBD)
+      filteredData.viewed = false;
+      filteredData.likedData = [];
+      filteredData.starredData = {};
+
+      // 정제한 데이터 추가
+      rtDataset.push(filteredData);
     }
 
-    // 리액션 관련 데이터 생성 (TBD)
-    filteredData.viewed = false;
-    filteredData.likedData = [];
-    filteredData.starredData = {};
+    return rtDataset;
+  } catch (error) {
+    console.error(error);
 
-    // 정제한 데이터 추가
-    rtDataset.push(filteredData);
+    return [];
   }
-
-  return rtDataset;
 }

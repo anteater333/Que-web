@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, AppRegistry } from "react-native";
+import { StyleSheet, Text, View, AppRegistry, LogBox } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
@@ -7,11 +7,14 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import VideoCard from "./app/components/cards/VideoCard";
 import { RootStackParamList } from "./app/screens/RootStackParamList";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import VideoCardList from "./app/components/Lists/VideoCardList";
+import TimelineScreen from "./app/screens/TimelineScreen";
+
+// 타이머 경고 무효
+LogBox.ignoreLogs(["Setting a timer"]);
 
 function AppScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -98,6 +101,7 @@ export default function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <RootStack.Navigator>
+          <RootStack.Screen name="Timeline" component={TimelineScreen} />
           <RootStack.Screen name="App" component={AppScreen} />
           <RootStack.Screen name="Video" component={VideoScreen} />
         </RootStack.Navigator>
