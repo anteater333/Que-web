@@ -1,5 +1,11 @@
 import React from "react";
-import { cleanup, fireEvent, render } from "@testing-library/react-native";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react-native";
 import VideoCardList from "./VideoCardList";
 
 /** 네비게이션 모의 함수 */
@@ -35,15 +41,31 @@ describe("VideoCardList", () => {
     expect(cardList).toBeTruthy();
   });
 
-  it("리스트는 카드 아이템을 1개 이상 가지고 있다.", () => {
-    const cardListItems = component.getAllByTestId("videoCardItem");
+  it("리스트는 카드 아이템을 1개 이상 가지고 있다.", async () => {
+    // layout 이벤트 발생
+    const cardListContainer = component.getByTestId("videoCardListContainer");
+    act(() => {
+      fireEvent(cardListContainer, "layout", {
+        nativeEvent: { layout: { width: 300 } },
+      });
+    });
+
+    const cardListItems = await component.findAllByTestId("videoCardItem");
 
     initialListLength = cardListItems.length;
     expect(cardListItems.length).toBeGreaterThanOrEqual(1);
   });
 
   it("아래 끝 까지 스크롤 시 데이터가 추가된다.", async () => {
-    const eventData = {
+    // layout 이벤트 발생
+    const cardListContainer = component.getByTestId("videoCardListContainer");
+    act(() => {
+      fireEvent(cardListContainer, "layout", {
+        nativeEvent: { layout: { width: 300 } },
+      });
+    });
+
+    const scrollEventData = {
       nativeEvent: {
         contentOffset: {
           y: 500,
@@ -61,10 +83,12 @@ describe("VideoCardList", () => {
       },
     };
     const list = component.getByTestId("videoCardList");
-    fireEvent.scroll(list, eventData);
-
-    const cardListItems = await component.findAllByTestId("videoCardItem");
-
-    expect(cardListItems.length).toBeGreaterThan(initialListLength);
+    act(() => {
+      fireEvent.scroll(list, scrollEventData);
+    });
+    waitFor(async () => {
+      const cardListItems = await component.findAllByTestId("videoCardItem");
+      expect(cardListItems.length).toBeGreaterThan(initialListLength);
+    });
   });
 });
