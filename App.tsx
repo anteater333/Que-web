@@ -69,7 +69,7 @@ export default function App() {
     <SafeAreaProvider style={styles.root}>
       <View
         style={styles.container}
-        testID={"appRootView"}
+        testID="appRootView"
         onLayout={onLayoutRootView}
       >
         <NavigationContainer>
