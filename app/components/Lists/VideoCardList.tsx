@@ -42,7 +42,7 @@ export default function VideoCardList(props: VideoCardListProps) {
         return <VideoCard testID={"videoCardItem"} videoInfo={item} />;
       } else {
         // 더 이상 데이터가 없는 경우 데이터 없음 표시
-        return <Text>No More Data</Text>;
+        return <NoMoreDataIndicator />;
       }
     },
     [cardItemData]
@@ -54,14 +54,15 @@ export default function VideoCardList(props: VideoCardListProps) {
    */
   const handleEndReached = useCallback(async () => {
     if (!noMoreData) {
-      const newAppendData = await getVideoCardData(3, 1);
-      if (newAppendData.length) {
+      const cardPerPage = 3;
+      const newAppendData = await getVideoCardData(cardPerPage, 1);
+      if (newAppendData.length == cardPerPage) {
         // 추가 데이터가 있는 경우
         setCardItemData((prev) => [...prev, ...newAppendData]);
       } else {
         // 데이터가 더 없는 경우
         setNoMoreData(true);
-        setCardItemData((prev) => [...prev, { videoId: "" }]);
+        setCardItemData((prev) => [...prev, ...newAppendData, { videoId: "" }]);
       }
     }
   }, [cardItemData]);
@@ -82,6 +83,14 @@ export default function VideoCardList(props: VideoCardListProps) {
           return videoCard.videoId;
         }}
       />
+    </View>
+  );
+}
+
+function NoMoreDataIndicator() {
+  return (
+    <View style={styles.noMoreDataIndicator}>
+      <Text>No More Data</Text>
     </View>
   );
 }

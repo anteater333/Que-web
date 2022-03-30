@@ -54,10 +54,6 @@ export default function App() {
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
-
   let firstPage;
   if (userLoggedIn) {
     // firstPage = TimelineScene
@@ -65,37 +61,22 @@ export default function App() {
     // firstPage = OnBoardingScene
   }
 
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <SafeAreaProvider style={styles.root}>
-      <View
-        style={styles.container}
-        testID="appRootView"
-        onLayout={onLayoutRootView}
-      >
-        <NavigationContainer>
-          <RootStack.Navigator defaultScreenOptions={{ headerShown: false }}>
-            <RootStack.Screen
-              options={{ headerShown: false }}
-              name="Timeline"
-              component={TimelineScreen}
-            />
-            <RootStack.Screen name="Video" component={VideoScreen} />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </View>
+    <SafeAreaProvider>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <RootStack.Navigator>
+          <RootStack.Screen
+            options={{ headerShown: false }}
+            name="Timeline"
+            component={TimelineScreen}
+          />
+          <RootStack.Screen name="Video" component={VideoScreen} />
+        </RootStack.Navigator>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    alignItems: "center",
-  },
-  container: {
-    maxWidth: 480,
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

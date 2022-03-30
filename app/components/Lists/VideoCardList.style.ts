@@ -1,10 +1,15 @@
 import { StyleSheet } from "react-native";
+import { bDimensions } from "../../styles/base";
 
 const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
     maxWidth: 480,
-    width: "100vw",
-    height: "100vh",
+    width: bDimensions.fullWidth,
+    height: bDimensions.fullHeight,
+  },
+  noMoreDataIndicator: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
