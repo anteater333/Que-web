@@ -77,7 +77,7 @@ export default function VideoCardList(props: VideoCardListProps) {
         data={cardItemData}
         renderItem={handleRenderItem}
         onEndReached={handleEndReached}
-        onEndReachedThreshold={1}
+        onEndReachedThreshold={0.2}
         keyExtractor={(videoCard) => {
           return videoCard.videoId;
         }}

@@ -10,13 +10,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./app/screens/RootStackParamList";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import VideoCardList from "./app/components/Lists/VideoCardList";
 import TimelineScreen from "./app/screens/TimelineScreen";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
 
-function AppScreen() {
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(true);
 
@@ -65,52 +66,31 @@ function AppScreen() {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaProvider style={styles.root}>
       <View
         style={styles.container}
-        testID="appScreen"
+        testID={"appRootView"}
         onLayout={onLayoutRootView}
       >
-        <VideoCardList />
-        {/* <VideoCard
-        videoInfo={{
-          videoId: "1",
-          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
-          thumbnailUrl:
-            "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
-        }}
-      />
-      <VideoCard
-        videoInfo={{
-          videoId: "2",
-          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
-          thumbnailUrl:
-            "gs://que-backend-dev.appspot.com/videos/thumbnail/image 2.png",
-        }}
-      /> */}
-        {/* <StatusBar style="auto" /> */}
+        <NavigationContainer>
+          <RootStack.Navigator defaultScreenOptions={{ headerShown: false }}>
+            <RootStack.Screen
+              options={{ headerShown: false }}
+              name="Timeline"
+              component={TimelineScreen}
+            />
+            <RootStack.Screen name="Video" component={VideoScreen} />
+          </RootStack.Navigator>
+        </NavigationContainer>
       </View>
-    </SafeAreaView>
-  );
-}
-
-const RootStack = createNativeStackNavigator<RootStackParamList>();
-
-export default function App() {
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <RootStack.Navigator>
-          <RootStack.Screen name="Timeline" component={TimelineScreen} />
-          <RootStack.Screen name="App" component={AppScreen} />
-          <RootStack.Screen name="Video" component={VideoScreen} />
-        </RootStack.Navigator>
-      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    alignItems: "center",
+  },
   container: {
     maxWidth: 480,
     flex: 1,

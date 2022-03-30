@@ -9,11 +9,21 @@ import VideoType from "../types/Video";
 const TimelineScreen = () => {
   return (
     <SafeAreaView>
-      <View testID="timelineScreen">
+      <View style={styles.container} testID="timelineScreen">
         <VideoCardList />
       </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: 480,
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default TimelineScreen;

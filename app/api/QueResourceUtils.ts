@@ -15,7 +15,8 @@ import TestApiClient from "./testApi/testApiClient";
 let QueResourceClient: QueResourceAPI;
 if (process.env.NODE_ENV !== "test")
   // 백엔드 구현체에 따라 인스턴스를 변경하면 됩니다.
-  QueResourceClient = new FirebaseResourceClient();
+  // QueResourceClient = new FirebaseResourceClient();
+  QueResourceClient = new TestApiClient();
 else {
   // 테스트용 Mock API
   QueResourceClient = new TestApiClient();
