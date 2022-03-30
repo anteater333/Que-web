@@ -9,7 +9,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { RootStackParamList } from "./app/screens/RootStackParamList";
 import VideoScreen from "./app/screens/VideoScreen";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import TimelineScreen from "./app/screens/TimelineScreen";
 
 // 타이머 경고 무효

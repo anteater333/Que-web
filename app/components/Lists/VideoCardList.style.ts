@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bDimensions } from "../../styles/base";
+import { bDimensions, bMargin } from "../../styles/base";
 
 const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
@@ -7,9 +7,13 @@ const videoCardListStyles = StyleSheet.create({
     width: bDimensions.fullWidth,
     height: bDimensions.fullHeight,
   },
-  noMoreDataIndicator: {
+  indicatorContainer: {
+    margin: bMargin.large,
     alignItems: "center",
     justifyContent: "center",
+  },
+  noMoreDataImage: {
+    opacity: 0.25,
   },
 });
 
