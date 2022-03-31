@@ -1,9 +1,14 @@
 import React from "react";
-import { cleanup, fireEvent, render } from "@testing-library/react-native";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react-native";
 
 import VideoCard from "./VideoCard";
 import mockVideoCardData from "../../../potato/mockData/VideoCardData";
-import formatCount from "../../utils/formatCount";
+import { formatCount } from "../../utils/formatter";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -22,8 +27,9 @@ jest.mock("@react-navigation/native", () => {
 let component = render(<VideoCard videoInfo={mockVideoCardData[0]} />);
 let componentJSON = component.toJSON();
 
-beforeEach(() => {
+beforeEach(async () => {
   component = render(<VideoCard videoInfo={mockVideoCardData[0]} />);
+  await waitFor(() => {});
 });
 
 afterEach(cleanup);

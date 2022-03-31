@@ -14,6 +14,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 320,
   },
   {
     videoId: "2",
@@ -28,6 +29,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 552642,
   },
   {
     videoId: "3",
@@ -42,6 +44,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 32134,
   },
   {
     videoId: "4",
@@ -56,6 +59,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 77,
   },
   {
     videoId: "5",
@@ -84,6 +88,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 1,
   },
   {
     videoId: "7",
@@ -98,6 +103,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 32,
   },
   {
     videoId: "8",
@@ -112,6 +118,7 @@ const mockVideoCardData: VideoType[] = [
     viewed: false,
     likedData: [],
     starredData: {},
+    length: 523,
   },
   {
     videoId: "9",
