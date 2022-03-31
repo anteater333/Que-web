@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   StyleProp,
   ViewStyle,
+  ImageSourcePropType,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState, useCallback } from "react";
@@ -17,7 +18,8 @@ import styles from "./VideoCard.style";
 import { RootStackParamList } from "../../screens/RootStackParamList";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
-import formatCount from "../../utils/formatCount";
+import { formatCount, formatTimer } from "../../utils/formatter";
+import { getImageDownloadURL } from "../../api/QueResourceUtils";
 
 type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -116,8 +118,9 @@ export default function VideoCard(props: VideoCardProps) {
         />
       </MenuModal>
       <CardThumbnailView
-        uri="../../../potato/placeholders/cardImage.png"
-        direction="horizontal"
+        uri={props.videoInfo.thumbnailUrl!}
+        length={props.videoInfo.length!}
+        direction="vertical"
         onPressMenuButton={() => setMenuModalVisible(true)}
       />
       <CardInfoView
@@ -138,6 +141,7 @@ export default function VideoCard(props: VideoCardProps) {
 
 type CardThumbnailProps = {
   uri: string;
+  length: number;
   direction: "horizontal" | "vertical";
   onPressMenuButton: () => void;
 };
@@ -148,15 +152,35 @@ type CardThumbnailProps = {
  * @returns
  */
 function CardThumbnailView(props: CardThumbnailProps) {
-  /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
-  const [thumbnail, setThumbnail] = useState(
-    require("../../../potato/placeholders/cardImage.png")
+  /** 영상 길이 */
+  const [modifiedVideoLength, setModifiedLength] = useState<String>(
+    props.length ? formatTimer(props.length) : "0:00"
   );
+  /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
+  const [thumbnail, setThumbnail] = useState<ImageSourcePropType>({});
   /** 썸네일 이미지의 비율에 따라 resize 모드 결정 */
   const [resizeMode, setResizeMode] =
     props.direction == "horizontal"
       ? useState<"stretch" | "contain">("stretch")
       : useState<"stretch" | "contain">("contain");
+  /** TBD: 썸네일에 로딩 표시 하기 */
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    /**
+     * 카드의 썸네일로 사용할 이미지를 서버로부터 다운로드받는다.
+     */
+    async function downloadImage() {
+      const downloadURL = await getImageDownloadURL(props.uri);
+      setThumbnail({ uri: downloadURL });
+    }
+
+    setIsLoading(true);
+    downloadImage();
+
+    // clean-up
+    return () => setIsLoading(false);
+  }, []);
 
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
@@ -167,7 +191,7 @@ function CardThumbnailView(props: CardThumbnailProps) {
         source={thumbnail}
       ></Image>
       <Text testID="cardThumbnailTime" style={styles.videoTime}>
-        0:00
+        {modifiedVideoLength}
       </Text>
       <TouchableOpacity
         testID="cardThumbnailButton"
