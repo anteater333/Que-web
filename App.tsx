@@ -11,6 +11,7 @@ import { RootStackParamList } from "./app/screens/RootStackParamList";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TimelineScreen from "./app/screens/TimelineScreen";
+import { bColors } from "./app/styles/base";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -66,17 +67,31 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer onReady={onLayoutRootView}>
-        <RootStack.Navigator>
-          <RootStack.Screen
-            options={{ headerShown: false }}
-            name="Timeline"
-            component={TimelineScreen}
-          />
-          <RootStack.Screen name="Video" component={VideoScreen} />
-        </RootStack.Navigator>
-      </NavigationContainer>
+    <SafeAreaProvider style={styles.rootBackground}>
+      <View style={styles.rootContainer}>
+        <NavigationContainer onReady={onLayoutRootView}>
+          <RootStack.Navigator>
+            <RootStack.Screen
+              options={{ headerShown: false }}
+              name="Timeline"
+              component={TimelineScreen}
+            />
+            <RootStack.Screen name="Video" component={VideoScreen} />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      </View>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  rootBackground: {
+    backgroundColor: bColors.greyTetiary,
+    alignItems: "center",
+  },
+  rootContainer: {
+    width: "100%",
+    maxWidth: 480,
+    height: "100%",
+  },
+});

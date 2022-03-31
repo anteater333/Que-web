@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
-import { bDimensions, bMargin } from "../../styles/base";
+import { bColors, bDimensions, bMargin } from "../../styles/base";
 
 const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
+    backgroundColor: bColors.white,
     maxWidth: 480,
     width: bDimensions.fullWidth,
     height: bDimensions.fullHeight,

@@ -48,7 +48,7 @@ const videoCardStyles = StyleSheet.create({
   // 카드 정보 영역
   cardInfoView: {
     height: infoViewHeight,
-
+    backgroundColor: bColors.white,
     flexDirection: "row",
     alignContent: "center",
   },
