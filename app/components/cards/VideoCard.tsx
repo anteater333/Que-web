@@ -15,13 +15,13 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
-import { RootStackParamList } from "../../screens/RootStackParamList";
+import { MainServiceStackParamList } from "../../navigators/MainServiceNavigator";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
 import { formatCount, formatTimer } from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 
-type VideoCardNavProps = NativeStackNavigationProp<RootStackParamList>;
+type VideoCardNavProps = NativeStackNavigationProp<MainServiceStackParamList>;
 
 export type VideoCardProps = {
   videoInfo: VideoType;
@@ -77,14 +77,14 @@ export default function VideoCard(props: VideoCardProps) {
    * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
    */
   const navigateToUserProfile = useCallback(async () => {
-    navigation.navigate("UserProfile");
+    navigation.navigate("UserPage");
   }, []);
 
   /**
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
-    navigation.navigate("Evaluation");
+    navigation.navigate("Criticism");
   }, []);
 
   /**

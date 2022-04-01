@@ -7,7 +7,7 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { RootStackParamList } from "./app/screens/RootStackParamList";
+import { MainServiceStackParamList } from "./app/navigators/MainServiceNavigator";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TimelineScreen from "./app/screens/TimelineScreen";
@@ -16,11 +16,12 @@ import { bColors } from "./app/styles/base";
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
+// 추후에 RootStackNavigator 할당하기
+const RootStack = createNativeStackNavigator<MainServiceStackParamList>();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
+  const [userSignedIn, setUserLoggedIn] = useState(true);
 
   useEffect(() => {
     /**
@@ -56,7 +57,7 @@ export default function App() {
   }, [appIsReady]);
 
   let firstPage;
-  if (userLoggedIn) {
+  if (userSignedIn) {
     // firstPage = TimelineScene
   } else {
     // firstPage = OnBoardingScene
@@ -68,8 +69,8 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.rootBackground}>
-      <View style={styles.rootContainer}>
-        <NavigationContainer onReady={onLayoutRootView}>
+      <View onLayout={onLayoutRootView} style={styles.rootContainer}>
+        <NavigationContainer>
           <RootStack.Navigator>
             <RootStack.Screen
               options={{ headerShown: false }}
