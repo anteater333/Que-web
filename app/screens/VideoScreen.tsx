@@ -3,11 +3,11 @@ import { Video } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import { getVideoDownloadURL } from "../api/QueResourceUtils";
-import { MainServiceStackParamList } from "../navigators/MainServiceNavigator";
+import { MainStackParamList } from "../navigators/MainNavigator";
 
-type Props = NativeStackScreenProps<MainServiceStackParamList, "Video">;
+type MainNavProps = NativeStackScreenProps<MainStackParamList, "Video">;
 
-const VideoScreen = ({ route, navigation }: Props) => {
+const VideoScreen = ({ route, navigation }: MainNavProps) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 

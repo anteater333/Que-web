@@ -115,7 +115,7 @@ describe("VideoCard", () => {
       const navigated = mockedNavigate.mock.calls[1][0];
 
       expect(mockedNavigate).toHaveBeenCalledTimes(2);
-      expect(navigated).toBe("UserProfile");
+      expect(navigated).toBe("UserPage");
     });
 
     it("좋아요 아이콘을 누르면 좋아한다.", async () => {
@@ -134,7 +134,7 @@ describe("VideoCard", () => {
 
       expect(mockedNavigate).toHaveBeenCalledTimes(3);
       const navigated = mockedNavigate.mock.calls[2][0];
-      expect(navigated).toBe("Evaluation");
+      expect(navigated).toBe("Criticism");
     });
   });
 });

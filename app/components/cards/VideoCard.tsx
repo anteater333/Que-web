@@ -15,13 +15,15 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
-import { MainServiceStackParamList } from "../../navigators/MainServiceNavigator";
+import { MainStackParamList } from "../../navigators/MainNavigator";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
 import { formatCount, formatTimer } from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
+import UserType from "../../types/User";
 
-type VideoCardNavProps = NativeStackNavigationProp<MainServiceStackParamList>;
+/** 메인 네비게이션 프로퍼티 */
+type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
 
 export type VideoCardProps = {
   videoInfo: VideoType;
@@ -60,7 +62,7 @@ export default function VideoCard(props: VideoCardProps) {
   useEffect(() => {}, []);
 
   /** 네비게이션 객체 사용 */
-  const navigation = useNavigation<VideoCardNavProps>();
+  const navigation = useNavigation<MainNavProps>();
 
   /**
    * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
@@ -77,14 +79,16 @@ export default function VideoCard(props: VideoCardProps) {
    * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
    */
   const navigateToUserProfile = useCallback(async () => {
-    navigation.navigate("UserPage");
+    navigation.navigate("UserPage", {
+      userId: (props.videoInfo.uploader as UserType).userId!,
+    });
   }, []);
 
   /**
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
-    navigation.navigate("Criticism");
+    navigation.navigate("Criticism", { videoId: props.videoInfo.videoId });
   }, []);
 
   /**

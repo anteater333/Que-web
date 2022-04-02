@@ -3,5 +3,5 @@
  */
 export type RootStackParamList = {
   OnBoarding: undefined;
-  MainService: undefined;
+  Main: undefined;
 };

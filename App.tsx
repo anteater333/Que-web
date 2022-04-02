@@ -7,7 +7,7 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { MainServiceStackParamList } from "./app/navigators/MainServiceNavigator";
+import { MainStackParamList } from "./app/navigators/MainNavigator";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TimelineScreen from "./app/screens/TimelineScreen";
@@ -17,7 +17,7 @@ import { bColors } from "./app/styles/base";
 LogBox.ignoreLogs(["Setting a timer"]);
 
 // 추후에 RootStackNavigator 할당하기
-const RootStack = createNativeStackNavigator<MainServiceStackParamList>();
+const RootStack = createNativeStackNavigator<MainStackParamList>();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -74,7 +74,7 @@ export default function App() {
           <RootStack.Navigator>
             <RootStack.Screen
               options={{ headerShown: false }}
-              name="Timeline"
+              name="Home"
               component={TimelineScreen}
             />
             <RootStack.Screen name="Video" component={VideoScreen} />
