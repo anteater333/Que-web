@@ -7,6 +7,9 @@ import { MainStackParamList } from "../navigators/MainNavigator";
 
 type MainNavProps = NativeStackScreenProps<MainStackParamList, "Video">;
 
+/**
+ * 비디오 재생 화면
+ */
 const VideoScreen = ({ route, navigation }: MainNavProps) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");

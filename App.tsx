@@ -10,7 +10,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MainStackParamList } from "./app/navigators/MainNavigator";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import TimelineScreen from "./app/screens/TimelineScreen";
+import HomeScreen from "./app/screens/HomeScreen";
 import { bColors } from "./app/styles/base";
 
 // 타이머 경고 무효
@@ -75,7 +75,7 @@ export default function App() {
             <RootStack.Screen
               options={{ headerShown: false }}
               name="Home"
-              component={TimelineScreen}
+              component={HomeScreen}
             />
             <RootStack.Screen name="Video" component={VideoScreen} />
           </RootStack.Navigator>
