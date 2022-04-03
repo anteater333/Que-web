@@ -34,16 +34,14 @@ describe("VideoCardList", () => {
   let initialListLength = 0;
 
   it("리스트 컴포넌트가 잘 렌더링 된다.", () => {
-    const cardListContainer = component.getByTestId("videoCardListContainer");
     const cardList = component.getByTestId("videoCardList");
 
-    expect(cardListContainer).toBeTruthy();
     expect(cardList).toBeTruthy();
   });
 
   it("리스트는 카드 아이템을 1개 이상 가지고 있다.", async () => {
     // layout 이벤트 발생
-    const cardListContainer = component.getByTestId("videoCardListContainer");
+    const cardListContainer = component.getByTestId("videoCardList");
     act(() => {
       fireEvent(cardListContainer, "layout", {
         nativeEvent: { layout: { width: 300 } },
@@ -58,7 +56,7 @@ describe("VideoCardList", () => {
 
   it("아래 끝 까지 스크롤 시 데이터가 추가된다.", async () => {
     // layout 이벤트 발생
-    const cardListContainer = component.getByTestId("videoCardListContainer");
+    const cardListContainer = component.getByTestId("videoCardList");
     act(() => {
       fireEvent(cardListContainer, "layout", {
         nativeEvent: { layout: { width: 300 } },

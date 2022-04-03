@@ -99,25 +99,21 @@ export default function VideoCardList(props: VideoCardListProps) {
   }, [cardItemData]);
 
   return (
-    <View
-      testID="videoCardListContainer"
-      style={styles.cardListConatiner}
+    <FlatList
+      showsHorizontalScrollIndicator={false}
+      testID="videoCardList"
+      data={cardItemData}
       onLayout={handleLayout}
-    >
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        testID="videoCardList"
-        data={cardItemData}
-        renderItem={handleRenderItem}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.2}
-        keyExtractor={(listItem) => {
-          if ((listItem as VideoType).videoId)
-            return (listItem as VideoType).videoId;
-          else return (listItem as Indicator).indicatorType;
-        }}
-      />
-    </View>
+      contentContainerStyle={styles.cardListConatiner}
+      renderItem={handleRenderItem}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.2}
+      keyExtractor={(listItem) => {
+        if ((listItem as VideoType).videoId)
+          return (listItem as VideoType).videoId;
+        else return (listItem as Indicator).indicatorType;
+      }}
+    />
   );
 }
 

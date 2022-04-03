@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
-import HomeNavBar from "../components/common/HomeNavBar";
+import HomeNavBar from "../components/navbars/HomeNavbar";
 import HomeScreenHeader from "../components/headers/HomeScreenHeader";
 import { HomeTabParamList } from "../navigators/HomeNavigator";
 import screens from "../styles/screens";

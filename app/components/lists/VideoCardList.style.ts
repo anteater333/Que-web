@@ -5,8 +5,6 @@ const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
     backgroundColor: bColors.white,
     maxWidth: 480,
-    width: bDimensions.fullWidth,
-    height: bDimensions.fullHeight,
   },
   indicatorContainer: {
     margin: bMargin.large,

@@ -6,6 +6,6 @@ export default StyleSheet.create({
    * 화면 전체를 커버하는 스크린 크기
    */
   defaultScreenLayout: {
-    height: "100vh",
+    flex: 1,
   },
 });
