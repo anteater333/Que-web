@@ -27,11 +27,7 @@ function HomeScreen() {
           component={TimelineScreen}
           options={{ title: "영상" }}
         />
-        <HomeTabNavigator.Screen
-          name="Upload"
-          component={DummyComponent}
-          options={{ title: "업로드" }}
-        />
+        <HomeTabNavigator.Screen name="Upload" component={DummyComponent} />
         <HomeTabNavigator.Screen
           name="Preference"
           component={PreferenceScreen}
