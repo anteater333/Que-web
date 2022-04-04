@@ -8,10 +8,9 @@ import PreferenceScreen from "./PreferenceScreen";
 import TimelineScreen from "./TimelineScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MainStackParamList } from "../navigators/MainNavigator";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 const HomeTabNavigator = createBottomTabNavigator<HomeTabParamList>();
-const MainNavigator = createNativeStackNavigator<MainStackParamList>();
 
 /**
  * 어플리케이션 홈 스크린
@@ -30,7 +29,7 @@ function HomeScreen() {
         />
         <HomeTabNavigator.Screen
           name="Upload"
-          component={() => null}
+          component={DummyComponent}
           options={{ title: "업로드" }}
         />
         <HomeTabNavigator.Screen
@@ -41,6 +40,11 @@ function HomeScreen() {
       </HomeTabNavigator.Navigator>
     </SafeAreaView>
   );
+}
+
+/** 더미 컴포넌트를 인라인으로 전달할 경우 발생하는 에러 방지 */
+function DummyComponent() {
+  return null;
 }
 
 export default HomeScreen;

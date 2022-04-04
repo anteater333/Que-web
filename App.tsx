@@ -83,18 +83,33 @@ export default function App() {
           </RootStack.Navigator>
         </NavigationContainer>
       </View>
+      {QueStatusBar()}
     </SafeAreaProvider>
   );
 }
 
+/** Statusbar customize */
+function QueStatusBar() {
+  // TBD 테마별 스테이터스 바 변경
+  return <StatusBar style="auto" backgroundColor={bColors.white} />;
+}
+
 const styles = StyleSheet.create({
   rootBackground: {
-    backgroundColor: bColors.greyTetiary,
+    backgroundColor: bColors.white,
     alignItems: "center",
   },
   rootContainer: {
     width: "100%",
     maxWidth: 480,
     height: "100%",
+    shadowColor: bColors.black,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 50,
+    elevation: 5,
   },
 });

@@ -129,15 +129,19 @@ type Indicator = {
  * @returns
  */
 function NoMoreDataIndicator() {
-  const [assets, error] = useAssets([require("../../assets/favicon.png")]);
+  const [assets, error] = useAssets([
+    require("../../assets/custom/haeder-logo.png"),
+  ]);
   return (
     <View style={styles.indicatorContainer}>
       {assets ? (
         <Image
           style={styles.noMoreDataImage}
+          resizeMode="contain"
           source={assets[0] as ImageSourcePropType}
         />
       ) : null}
+      <Text style={styles.easterMessage}>QUE는 아직 자라나는 중이에요 ;)</Text>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bDimensions, bMargin } from "../../styles/base";
+import { bColors, bDimensions, bFont, bMargin } from "../../styles/base";
 
 const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
@@ -13,6 +13,13 @@ const videoCardListStyles = StyleSheet.create({
   },
   noMoreDataImage: {
     opacity: 0.25,
+    height: 36,
+  },
+  easterMessage: {
+    opacity: 0.25,
+    color: bColors.black,
+    fontSize: bFont.small,
+    marginTop: bMargin.middle,
   },
 });
 
