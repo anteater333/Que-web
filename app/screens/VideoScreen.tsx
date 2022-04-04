@@ -45,13 +45,9 @@ const VideoScreen = ({ route, navigation }: MainNavProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
-    height: 200,
+    flex: 1,
   },
-  video: {
-    width: 320,
-    height: 200,
-  },
+  video: { flex: 1 },
   buttons: {},
 });
 

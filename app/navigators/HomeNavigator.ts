@@ -4,4 +4,5 @@
 export type HomeTabParamList = {
   Timeline: undefined;
   Preference: undefined;
+  Upload: undefined;
 };

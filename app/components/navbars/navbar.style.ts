@@ -8,6 +8,7 @@ const navBarStyle = StyleSheet.create({
     backgroundColor: bColors.white,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
   },
 });
 
