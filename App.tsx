@@ -7,20 +7,22 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { RootStackParamList } from "./app/screens/RootStackParamList";
+import { MainStackParamList } from "./app/navigators/MainNavigator";
 import VideoScreen from "./app/screens/VideoScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import TimelineScreen from "./app/screens/TimelineScreen";
+import HomeScreen from "./app/screens/HomeScreen";
 import { bColors } from "./app/styles/base";
+import UploadScreen from "./app/screens/UploadScreen";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
+// 추후에 RootStackNavigator 할당하기
+const RootStack = createNativeStackNavigator<MainStackParamList>();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
+  const [userSignedIn, setUserLoggedIn] = useState(true);
 
   useEffect(() => {
     /**
@@ -56,7 +58,7 @@ export default function App() {
   }, [appIsReady]);
 
   let firstPage;
-  if (userLoggedIn) {
+  if (userSignedIn) {
     // firstPage = TimelineScene
   } else {
     // firstPage = OnBoardingScene
@@ -68,30 +70,46 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.rootBackground}>
-      <View style={styles.rootContainer}>
-        <NavigationContainer onReady={onLayoutRootView}>
+      <View onLayout={onLayoutRootView} style={styles.rootContainer}>
+        <NavigationContainer>
           <RootStack.Navigator>
             <RootStack.Screen
               options={{ headerShown: false }}
-              name="Timeline"
-              component={TimelineScreen}
+              name="Home"
+              component={HomeScreen}
             />
+            <RootStack.Screen name="Upload" component={UploadScreen} />
             <RootStack.Screen name="Video" component={VideoScreen} />
           </RootStack.Navigator>
         </NavigationContainer>
       </View>
+      {QueStatusBar()}
     </SafeAreaProvider>
   );
 }
 
+/** Statusbar customize */
+function QueStatusBar() {
+  // TBD 테마별 스테이터스 바 변경
+  return <StatusBar style="auto" backgroundColor={bColors.white} />;
+}
+
 const styles = StyleSheet.create({
   rootBackground: {
-    backgroundColor: bColors.greyTetiary,
+    backgroundColor: bColors.white,
     alignItems: "center",
   },
   rootContainer: {
     width: "100%",
     maxWidth: 480,
     height: "100%",
+    shadowColor: bColors.black,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 50,
+    elevation: 5,
   },
 });

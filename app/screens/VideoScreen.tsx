@@ -3,11 +3,14 @@ import { Video } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import { getVideoDownloadURL } from "../api/QueResourceUtils";
-import { RootStackParamList } from "./RootStackParamList";
+import { MainStackParamList } from "../navigators/MainNavigator";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Video">;
+type MainNavProps = NativeStackScreenProps<MainStackParamList, "Video">;
 
-const VideoScreen = ({ route, navigation }: Props) => {
+/**
+ * 비디오 재생 화면
+ */
+const VideoScreen = ({ route, navigation }: MainNavProps) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 
@@ -42,13 +45,9 @@ const VideoScreen = ({ route, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
-    height: 200,
+    flex: 1,
   },
-  video: {
-    width: 320,
-    height: 200,
-  },
+  video: { flex: 1 },
   buttons: {},
 });
 

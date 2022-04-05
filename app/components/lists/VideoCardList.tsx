@@ -99,25 +99,21 @@ export default function VideoCardList(props: VideoCardListProps) {
   }, [cardItemData]);
 
   return (
-    <View
-      testID="videoCardListContainer"
-      style={styles.cardListConatiner}
+    <FlatList
+      showsHorizontalScrollIndicator={false}
+      testID="videoCardList"
+      data={cardItemData}
       onLayout={handleLayout}
-    >
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        testID="videoCardList"
-        data={cardItemData}
-        renderItem={handleRenderItem}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.2}
-        keyExtractor={(listItem) => {
-          if ((listItem as VideoType).videoId)
-            return (listItem as VideoType).videoId;
-          else return (listItem as Indicator).indicatorType;
-        }}
-      />
-    </View>
+      contentContainerStyle={styles.cardListConatiner}
+      renderItem={handleRenderItem}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.2}
+      keyExtractor={(listItem) => {
+        if ((listItem as VideoType).videoId)
+          return (listItem as VideoType).videoId;
+        else return (listItem as Indicator).indicatorType;
+      }}
+    />
   );
 }
 
@@ -133,15 +129,19 @@ type Indicator = {
  * @returns
  */
 function NoMoreDataIndicator() {
-  const [assets, error] = useAssets([require("../../assets/favicon.png")]);
+  const [assets, error] = useAssets([
+    require("../../assets/custom/haeder-logo.png"),
+  ]);
   return (
     <View style={styles.indicatorContainer}>
       {assets ? (
         <Image
           style={styles.noMoreDataImage}
+          resizeMode="contain"
           source={assets[0] as ImageSourcePropType}
         />
       ) : null}
+      <Text style={styles.easterMessage}>QUE는 아직 자라나는 중이에요 ;)</Text>
     </View>
   );
 }

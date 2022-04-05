@@ -1,21 +1,12 @@
-import {} from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import VideoCardList from "../components/Lists/VideoCardList";
+import { View } from "react-native";
+import VideoCardList from "../components/lists/VideoCardList";
 
+/**
+ * 영상 타임라인 스크린
+ * 사실 VideoCardList 하나 딸랑 있는
+ */
 function TimelineScreen() {
-  return (
-    <SafeAreaView style={styles.container} testID="timelineScreen">
-      <VideoCardList />
-    </SafeAreaView>
-  );
+  return <VideoCardList />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
-});
 
 export default TimelineScreen;
