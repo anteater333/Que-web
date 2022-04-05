@@ -62,7 +62,6 @@ const videoCardStyles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 32 / 2,
-    backgroundColor: bColors.tetiary,
   },
   infoTitleView: {
     flexGrow: 2,

@@ -21,6 +21,7 @@ import VideoType from "../../types/Video";
 import { formatCount, formatTimer } from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
+import { useAssets } from "expo-asset";
 
 /** 메인 네비게이션 프로퍼티 */
 type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
@@ -269,6 +270,11 @@ function CardInfoView(props: VideoCardInfoProps) {
     );
   }
 
+  /** 임시 프로필 사진Placeholder */
+  const [assets, error] = useAssets([
+    require("../../../potato/placeholders/profilePic.png"),
+  ]);
+
   return (
     <View style={styles.cardInfoView}>
       <Pressable
@@ -276,7 +282,13 @@ function CardInfoView(props: VideoCardInfoProps) {
         style={styles.profilePicView}
         onPress={props.onPressProfile}
       >
-        <View style={styles.profilePic} />
+        {assets ? (
+          <Image
+            resizeMode="contain"
+            style={styles.profilePic}
+            source={assets[0] as ImageSourcePropType}
+          />
+        ) : null}
       </Pressable>
       <View style={styles.infoTitleView}>
         <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
