@@ -20,7 +20,7 @@ function HomeScreen() {
     <SafeAreaView style={screens.defaultScreenLayout}>
       <HomeTabNavigator.Navigator
         tabBar={(props) => <HomeNavBar {...props} />}
-        screenOptions={{ header: HomeScreenHeader }}
+        screenOptions={{ header: (props) => <HomeScreenHeader {...props} /> }}
       >
         <HomeTabNavigator.Screen
           name="Timeline"
