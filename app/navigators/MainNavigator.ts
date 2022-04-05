@@ -8,4 +8,5 @@ export type MainStackParamList = {
   Video: { url: string };
   Criticism: { videoId: string };
   Search: undefined;
+  Notification: undefined;
 };
