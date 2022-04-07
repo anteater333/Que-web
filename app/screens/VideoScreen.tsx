@@ -1,16 +1,13 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Video } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import { getVideoDownloadURL } from "../api/QueResourceUtils";
-import { MainStackParamList } from "../navigators/MainNavigator";
-
-type MainNavProps = NativeStackScreenProps<MainStackParamList, "Video">;
+import { MainStackScreenProp } from "../navigators/MainNavigator";
 
 /**
  * 비디오 재생 화면
  */
-const VideoScreen = ({ route, navigation }: MainNavProps) => {
+const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 

@@ -13,6 +13,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import HomeScreen from "./app/screens/HomeScreen";
 import { bColors } from "./app/styles/base";
 import UploadScreen from "./app/screens/UploadScreen";
+import UserPageScreen from "./app/screens/UserPageScreen";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -80,6 +81,7 @@ export default function App() {
             />
             <RootStack.Screen name="Upload" component={UploadScreen} />
             <RootStack.Screen name="Video" component={VideoScreen} />
+            <RootStack.Screen name="UserPage" component={UserPageScreen} />
           </RootStack.Navigator>
         </NavigationContainer>
       </View>

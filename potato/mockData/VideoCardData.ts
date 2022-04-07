@@ -4,7 +4,11 @@ const mockVideoCardData: VideoType[] = [
   {
     videoId: "1",
     title: "test1",
-    uploader: { nickname: "nobody", profilePictureUrl: "http://" },
+    uploader: {
+      userId: "12345",
+      nickname: "nobody",
+      profilePictureUrl: "http://",
+    },
     viewCount: 4567890,
     starCount: 123,
     likeCount: 0,

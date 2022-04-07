@@ -36,13 +36,6 @@ const headerStyle = StyleSheet.create({
     fontSize: sharedSize,
     marginLeft: bMargin.xlarge,
   },
-  profilePic: {
-    alignSelf: "center",
-    width: sharedSize,
-    height: sharedSize,
-    borderRadius: sharedSize / 2,
-    backgroundColor: bColors.tetiary,
-  },
 });
 
 export default headerStyle;

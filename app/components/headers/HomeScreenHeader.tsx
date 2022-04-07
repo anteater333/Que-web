@@ -10,8 +10,12 @@ import headerStyle from "./header.style";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {
+  NativeStackHeaderProps,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { MainStackParamList } from "../../navigators/MainNavigator";
+import ProfilePictureButton from "../buttons/ProfilePictureButton";
 
 const styles = headerStyle;
 
@@ -59,11 +63,6 @@ function HomeHeaderButtonGroup() {
     navigation.navigate("Search");
   }, []);
 
-  /** 프로필 사진을 누르면 유저 페이지 화면으로 */
-  const handleOnPressProfile = useCallback(() => {
-    navigation.navigate("UserPage", { userId: "NOTYETBRO" });
-  }, []);
-
   return (
     <View style={styles.buttonsContainer} testID="homeHeaderButtonsContainer">
       <TouchableOpacity
@@ -78,13 +77,7 @@ function HomeHeaderButtonGroup() {
           name="notifications-none"
         />
       </TouchableOpacity>
-      {/* TBD : 프로필 사진 영역 컴포넌트화 하기 (VideoCard쪽 코드에도 존재함.) */}
-      <TouchableOpacity
-        onPress={handleOnPressProfile}
-        accessibilityRole="button"
-      >
-        <View style={[styles.headerButtonIcon, styles.profilePic]} />
-      </TouchableOpacity>
+      <ProfilePictureButton userId="test" style={styles.headerButtonIcon} />
     </View>
   );
 }

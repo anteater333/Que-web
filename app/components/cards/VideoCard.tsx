@@ -22,6 +22,7 @@ import { formatCount, formatTimer } from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
 import { useAssets } from "expo-asset";
+import ProfilePicture from "../buttons/ProfilePictureButton";
 
 /** 메인 네비게이션 프로퍼티 */
 type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
@@ -76,16 +77,6 @@ export default function VideoCard(props: VideoCardProps) {
   }, [props.videoInfo.sourceUrl]);
 
   /**
-   * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
-   * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
-   */
-  const navigateToUserProfile = useCallback(async () => {
-    navigation.navigate("UserPage", {
-      userId: (props.videoInfo.uploader as UserType).userId!,
-    });
-  }, []);
-
-  /**
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
@@ -129,13 +120,13 @@ export default function VideoCard(props: VideoCardProps) {
         onPressMenuButton={() => setMenuModalVisible(true)}
       />
       <CardInfoView
-        onPressProfile={navigateToUserProfile}
         onPressLike={likeThisVideo}
         onPressStar={navigateToEvalutaion}
         liked={videoLiked}
         starred={videoStarred}
         title={props.videoInfo.title}
         uploaderName={props.videoInfo.uploader?.nickname}
+        uploaderId={props.videoInfo.uploader?.userId}
         viewCount={strViewCount}
         likeCount={strLikeCount}
         starCount={strStarCount}
@@ -210,11 +201,11 @@ function CardThumbnailView(props: CardThumbnailProps) {
 }
 
 type VideoCardInfoProps = {
-  onPressProfile: () => void;
   onPressStar: () => void;
   onPressLike: () => void;
   title?: string;
   uploaderName?: string;
+  uploaderId?: string;
   liked?: boolean;
   starred?: boolean;
   likeCount?: string;
@@ -270,26 +261,13 @@ function CardInfoView(props: VideoCardInfoProps) {
     );
   }
 
-  /** 임시 프로필 사진Placeholder */
-  const [assets, error] = useAssets([
-    require("../../../potato/placeholders/profilePic.png"),
-  ]);
-
   return (
     <View style={styles.cardInfoView}>
-      <Pressable
+      <ProfilePicture
         testID="cardInfoProfilePic"
-        style={styles.profilePicView}
-        onPress={props.onPressProfile}
-      >
-        {assets ? (
-          <Image
-            resizeMode="contain"
-            style={styles.profilePic}
-            source={assets[0] as ImageSourcePropType}
-          />
-        ) : null}
-      </Pressable>
+        style={styles.profilePic}
+        userId={props.uploaderId!}
+      />
       <View style={styles.infoTitleView}>
         <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
           {props.title}

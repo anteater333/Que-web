@@ -52,16 +52,10 @@ const videoCardStyles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
   },
-  profilePicView: {
-    width: 32,
-    justifyContent: "center",
-    margin: bMargin.middle,
-  },
   profilePic: {
     alignSelf: "center",
-    width: 32,
-    height: 32,
-    borderRadius: 32 / 2,
+    fontSize: 32,
+    margin: bMargin.middle,
   },
   infoTitleView: {
     flexGrow: 2,
