@@ -48,11 +48,14 @@ export default function VideoCardList(props: VideoCardListProps) {
    * @returns
    */
   const handleRenderItem = useCallback(
-    ({ item }: { item: VideoType | Indicator }) => {
+    ({ item, index }: { item: VideoType | Indicator; index: number }) => {
       if ((item as VideoType).videoId) {
         // 정상적인 비디오 카드 데이터 처리
         return (
-          <VideoCard testID={"videoCardItem"} videoInfo={item as VideoType} />
+          <VideoCard
+            testID={"videoCardItem" + index}
+            videoInfo={item as VideoType}
+          />
         );
       } else {
         // 로딩중 표시

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAssets } from "expo-asset";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Image,
   ImageSourcePropType,
