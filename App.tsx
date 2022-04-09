@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, AppRegistry, LogBox } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  AppRegistry,
+  LogBox,
+  SafeAreaView,
+} from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
@@ -14,6 +21,8 @@ import HomeScreen from "./app/screens/HomeScreen";
 import { bColors } from "./app/styles/base";
 import UploadScreen from "./app/screens/UploadScreen";
 import UserPageScreen from "./app/screens/UserPageScreen";
+import MainScreenHeader from "./app/components/headers/MainScreenHeader";
+import MainScreen from "./app/screens/MainScreen";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -71,21 +80,12 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.rootBackground}>
-      <View onLayout={onLayoutRootView} style={styles.rootContainer}>
+      <QueStatusBar />
+      <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
         <NavigationContainer>
-          <RootStack.Navigator>
-            <RootStack.Screen
-              options={{ headerShown: false }}
-              name="Home"
-              component={HomeScreen}
-            />
-            <RootStack.Screen name="Upload" component={UploadScreen} />
-            <RootStack.Screen name="Video" component={VideoScreen} />
-            <RootStack.Screen name="UserPage" component={UserPageScreen} />
-          </RootStack.Navigator>
+          <MainScreen />
         </NavigationContainer>
-      </View>
-      {QueStatusBar()}
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
@@ -93,7 +93,7 @@ export default function App() {
 /** Statusbar customize */
 function QueStatusBar() {
   // TBD 테마별 스테이터스 바 변경
-  return <StatusBar style="auto" backgroundColor={bColors.white} />;
+  return <StatusBar style="auto" backgroundColor="auto" />;
 }
 
 const styles = StyleSheet.create({
@@ -103,8 +103,8 @@ const styles = StyleSheet.create({
   },
   rootContainer: {
     width: "100%",
+    flex: 1,
     maxWidth: 480,
-    height: "100%",
     shadowColor: bColors.black,
     shadowOffset: {
       width: 0,

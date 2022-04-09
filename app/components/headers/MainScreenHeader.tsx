@@ -3,18 +3,19 @@ import { useAssets } from "expo-asset";
 import {
   Image,
   ImageSourcePropType,
+  SafeAreaView,
   TouchableOpacity,
   View,
 } from "react-native";
 import headerStyle from "./header.style";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import {
-  NativeStackHeaderProps,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
-import { MainStackParamList } from "../../navigators/MainNavigator";
+  MainStackNavigationProp,
+  MainStackParamList,
+} from "../../navigators/MainNavigator";
 import ProfilePictureButton from "../buttons/ProfilePictureButton";
 
 const styles = headerStyle;
@@ -22,36 +23,32 @@ const styles = headerStyle;
 /**
  * 홈 스크린 적용 헤더
  */
-function HomeScreenHeader(props: BottomTabHeaderProps) {
+function MainScreenHeader(props: NativeStackHeaderProps) {
   const [assets, error] = useAssets([
     require("../../assets/custom/haeder-logo.png"),
   ]);
 
   /** 어플리케이션 로고 asset 붙여놓기 */
-  const headerTitle = (
-    <View style={styles.titleContainer} testID="homeHeaderTitleContainer">
-      {assets ? (
-        <Image
-          style={styles.titleLogo}
-          source={assets[0] as ImageSourcePropType}
-        />
-      ) : null}
-    </View>
-  );
 
   return (
-    <View style={styles.default} testID="homeScreenHeader">
-      {headerTitle}
+    <SafeAreaView style={styles.default} testID="homeScreenHeader">
+      <View style={styles.titleContainer} testID="homeHeaderTitleContainer">
+        {assets ? (
+          <Image
+            style={styles.titleLogo}
+            source={assets[0] as ImageSourcePropType}
+          />
+        ) : null}
+      </View>
       <HomeHeaderButtonGroup />
-    </View>
+    </SafeAreaView>
   );
 }
 
 /** 버튼 묶음 코드 분리 */
 function HomeHeaderButtonGroup() {
   /** 메인 네비게이터 사용 */
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const navigation = useNavigation<MainStackNavigationProp>();
 
   /** 알림 버튼을 누르면 알림 화면으로 */
   const handleOnPressAlarm = useCallback(() => {
@@ -82,4 +79,4 @@ function HomeHeaderButtonGroup() {
   );
 }
 
-export default HomeScreenHeader;
+export default MainScreenHeader;

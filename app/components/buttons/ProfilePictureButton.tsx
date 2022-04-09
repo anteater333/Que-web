@@ -24,16 +24,6 @@ interface ProfilePictureProps extends TouchableOpacityProps {
 
 /** 프로필 사진을 포함한 버튼, 누르면 사용자 페이지로 이동합니다. TouchableOpacity 처럼 작동합니다. */
 function ProfilePicture(props: ProfilePictureProps) {
-  /** 상속받은 스타일에서 fontSize 추출 */
-  const inheritedFontSize = props.style
-    ? StyleSheet.flatten(props.style).fontSize
-    : undefined;
-
-  /** prop을 전달해 스타일 결정 */
-  const styles = profilePictureStyles(
-    props.size ? props.size : inheritedFontSize ? inheritedFontSize : undefined
-  );
-
   /** 페이지 전환을 위한 메인 네비게이터 사용 */
   const mainNavigator = useNavigation<MainStackNavigationProp>();
 
@@ -52,6 +42,15 @@ function ProfilePicture(props: ProfilePictureProps) {
     });
   }, []);
 
+  /** 상속받은 스타일에서 fontSize 추출 */
+  const inheritedFontSize = props.style
+    ? StyleSheet.flatten(props.style).fontSize
+    : undefined;
+
+  /** prop을 전달해 스타일 결정 */
+  const styles = profilePictureStyles(
+    props.size ? props.size : inheritedFontSize ? inheritedFontSize : undefined
+  );
   return (
     <TouchableOpacity
       {...props}
