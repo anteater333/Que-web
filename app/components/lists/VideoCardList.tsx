@@ -39,6 +39,8 @@ export default function VideoCardList(props: VideoCardListProps) {
    * 최초 데이터 설정
    */
   const handleLayout = useCallback(async () => {
+    setIsLoading(false);
+    setNoMoreData(false);
     setCardItemData(await getVideoCardData(5, 0));
   }, [cardItemData]);
 
