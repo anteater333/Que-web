@@ -56,21 +56,27 @@ describe("VideoCardList", () => {
   });
 
   it("아래 끝 까지 스크롤 시 데이터가 추가된다.", async () => {
-    let cardList = component.getByTestId("videoCardList");
+    const cardList = component.getByTestId("videoCardList");
 
-    // layout 이벤트 발생
-    fireEvent(cardList, "layout", {
-      nativeEvent: { layout: { width: 300 } },
-    });
+    try {
+      // layout 이벤트 발생
+      fireEvent(cardList, "layout", {
+        nativeEvent: { layout: { width: 300 } },
+      });
 
-    cardList = await component.findByTestId("videoCardList");
+      const newCardList = await component.findByTestId("videoCardList");
 
-    fireEvent(cardList, "endReached");
+      fireEvent(newCardList, "endReached");
 
-    const cardListItems = await component.findByTestId(
-      "videoCardItem" + initialListLength
-    );
+      const newCardListItem = await component.findByTestId(
+        "videoCardItem" + initialListLength
+      );
 
-    expect(cardListItems).toBeTruthy();
+      expect(newCardListItem).toBeTruthy();
+    } catch (error) {
+      // 실패!
+      console.error(error);
+      expect(null).toBeTruthy();
+    }
   });
 });
