@@ -48,21 +48,14 @@ const videoCardStyles = StyleSheet.create({
   // 카드 정보 영역
   cardInfoView: {
     height: infoViewHeight,
-
+    backgroundColor: bColors.white,
     flexDirection: "row",
     alignContent: "center",
   },
-  profilePicView: {
-    width: 32,
-    justifyContent: "center",
-    margin: bMargin.middle,
-  },
   profilePic: {
     alignSelf: "center",
-    width: 32,
-    height: 32,
-    borderRadius: 32 / 2,
-    backgroundColor: bColors.tetiary,
+    fontSize: 32,
+    margin: bMargin.middle,
   },
   infoTitleView: {
     flexGrow: 2,

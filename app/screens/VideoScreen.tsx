@@ -1,19 +1,19 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Video } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
-import getVideofromStorage from "../api/firebase";
-import { RootStackParamList } from "./RootStackParamList";
+import { Button, StyleSheet, View } from "react-native";
+import { getVideoDownloadURL } from "../api/QueResourceUtils";
+import { MainStackScreenProp } from "../navigators/MainNavigator";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Video">;
-
-const VideoScreen = ({ route, navigation }: Props) => {
+/**
+ * 비디오 재생 화면
+ */
+const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 
   useEffect(() => {
     async function fetchVideo() {
-      const httpDownloadUrl = await getVideofromStorage(route.params.url);
+      const httpDownloadUrl = await getVideoDownloadURL(route.params.url);
       setVideoUrl(httpDownloadUrl);
     }
 
@@ -42,13 +42,9 @@ const VideoScreen = ({ route, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
-    height: 200,
+    flex: 1,
   },
-  video: {
-    width: 320,
-    height: 200,
-  },
+  video: { flex: 1 },
   buttons: {},
 });
 

@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, AppRegistry } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  AppRegistry,
+  LogBox,
+  SafeAreaView,
+} from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
@@ -7,15 +14,25 @@ import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import VideoCard from "./app/components/cards/VideoCard";
-import { RootStackParamList } from "./app/screens/RootStackParamList";
+import { MainStackParamList } from "./app/navigators/MainNavigator";
 import VideoScreen from "./app/screens/VideoScreen";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import VideoCardList from "./app/components/Lists/VideoCardList";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import HomeScreen from "./app/screens/HomeScreen";
+import { bColors } from "./app/styles/base";
+import UploadScreen from "./app/screens/UploadScreen";
+import UserPageScreen from "./app/screens/UserPageScreen";
+import MainScreenHeader from "./app/components/headers/MainScreenHeader";
+import MainScreen from "./app/screens/MainScreen";
 
-function AppScreen() {
+// 타이머 경고 무효
+LogBox.ignoreLogs(["Setting a timer"]);
+
+// 추후에 RootStackNavigator 할당하기
+const RootStack = createNativeStackNavigator<MainStackParamList>();
+
+export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
+  const [userSignedIn, setUserLoggedIn] = useState(true);
 
   useEffect(() => {
     /**
@@ -50,68 +67,51 @@ function AppScreen() {
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
-
   let firstPage;
-  if (userLoggedIn) {
+  if (userSignedIn) {
     // firstPage = TimelineScene
   } else {
     // firstPage = OnBoardingScene
   }
 
-  return (
-    <SafeAreaView>
-      <View
-        style={styles.container}
-        testID="appScreen"
-        onLayout={onLayoutRootView}
-      >
-        <VideoCardList />
-        {/* <VideoCard
-        videoInfo={{
-          videoId: "1",
-          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
-          thumbnailUrl:
-            "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",
-        }}
-      />
-      <VideoCard
-        videoInfo={{
-          videoId: "2",
-          sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
-          thumbnailUrl:
-            "gs://que-backend-dev.appspot.com/videos/thumbnail/image 2.png",
-        }}
-      /> */}
-        {/* <StatusBar style="auto" /> */}
-      </View>
-    </SafeAreaView>
-  );
-}
+  if (!appIsReady) {
+    return null;
+  }
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
-
-export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <RootStack.Navigator>
-          <RootStack.Screen name="App" component={AppScreen} />
-          <RootStack.Screen name="Video" component={VideoScreen} />
-        </RootStack.Navigator>
-      </NavigationContainer>
+    <SafeAreaProvider style={styles.rootBackground}>
+      <QueStatusBar />
+      <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
+        <NavigationContainer>
+          <MainScreen />
+        </NavigationContainer>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
+/** Statusbar customize */
+function QueStatusBar() {
+  // TBD 테마별 스테이터스 바 변경
+  return <StatusBar style="auto" backgroundColor="auto" />;
+}
+
 const styles = StyleSheet.create({
-  container: {
-    maxWidth: 480,
-    flex: 1,
-    backgroundColor: "#fff",
+  rootBackground: {
+    backgroundColor: bColors.white,
     alignItems: "center",
-    justifyContent: "center",
+  },
+  rootContainer: {
+    width: "100%",
+    flex: 1,
+    maxWidth: 480,
+    shadowColor: bColors.black,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 50,
+    elevation: 5,
   },
 });

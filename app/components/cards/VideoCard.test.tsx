@@ -4,12 +4,13 @@ import {
   fireEvent,
   render,
   waitFor,
+  RenderAPI,
 } from "@testing-library/react-native";
 
 import VideoCard from "./VideoCard";
-import { NavigationContainer } from "@react-navigation/native";
-import { Modal } from "react-native";
-import { act } from "react-test-renderer";
+import mockVideoCardData from "../../../potato/mockData/VideoCardData";
+import { formatCount } from "../../utils/formatter";
+import { ReactTestRendererJSON } from "react-test-renderer";
 
 /** 네비게이션 모의 함수 */
 const mockedNavigate = jest.fn();
@@ -25,21 +26,35 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-let component = render(<VideoCard />);
-let componentJSON = component.toJSON();
+let component: RenderAPI;
+let componentJSON: ReactTestRendererJSON;
 
-beforeEach(() => {
-  component = render(<VideoCard />);
+beforeEach(async () => {
+  component = render(<VideoCard videoInfo={mockVideoCardData[0]} />);
+  componentJSON = component.toJSON() as ReactTestRendererJSON;
+  await waitFor(() => {});
 });
 
 afterEach(cleanup);
 
 describe("VideoCard", () => {
-  it("두 View 영역과 MenuModal 으로 나뉜다.", () => {
-    expect(componentJSON.children.length).toBe(3);
-    expect(componentJSON.children[0].type).toBe("Modal");
-    expect(componentJSON.children[1].type).toBe("View");
-    expect(componentJSON.children[2].type).toBe("View");
+  it("3개의 영역으로 나뉜다.", () => {
+    expect(componentJSON.children!.length).toBe(3);
+  });
+
+  it("테스트 데이터 중 단순 텍스트와 같은 1차적 요소가 카드에 반영된다.", () => {
+    const sample = mockVideoCardData[0];
+    const wannabeVideoTitle = sample.title;
+    const wannabeVideoUploader = sample.uploader.nickname;
+    const wannabeVideoLikeCount = formatCount(sample.likeCount!);
+    const wannabeVideoStarCount = formatCount(sample.starCount!);
+    const wannabeVideoViewCount = formatCount(sample.viewCount!);
+
+    expect(component.getByText(wannabeVideoTitle!)).toBeTruthy();
+    expect(component.getByText(wannabeVideoUploader)).toBeTruthy();
+    expect(component.getByText(wannabeVideoLikeCount)).toBeTruthy();
+    expect(component.getByText(wannabeVideoStarCount)).toBeTruthy();
+    expect(component.getByText(wannabeVideoViewCount)).toBeTruthy();
   });
 
   it("카드를 누를 시 Video 화면으로 Navigation이 진행된다.", async () => {
@@ -100,7 +115,7 @@ describe("VideoCard", () => {
       const navigated = mockedNavigate.mock.calls[1][0];
 
       expect(mockedNavigate).toHaveBeenCalledTimes(2);
-      expect(navigated).toBe("UserProfile");
+      expect(navigated).toBe("UserPage");
     });
 
     it("좋아요 아이콘을 누르면 좋아한다.", async () => {
@@ -110,7 +125,7 @@ describe("VideoCard", () => {
 
       // 한 번 더 누르면 좋아하지 않는다.
       fireEvent.press(component.getByTestId("cardInfoLikedButton"));
-      changed = component.queryByTestId("cardInfoLikeButton");
+      changed = component.queryByTestId("cardInfoLikeButton")!;
       expect(changed).toBeTruthy();
     });
 
@@ -119,7 +134,7 @@ describe("VideoCard", () => {
 
       expect(mockedNavigate).toHaveBeenCalledTimes(3);
       const navigated = mockedNavigate.mock.calls[2][0];
-      expect(navigated).toBe("Evaluation");
+      expect(navigated).toBe("Criticism");
     });
   });
 });
