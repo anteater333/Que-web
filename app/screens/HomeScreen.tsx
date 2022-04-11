@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeNavBar from "../components/navbars/HomeNavbar";
 import { HomeTabParamList } from "../navigators/HomeNavigator";
-import screens from "../styles/screens";
 import PreferenceScreen from "./PreferenceScreen";
 import TimelineScreen from "./TimelineScreen";
 
@@ -14,7 +14,7 @@ const HomeTab = createBottomTabNavigator<HomeTabParamList>();
  */
 function HomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <HomeTab.Navigator
         tabBar={(props) => <HomeNavBar {...props} />}
         screenOptions={{ headerShown: false }}
@@ -31,7 +31,7 @@ function HomeScreen() {
           options={{ title: "설정" }}
         />
       </HomeTab.Navigator>
-    </SafeAreaView>
+    </View>
   );
 }
 

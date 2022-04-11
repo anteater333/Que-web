@@ -1,12 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  AppRegistry,
-  LogBox,
-  SafeAreaView,
-} from "react-native";
+import { StatusBar, StatusBarProps } from "expo-status-bar";
+import { StyleSheet, LogBox, SafeAreaView, View } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
@@ -15,25 +8,28 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { MainStackParamList } from "./app/navigators/MainNavigator";
-import VideoScreen from "./app/screens/VideoScreen";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import HomeScreen from "./app/screens/HomeScreen";
 import { bColors } from "./app/styles/base";
-import UploadScreen from "./app/screens/UploadScreen";
-import UserPageScreen from "./app/screens/UserPageScreen";
-import MainScreenHeader from "./app/components/headers/MainScreenHeader";
-import MainScreen from "./app/screens/MainScreen";
+import RootScreen from "./app/screens/RootScreen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
 
-// 추후에 RootStackNavigator 할당하기
+// TBD RootStackNavigator 할당하기
 const RootStack = createNativeStackNavigator<MainStackParamList>();
 
+/**
+ * 어플리케이션 프로그램 최상단 컴포넌트, 엔트리 포인트
+ * TBD: 최소한의 로직만 남겨두기
+ */
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [userSignedIn, setUserLoggedIn] = useState(true);
+  // TBD 전역 상태로 바꾸기
+  const [userSignedIn, setUserSignedIn] = useState(false);
 
+  /**
+   * 빈 배열을 전달한 useEffect는 최초 렌더링에서만 실행된다.
+   */
   useEffect(() => {
     /**
      * Splash screen 함수
@@ -57,6 +53,11 @@ export default function App() {
     prepare();
   }, []);
 
+  /**
+   * TBD 사용자 로그인 여부 정보를 읽어서 상태 관리 객체에 담기
+   */
+  useEffect(() => {}, []);
+
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
       // 이 코드는 스플래시 화면이 바로 사라지게 만듬
@@ -67,37 +68,28 @@ export default function App() {
     }
   }, [appIsReady]);
 
-  let firstPage;
-  if (userSignedIn) {
-    // firstPage = TimelineScene
-  } else {
-    // firstPage = OnBoardingScene
-  }
-
   if (!appIsReady) {
     return null;
   }
 
   return (
     <SafeAreaProvider style={styles.rootBackground}>
-      <QueStatusBar />
       <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
         <NavigationContainer>
-          <MainScreen />
+          <RootScreen userSignedIn={userSignedIn} />
         </NavigationContainer>
       </SafeAreaView>
+      <StatusBar style="auto" />
     </SafeAreaProvider>
   );
 }
 
-/** Statusbar customize */
-function QueStatusBar() {
-  // TBD 테마별 스테이터스 바 변경
-  return <StatusBar style="auto" backgroundColor="auto" />;
-}
-
+/**
+ * 최상위 컴포넌트에 대한 스타일
+ */
 const styles = StyleSheet.create({
   rootBackground: {
+    flex: 1,
     backgroundColor: bColors.white,
     alignItems: "center",
   },
