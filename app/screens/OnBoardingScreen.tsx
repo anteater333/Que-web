@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import RoundedButton from "../components/buttons/RoundedButton";
 import {
   OnBoardingStackNavigationProp,
   OnBoardingStackParamList,
@@ -53,6 +54,8 @@ function OnBoardingContextScreen() {
 
   const [assets, error] = useAssets([
     require("../assets/custom/logo-colored.png"),
+    require("../assets/custom/google-icon.png"),
+    require("../assets/custom/que-icon.png"),
   ]);
 
   return (
@@ -66,7 +69,7 @@ function OnBoardingContextScreen() {
         <View testID="emptySpace" style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: bFont.middle,
+              fontSize: bFont.xlarge,
               color: bColors.greyPrimary,
               alignSelf: "center",
               paddingTop: bPadding.small,
@@ -104,20 +107,38 @@ function OnBoardingContextScreen() {
             </Text>
           </View>
           <View testID="signUpButtonContainer" style={styles.buttonContainer}>
-            <TouchableOpacity
+            <RoundedButton
+              buttonType="white"
               style={{
-                backgroundColor: bColors.white,
-                marginBottom: bPadding.xlarge,
-                height: bFont.xlarge + bFont.middle,
-              }}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                height: bFont.xlarge + bFont.middle,
-                backgroundColor: bColors.primary,
+                height: bFont.xlarge + bFont.large,
                 marginBottom: bPadding.xlarge,
               }}
-            ></TouchableOpacity>
+              bold={true}
+              iconData={{
+                iconType: "image",
+                withText: true,
+                iconSize: bFont.xlarge,
+                imageSrc: assets ? (assets[1] as ImageSourcePropType) : {},
+              }}
+            >
+              Google 계정으로 계속하기
+            </RoundedButton>
+            <RoundedButton
+              buttonType="primary"
+              bold={true}
+              style={{
+                height: bFont.xlarge + bFont.large,
+                marginBottom: bPadding.xlarge,
+              }}
+              iconData={{
+                iconType: "image",
+                withText: true,
+                iconSize: bFont.xlarge,
+                imageSrc: assets ? (assets[2] as ImageSourcePropType) : {},
+              }}
+            >
+              QUE 계정 만들기
+            </RoundedButton>
           </View>
           <View testID="signInTextContainer">
             <Text style={styles.signInSuggestionText}>이미 계정이 있다면</Text>

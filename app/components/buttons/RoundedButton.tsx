@@ -1,0 +1,106 @@
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { bFont } from "../../styles/base";
+import { buttonInsideStyles, buttonLayoutStyles } from "./RoundedButton.style";
+
+export type RoundedButtonProps = {
+  children: string;
+  style?: ViewStyle;
+  buttonType:
+    | "primary"
+    | "enabledDark"
+    | "enabledBorder"
+    | "white"
+    | "disabled";
+  fontSize: number;
+  bold?: boolean;
+  iconData?: {
+    iconType: "image" | "material" | "ionicon";
+    withText?: boolean;
+    ioniconName?: keyof typeof Ionicons.glyphMap;
+    materialIconName?: keyof typeof MaterialIcons.glyphMap;
+    imageSrc?: ImageSourcePropType;
+    iconSize?: number;
+  };
+};
+
+/**
+ * Que 어플리케이션에서 기본적으로 자주 사용하게 될 끝이 둥근 네모난 버튼 컴포넌트
+ */
+function RoundedButton(props: RoundedButtonProps) {
+  const insideStyles = buttonInsideStyles(props);
+
+  const iconComponent = !props.iconData ? null : props.iconData?.iconType ===
+    "image" ? (
+    <Image
+      source={props.iconData.imageSrc!}
+      resizeMode="contain"
+      style={insideStyles.buttonImage}
+    />
+  ) : props.iconData?.iconType === "ionicon" ? (
+    <Ionicons
+      style={[insideStyles.buttonText, insideStyles.buttonIcon]}
+      name={props.iconData.ioniconName!}
+    />
+  ) : props.iconData?.iconType === "material" ? (
+    <MaterialIcons
+      style={[insideStyles.buttonText, insideStyles.buttonIcon]}
+      name={props.iconData.materialIconName}
+    />
+  ) : null;
+
+  return (
+    <View style={[props.style, buttonLayoutStyles.buttonBorder]}>
+      <Pressable style={[buttonLayoutStyles.buttonBody]}>
+        {props.buttonType === "primary" ? (
+          <LinearGradient
+            style={insideStyles.gradientBackground}
+            colors={insideStyles.primaryGradient.colors}
+            start={insideStyles.primaryGradient.start}
+            end={insideStyles.primaryGradient.end}
+          />
+        ) : null}
+        <View style={insideStyles.buttonInside}>
+          {!props.iconData ? (
+            // iconData가 없는 경우, 버튼 내용이 텍스트만으로 이루어져 있음.
+            <Text style={insideStyles.buttonText}>{props.children}</Text>
+          ) : props.iconData.withText ? (
+            // 텍스트와 아이콘 함께 사용하는 버튼
+            <View style={insideStyles.rowFlexContainer}>
+              <View style={[insideStyles.rowFlexItem]}>{iconComponent}</View>
+              <View
+                style={[insideStyles.rowFlexItem, insideStyles.verticalLine]}
+              />
+              <View
+                style={[insideStyles.rowFlexItem, insideStyles.rowFlexText]}
+              >
+                <Text style={[insideStyles.buttonText]}>{props.children}</Text>
+              </View>
+            </View>
+          ) : (
+            // 아이콘만 있는 버튼
+            iconComponent
+          )}
+        </View>
+      </Pressable>
+    </View>
+  );
+}
+
+/** 프로퍼티 기본 값 */
+RoundedButton.defaultProps = {
+  children: "",
+  buttonType: "enabledBorder",
+  fontSize: bFont.large,
+};
+
+export default RoundedButton;

@@ -30,6 +30,8 @@ export const bColors = {
   tpSecondary: "99",
   /** 투명도 추가 40% */
   tpTetiary: "66",
+  /** 완전 투명 */
+  transparent: "#00000000",
 };
 
 /**
