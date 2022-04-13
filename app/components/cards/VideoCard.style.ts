@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bFont, bMargin, bPadding } from "../../styles/base";
+import { bColors, bFont, bSpace } from "../../styles/base";
 
 const cardViewHeight = 300;
 const thumbnailHeight = 240;
@@ -28,7 +28,7 @@ const videoCardStyles = StyleSheet.create({
     backgroundColor: bColors.black + bColors.tpPrimary,
     color: bColors.white,
     fontSize: bFont.small,
-    paddingHorizontal: bPadding.small,
+    paddingHorizontal: bSpace.small,
   },
   optionButton: {
     position: "absolute",
@@ -55,33 +55,33 @@ const videoCardStyles = StyleSheet.create({
   profilePic: {
     alignSelf: "center",
     fontSize: 32,
-    margin: bMargin.middle,
+    margin: bSpace.middle,
   },
   infoTitleView: {
     flexGrow: 2,
-    marginTop: bMargin.large,
+    marginTop: bSpace.large,
   },
   infoTitleText: {
     height: bFont.middle + 4,
     fontSize: bFont.middle,
-    marginBottom: bMargin.small,
+    marginBottom: bSpace.small,
   },
   infoSingerText: {
     fontSize: bFont.small,
   },
   reactionView: {
     flexDirection: "row",
-    marginHorizontal: bMargin.middle,
-    marginTop: bMargin.large,
+    marginHorizontal: bSpace.middle,
+    marginTop: bSpace.large,
   },
   reactionChildView: {
-    marginRight: bMargin.large,
+    marginRight: bSpace.large,
   },
   upperCountText: {
     height: bFont.middle + 4,
     alignSelf: "center",
     fontSize: bFont.middle + 2,
-    marginBottom: bMargin.small,
+    marginBottom: bSpace.small,
     lineHeight: 16,
   },
   reactionButtonEnabled: {

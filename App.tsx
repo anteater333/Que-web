@@ -15,9 +15,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
 
-// TBD RootStackNavigator 할당하기
-const RootStack = createNativeStackNavigator<MainStackParamList>();
-
 /**
  * 어플리케이션 프로그램 최상단 컴포넌트, 엔트리 포인트
  * TBD: 최소한의 로직만 남겨두기

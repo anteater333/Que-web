@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bFont, bMargin } from "../../styles/base";
+import { bColors, bFont, bSpace } from "../../styles/base";
 
 const sharedSize = bFont.xlarge;
 
@@ -17,8 +17,8 @@ const headerStyle = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    marginLeft: bMargin.xlarge,
-    marginVertical: bMargin.middle,
+    marginLeft: bSpace.xlarge,
+    marginVertical: bSpace.middle,
   },
   titleLogo: {
     height: sharedSize,
@@ -30,11 +30,11 @@ const headerStyle = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    marginRight: bMargin.xlarge,
+    marginRight: bSpace.xlarge,
   },
   headerButtonIcon: {
     fontSize: sharedSize,
-    marginLeft: bMargin.xlarge,
+    marginLeft: bSpace.xlarge,
   },
 });
 

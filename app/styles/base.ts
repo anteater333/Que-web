@@ -35,31 +35,29 @@ export const bColors = {
 };
 
 /**
- * 컴포넌트 내부 여백 스타일
+ * 컴포넌트 여백 수치 단위
  */
-export const bPadding = {
+export const bSpace = {
+  /** 4 */
   small: 4,
+  /** 8 */
   middle: 8,
+  /** 12 */
   large: 12,
+  /** 16 */
   xlarge: 16,
 };
 
 /**
- * 컴포넌트 간 간격 스타일
- */
-export const bMargin = {
-  small: 4,
-  middle: 8,
-  large: 12,
-  xlarge: 16,
-};
-
-/**
- * 폰트 크기 스타일
+ * 폰트 크기 단위
  */
 export const bFont = {
+  /** 8 */
   small: 8,
+  /** 12 */
   middle: 12,
+  /** 18 */
   large: 18,
+  /** 24 */
   xlarge: 24,
 };

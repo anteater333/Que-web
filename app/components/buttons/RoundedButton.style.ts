@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bMargin, bPadding } from "../../styles/base";
+import { bColors, bSpace } from "../../styles/base";
 import { RoundedButtonProps } from "./RoundedButton";
 
 /** 버튼 타입과 관계없는 기본 레이아웃에 대한 스타일 */
@@ -52,7 +52,7 @@ export const buttonInsideStyles = (props: RoundedButtonProps) => {
         borderRadius: 8,
         width: "100%",
         height: "100%",
-        borderWidth: bPadding.small,
+        borderWidth: bSpace.small,
         borderColor: colorSet.bdColor,
       },
       buttonImage: {
@@ -95,7 +95,7 @@ export const buttonInsideStyles = (props: RoundedButtonProps) => {
       rowFlexItem: {
         alignItems: "center",
         justifyContent: "center",
-        marginHorizontal: bMargin.small,
+        marginHorizontal: bSpace.small,
       },
       rowFlexIcon: {},
       rowFlexText: {

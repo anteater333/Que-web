@@ -19,7 +19,7 @@ import {
   OnBoardingStackParamList,
 } from "../navigators/OnBoardingNavigator";
 import { RootStackNavigationProp } from "../navigators/RootNavigator";
-import { bColors, bFont, bMargin, bPadding } from "../styles/base";
+import { bColors, bFont, bSpace } from "../styles/base";
 import screens from "../styles/screens";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
@@ -101,7 +101,7 @@ function OnBoardingContextScreen() {
               fontSize: bFont.xlarge,
               color: bColors.greyPrimary,
               alignSelf: "center",
-              paddingTop: bPadding.small,
+              paddingTop: bSpace.small,
             }}
           >
             임시 영상입니다.
@@ -141,7 +141,7 @@ function OnBoardingContextScreen() {
               buttonType="white"
               style={{
                 height: bFont.xlarge + bFont.large,
-                marginBottom: bPadding.xlarge,
+                marginBottom: bSpace.xlarge,
               }}
               bold={true}
               iconData={{
@@ -160,7 +160,7 @@ function OnBoardingContextScreen() {
               bold={true}
               style={{
                 height: bFont.xlarge + bFont.large,
-                marginBottom: bPadding.xlarge,
+                marginBottom: bSpace.xlarge,
               }}
               iconData={{
                 iconType: "image",
@@ -197,10 +197,10 @@ function OnBoardingContextScreen() {
 const styles = StyleSheet.create({
   contextContainer: {
     flexGrow: 0.1,
-    marginHorizontal: bMargin.xlarge * 2,
+    marginHorizontal: bSpace.xlarge * 2,
   },
   catchPhraseContainer: {
-    paddingTop: bPadding.large,
+    paddingTop: bSpace.large,
   },
   catchPhraseText: {
     fontWeight: "bold",
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     color: bColors.white,
   },
   buttonContainer: {
-    paddingTop: bPadding.xlarge + bPadding.middle,
+    paddingTop: bSpace.xlarge + bSpace.middle,
   },
   signInSuggestionText: { color: bColors.white, fontSize: bFont.middle },
   signInButtonText: { color: bColors.primary },

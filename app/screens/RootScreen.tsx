@@ -22,6 +22,7 @@ function RootScreen(props: { userSignedIn: boolean }) {
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   // TBD: prop이 아니라 전역상태 사용하는 방법 고려
+  // TBD: React-Navigation 공식 문서
   let initialScreen: keyof RootStackParamList;
   if (props.userSignedIn) {
     // 로그인 된 상태, 바로 어플리케이션 메인 화면으로

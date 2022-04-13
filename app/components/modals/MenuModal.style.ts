@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bFont, bMargin, bPadding } from "../../styles/base";
+import { bColors, bFont, bSpace } from "../../styles/base";
 
 /**
  * 메뉴 모달에서 포함하는 컴포넌트들의 스타일 객체
@@ -12,15 +12,15 @@ const menuModalStyles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     backgroundColor: bColors.white,
-    bottom: bMargin.small / 2,
+    bottom: bSpace.small / 2,
     width: "100%",
     maxWidth: 280,
     borderRadius: 10,
-    paddingHorizontal: bPadding.small,
+    paddingHorizontal: bSpace.small,
   },
 
   modalSwipeIndicator: {
-    height: bMargin.xlarge + bFont.small,
+    height: bSpace.xlarge + bFont.small,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -42,10 +42,10 @@ const menuModalStyles = StyleSheet.create({
   menuModalItemFlexBox: {
     flexDirection: "row",
     width: "100%",
-    marginBottom: bMargin.large,
+    marginBottom: bSpace.large,
   },
   menuModalItemFlexItem: {
-    marginLeft: bMargin.xlarge,
+    marginLeft: bSpace.xlarge,
   },
 });
 
