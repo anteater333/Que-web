@@ -72,7 +72,9 @@ export default function App() {
   return (
     <SafeAreaProvider style={styles.rootBackground}>
       <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
-        <NavigationContainer>
+        <NavigationContainer
+          linking={{ enabled: true, prefixes: ["https://localhost", "que://"] }}
+        >
           <RootScreen userSignedIn={userSignedIn} />
         </NavigationContainer>
       </SafeAreaView>

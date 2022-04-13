@@ -34,7 +34,7 @@ function OnBoardingScreen() {
     <SafeAreaView style={screens.defaultScreenLayout}>
       <OnBoardingStack.Navigator screenOptions={{ headerShown: false }}>
         <OnBoardingStack.Screen
-          name="OnBoarding"
+          name="CatchPharse"
           component={OnBoardingContextScreen}
         />
         <OnBoardingStack.Screen name="SignIn" component={SignInScreen} />
