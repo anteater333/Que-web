@@ -8,7 +8,7 @@ import {
  */
 export type OnBoardingStackParamList = {
   OnBoarding: undefined;
-  SignUp: undefined;
+  SignUp: { someGoogleTokenShit?: {} | null };
   SignIn: undefined;
 };
 

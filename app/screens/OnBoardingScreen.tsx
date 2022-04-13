@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from "expo-linear-gradient";
+import { useCallback } from "react";
 import {
   Image,
   ImageBackground,
@@ -17,8 +18,11 @@ import {
   OnBoardingStackNavigationProp,
   OnBoardingStackParamList,
 } from "../navigators/OnBoardingNavigator";
+import { RootStackNavigationProp } from "../navigators/RootNavigator";
 import { bColors, bFont, bMargin, bPadding } from "../styles/base";
 import screens from "../styles/screens";
+import SignInScreen from "./SignInScreen";
+import SignUpScreen from "./SignUpScreen";
 
 const OnBoardingStack = createNativeStackNavigator<OnBoardingStackParamList>();
 
@@ -33,8 +37,8 @@ function OnBoardingScreen() {
           name="OnBoarding"
           component={OnBoardingContextScreen}
         />
-        <OnBoardingStack.Screen name="SignIn" component={() => null} />
-        <OnBoardingStack.Screen name="SignUp" component={() => null} />
+        <OnBoardingStack.Screen name="SignIn" component={SignInScreen} />
+        <OnBoardingStack.Screen name="SignUp" component={SignUpScreen} />
       </OnBoardingStack.Navigator>
     </SafeAreaView>
   );
@@ -50,13 +54,38 @@ function OnBoardingContextScreen() {
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
 
   // 임시 네비게이터입니다.
-  const rootNavigator = useNavigation<OnBoardingStackNavigationProp>();
+  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
+  const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   const [assets, error] = useAssets([
     require("../assets/custom/logo-colored.png"),
     require("../assets/custom/google-icon.png"),
     require("../assets/custom/que-icon.png"),
   ]);
+
+  /**
+   * Google Auth를 통한 계정 인증
+   * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
+   * 등록된 Google 계정이 없으면 회원 가입 화면으로
+   */
+  const signWithGoogle = useCallback(() => {
+    /** TBD : Do something about Google Auth */
+    const userAlreadyExist = false;
+
+    if (userAlreadyExist) {
+      // 전역 인증 상태를 갱신하고 메인 화면으로
+      rootNavigator.navigate("Main");
+    } else {
+      // navigate to signup screen with google user info
+      onBoardingNavigator.navigate("SignUp", {
+        someGoogleTokenShit: { userName: "삼식이" },
+      });
+    }
+  }, []);
+
+  const signUpNewQueUser = useCallback(() => {
+    onBoardingNavigator.navigate("SignUp", {});
+  }, []);
 
   return (
     <SafeAreaView style={[screens.defaultScreenLayout]}>
@@ -108,6 +137,7 @@ function OnBoardingContextScreen() {
           </View>
           <View testID="signUpButtonContainer" style={styles.buttonContainer}>
             <RoundedButton
+              testID="googleSignButton"
               buttonType="white"
               style={{
                 height: bFont.xlarge + bFont.large,
@@ -120,10 +150,12 @@ function OnBoardingContextScreen() {
                 iconSize: bFont.xlarge,
                 imageSrc: assets ? (assets[1] as ImageSourcePropType) : {},
               }}
+              onPress={signWithGoogle}
             >
               Google 계정으로 계속하기
             </RoundedButton>
             <RoundedButton
+              testID="queSignUpButton"
               buttonType="primary"
               bold={true}
               style={{
@@ -136,6 +168,7 @@ function OnBoardingContextScreen() {
                 iconSize: bFont.xlarge,
                 imageSrc: assets ? (assets[2] as ImageSourcePropType) : {},
               }}
+              onPress={signUpNewQueUser}
             >
               QUE 계정 만들기
             </RoundedButton>
@@ -147,7 +180,7 @@ function OnBoardingContextScreen() {
               <Text
                 style={[styles.signInSuggestionText, styles.signInButtonText]}
                 onPress={() => {
-                  rootNavigator.navigate("SignIn");
+                  onBoardingNavigator.navigate("SignIn");
                 }}
                 accessibilityRole="button"
               >

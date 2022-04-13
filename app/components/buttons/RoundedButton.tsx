@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  GestureResponderEvent,
   Image,
   ImageSourcePropType,
   Pressable,
@@ -12,7 +13,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { bFont } from "../../styles/base";
 import { buttonInsideStyles, buttonLayoutStyles } from "./RoundedButton.style";
 
+/**
+ * 버튼 컴포넌트 프로퍼티
+ */
 export type RoundedButtonProps = {
+  /** <Text> 처럼 사용할 수 있습니다. */
   children: string;
   style?: ViewStyle;
   buttonType:
@@ -31,6 +36,8 @@ export type RoundedButtonProps = {
     imageSrc?: ImageSourcePropType;
     iconSize?: number;
   };
+  onPress: ((event: GestureResponderEvent) => void) | null | undefined;
+  testID?: string;
 };
 
 /**
@@ -59,8 +66,16 @@ function RoundedButton(props: RoundedButtonProps) {
   ) : null;
 
   return (
-    <View style={[props.style, buttonLayoutStyles.buttonBorder]}>
-      <Pressable style={[buttonLayoutStyles.buttonBody]}>
+    <View
+      testID={props.testID}
+      style={[props.style, buttonLayoutStyles.buttonBorder]}
+    >
+      <Pressable
+        testID="roundedButtonPressable"
+        style={[buttonLayoutStyles.buttonBody]}
+        onPress={props.onPress}
+        accessibilityRole="button"
+      >
         {props.buttonType === "primary" ? (
           <LinearGradient
             style={insideStyles.gradientBackground}
@@ -101,6 +116,9 @@ RoundedButton.defaultProps = {
   children: "",
   buttonType: "enabledBorder",
   fontSize: bFont.large,
+  onPress: () => {
+    console.warn("버튼은 왜 달았습니까?");
+  },
 };
 
 export default RoundedButton;
