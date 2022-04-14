@@ -56,8 +56,8 @@ export const bFont = {
   small: 8,
   /** 12 */
   middle: 12,
-  /** 18 */
-  large: 18,
+  /** 16 */
+  large: 16,
   /** 24 */
   xlarge: 24,
 };
