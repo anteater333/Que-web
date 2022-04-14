@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DummyComponent from "../components/common/DummyComponent";
 import HomeNavBar from "../components/navbars/HomeNavbar";
 import { HomeTabParamList } from "../navigators/HomeNavigator";
 import PreferenceScreen from "./PreferenceScreen";
@@ -34,10 +35,4 @@ function HomeScreen() {
     </View>
   );
 }
-
-/** 더미 컴포넌트를 인라인으로 전달할 경우 발생하는 에러 방지 */
-function DummyComponent() {
-  return null;
-}
-
 export default HomeScreen;
