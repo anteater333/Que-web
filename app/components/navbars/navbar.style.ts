@@ -32,6 +32,23 @@ const navBarStyle = StyleSheet.create({
     fontSize: bFont.small,
     color: bColors.primary,
   },
+  wizardNavBarContainer: {
+    paddingHorizontal: bSpace.xlarge,
+    justifyContent: "space-between",
+  },
+  wizardButtonContainer: {
+    width: bSpace.large * 6,
+    height: bFont.large * 2,
+  },
+  wizardButton: {
+    flex: 1,
+  },
+  skipButton: {
+    fontSize: bFont.middle,
+  },
+  nextButton: {
+    fontSize: bFont.large,
+  },
 });
 
 export default navBarStyle;

@@ -1,10 +1,10 @@
-import { StyleSheet } from "react-native";
-import { bColors, bSpace } from "../../styles/base";
+import { StyleSheet, TextStyle } from "react-native";
+import { bColors, bFont, bSpace } from "../../styles/base";
 import { RoundedButtonProps } from "./RoundedButton";
 
 /** 버튼 타입과 관계없는 기본 레이아웃에 대한 스타일 */
 export const buttonLayoutStyles = StyleSheet.create({
-  buttonBorder: { borderRadius: 8, overflow: "hidden" },
+  buttonBorder: { borderRadius: 4, overflow: "hidden" },
   buttonBody: {
     flex: 1,
     alignItems: "center",
@@ -25,7 +25,7 @@ const colorsetByTypes = {
     txColor: bColors.white,
   },
   disabled: {
-    bgColor: bColors.greyTetiary,
+    bgColor: bColors.white,
     bdColor: bColors.greyTetiary,
     txColor: bColors.greyTetiary,
   },
@@ -42,14 +42,19 @@ const colorsetByTypes = {
 };
 /** 버튼 타입등 프로퍼티에 영향을 받는 스타일 */
 export const buttonInsideStyles = (props: RoundedButtonProps) => {
-  const colorSet = colorsetByTypes[props.buttonType];
+  const colorSet = colorsetByTypes[props.buttonType!];
+  /** 상속된 텍스트 스타일 or 기본 텍스트 스타일 */
+  const inheritedStyle: TextStyle = props.style
+    ? (props.style as TextStyle)
+    : { fontSize: bFont.middle, fontWeight: "normal" };
+
   const rtStyle = {
     ...StyleSheet.create({
       buttonInside: {
         backgroundColor: colorSet.bgColor,
-        alignItems: "flex-start",
+        alignItems: props.iconData?.withText ? "flex-start" : "center",
         justifyContent: "center",
-        borderRadius: 8,
+        borderRadius: 4,
         width: "100%",
         height: "100%",
         borderWidth: bSpace.small,
@@ -58,22 +63,22 @@ export const buttonInsideStyles = (props: RoundedButtonProps) => {
       buttonImage: {
         height: props.iconData?.iconSize
           ? props.iconData.iconSize
-          : props.fontSize,
+          : inheritedStyle.fontSize,
         width: props.iconData?.iconSize
           ? props.iconData.iconSize
-          : props.fontSize,
+          : inheritedStyle.fontSize,
         alignSelf: "center",
       },
       buttonIcon: {
         fontSize: props.iconData?.iconSize
           ? props.iconData.iconSize
-          : props.fontSize,
+          : inheritedStyle.fontSize,
       },
       buttonText: {
         textAlign: "center",
         color: colorSet.txColor,
-        fontSize: props.fontSize,
-        fontWeight: props.bold ? "bold" : "normal",
+        fontSize: inheritedStyle.fontSize,
+        fontWeight: props.bold ? "bold" : inheritedStyle.fontWeight,
       },
       gradientBackground: {
         position: "absolute",

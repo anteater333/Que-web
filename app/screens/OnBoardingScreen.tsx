@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import { useCallback } from "react";
 import {
   Image,
@@ -34,11 +35,15 @@ function OnBoardingScreen() {
     <SafeAreaView style={screens.defaultScreenLayout}>
       <OnBoardingStack.Navigator screenOptions={{ headerShown: false }}>
         <OnBoardingStack.Screen
-          name="CatchPharse"
-          component={OnBoardingContextScreen}
+          name="CatchPhrase"
+          component={CatchPhraseScreen}
         />
         <OnBoardingStack.Screen name="SignIn" component={SignInScreen} />
-        <OnBoardingStack.Screen name="SignUp" component={SignUpScreen} />
+        <OnBoardingStack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          initialParams={{}}
+        />
       </OnBoardingStack.Navigator>
     </SafeAreaView>
   );
@@ -49,7 +54,7 @@ function OnBoardingScreen() {
  * 백그라운드에 휘황찬란한 GIF
  * @returns
  */
-function OnBoardingContextScreen() {
+function CatchPhraseScreen() {
   /** TBD: 영상 교체하기 */
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
 
@@ -89,6 +94,7 @@ function OnBoardingContextScreen() {
 
   return (
     <SafeAreaView style={[screens.defaultScreenLayout]}>
+      <StatusBar translucent={true} />
       <ImageBackground
         testID="serviceMockingVideo"
         source={{ uri: mockingVideoSrc }}
@@ -142,6 +148,7 @@ function OnBoardingContextScreen() {
               style={{
                 height: bFont.xlarge + bFont.large,
                 marginBottom: bSpace.xlarge,
+                fontSize: bFont.large,
               }}
               bold={true}
               iconData={{
@@ -161,6 +168,7 @@ function OnBoardingContextScreen() {
               style={{
                 height: bFont.xlarge + bFont.large,
                 marginBottom: bSpace.xlarge,
+                fontSize: bFont.large,
               }}
               iconData={{
                 iconType: "image",
@@ -180,7 +188,8 @@ function OnBoardingContextScreen() {
               <Text
                 style={[styles.signInSuggestionText, styles.signInButtonText]}
                 onPress={() => {
-                  onBoardingNavigator.navigate("SignIn");
+                  rootNavigator.navigate("Main");
+                  // onBoardingNavigator.navigate("SignIn");
                 }}
                 accessibilityRole="button"
               >

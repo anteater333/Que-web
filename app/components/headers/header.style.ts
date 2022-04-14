@@ -3,8 +3,8 @@ import { bColors, bFont, bSpace } from "../../styles/base";
 
 const sharedSize = bFont.xlarge;
 
-/** VideoCard 컴포넌트에 적용될 스타일 */
-const headerStyle = StyleSheet.create({
+/** MainScreenHeader용 스타일 */
+export const mainScreenHeaderStyle = StyleSheet.create({
   default: {
     flexDirection: "row",
     height: 56,
@@ -38,4 +38,39 @@ const headerStyle = StyleSheet.create({
   },
 });
 
-export default headerStyle;
+/** CommonHeader용 스타일 */
+export const commonHeaderStyle = StyleSheet.create({
+  default: {
+    backgroundColor: bColors.white,
+    height: 56,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  backButtonContainer: {
+    flex: 1,
+    alignItems: "flex-start",
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titleLogo: {
+    height: bFont.large * 2,
+    resizeMode: "contain",
+  },
+  titleText: {
+    fontSize: sharedSize,
+  },
+  roundedButtonContainer: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  roundedButton: {
+    width: bSpace.large * 6,
+    height: bFont.large * 2,
+    fontSize: bFont.large,
+    marginRight: bSpace.middle,
+  },
+});

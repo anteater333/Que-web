@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import headerStyle from "./header.style";
+import { mainScreenHeaderStyle } from "./header.style";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -18,7 +18,7 @@ import {
 } from "../../navigators/MainNavigator";
 import ProfilePictureButton from "../buttons/ProfilePictureButton";
 
-const styles = headerStyle;
+const styles = mainScreenHeaderStyle;
 
 /**
  * 홈 스크린 적용 헤더

@@ -1,13 +1,10 @@
-import { StatusBar, StatusBarProps } from "expo-status-bar";
-import { StyleSheet, LogBox, SafeAreaView, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, LogBox, SafeAreaView } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import { MainStackParamList } from "./app/navigators/MainNavigator";
 import { bColors } from "./app/styles/base";
 import RootScreen from "./app/screens/RootScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -78,7 +75,11 @@ export default function App() {
           <RootScreen userSignedIn={userSignedIn} />
         </NavigationContainer>
       </SafeAreaView>
-      <StatusBar style="auto" />
+      <StatusBar
+        translucent={false}
+        style="auto"
+        backgroundColor={bColors.transparent}
+      />
     </SafeAreaProvider>
   );
 }

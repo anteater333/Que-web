@@ -4,7 +4,10 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
+  StyleSheet,
   Text,
+  TextProps,
+  TextStyle,
   View,
   ViewStyle,
 } from "react-native";
@@ -13,20 +16,18 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { bFont } from "../../styles/base";
 import { buttonInsideStyles, buttonLayoutStyles } from "./RoundedButton.style";
 
+export type RoundedButtonType =
+  | "primary"
+  | "enabledDark"
+  | "enabledBorder"
+  | "white"
+  | "disabled";
+
 /**
  * 버튼 컴포넌트 프로퍼티
  */
-export type RoundedButtonProps = {
-  /** <Text> 처럼 사용할 수 있습니다. */
-  children: string;
-  style?: ViewStyle;
-  buttonType:
-    | "primary"
-    | "enabledDark"
-    | "enabledBorder"
-    | "white"
-    | "disabled";
-  fontSize: number;
+export interface RoundedButtonProps extends TextProps {
+  buttonType?: RoundedButtonType;
   bold?: boolean;
   iconData?: {
     iconType: "image" | "material" | "ionicon";
@@ -36,12 +37,12 @@ export type RoundedButtonProps = {
     imageSrc?: ImageSourcePropType;
     iconSize?: number;
   };
-  onPress: ((event: GestureResponderEvent) => void) | null | undefined;
   testID?: string;
-};
+}
 
 /**
  * Que 어플리케이션에서 기본적으로 자주 사용하게 될 끝이 둥근 네모난 버튼 컴포넌트
+ * <Text> 처럼 사용할 수 있습니다.
  */
 function RoundedButton(props: RoundedButtonProps) {
   const insideStyles = buttonInsideStyles(props);
@@ -115,7 +116,6 @@ function RoundedButton(props: RoundedButtonProps) {
 RoundedButton.defaultProps = {
   children: "",
   buttonType: "enabledBorder",
-  fontSize: bFont.large,
   onPress: () => {
     console.warn("버튼은 왜 달았습니까?");
   },
