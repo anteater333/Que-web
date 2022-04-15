@@ -75,6 +75,7 @@ function RoundedButton(props: RoundedButtonProps) {
         testID="roundedButtonPressable"
         style={[buttonLayoutStyles.buttonBody]}
         onPress={props.onPress}
+        disabled={props.buttonType === "disabled"}
         accessibilityRole="button"
       >
         {props.buttonType === "primary" ? (
@@ -88,7 +89,9 @@ function RoundedButton(props: RoundedButtonProps) {
         <View style={insideStyles.buttonInside}>
           {!props.iconData ? (
             // iconData가 없는 경우, 버튼 내용이 텍스트만으로 이루어져 있음.
-            <Text style={insideStyles.buttonText}>{props.children}</Text>
+            <Text selectable={false} style={insideStyles.buttonText}>
+              {props.children}
+            </Text>
           ) : props.iconData.withText ? (
             // 텍스트와 아이콘 함께 사용하는 버튼
             <View style={insideStyles.rowFlexContainer}>
@@ -99,7 +102,9 @@ function RoundedButton(props: RoundedButtonProps) {
               <View
                 style={[insideStyles.rowFlexItem, insideStyles.rowFlexText]}
               >
-                <Text style={[insideStyles.buttonText]}>{props.children}</Text>
+                <Text selectable={false} style={[insideStyles.buttonText]}>
+                  {props.children}
+                </Text>
               </View>
             </View>
           ) : (
