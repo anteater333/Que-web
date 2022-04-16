@@ -18,6 +18,7 @@ import RoundedButton, {
 } from "../components/buttons/RoundedButton";
 import DummyComponent from "../components/common/DummyComponent";
 import CommonHeader from "../components/headers/CommonHeader";
+import CommonTextInput from "../components/inputs/CommonTextInput";
 import WizardNavBar from "../components/navbars/WizardNavBar";
 import {
   OnBoardingStackScreenProp,
@@ -85,7 +86,7 @@ function SignUpScreen({
  * @returns
  */
 function VerifyMailScreen() {
-  const [sentMail, setSetMail] = useState(false);
+  const [sentMail, setSetMail] = useState(true);
   const [timer, setTimer] = useState(0);
   const [assets, error] = useAssets([require("../assets/custom/logo-big.png")]);
 
@@ -105,32 +106,38 @@ function VerifyMailScreen() {
       </View>
 
       <View style={verifyMailScreenStyle.bottomContainer}>
-        {/** TBD 커스텀 컴포넌트로 대체하기 */}
-        <TextInput
-          style={verifyMailScreenStyle.textInput}
-          accessibilityRole="text"
-          textContentType="emailAddress"
-          placeholder="이메일"
-        />
-        <TextInput
-          style={verifyMailScreenStyle.textInput}
-          textContentType="oneTimeCode"
-          accessibilityRole="text"
-          placeholder="인증번호"
-        />
-        <Text style={verifyMailScreenStyle.messageText}>
-          입력하신 이메일로 인증번호를 전송했습니다.{"\n"}
-          인증번호는 {timer}초 이후 만료됩니다.{" "}
-          <Text
-            style={verifyMailScreenStyle.messageTextButton}
-            onPress={() => {
-              alert("재전송");
-            }}
-            accessibilityRole="button"
-          >
-            재전송
-          </Text>
-        </Text>
+        <View>
+          {/** TBD 커스텀 컴포넌트로 대체하기 */}
+          <CommonTextInput
+            style={verifyMailScreenStyle.textInput}
+            accessibilityRole="text"
+            textContentType="emailAddress"
+            placeholder="이메일"
+          />
+        </View>
+        {sentMail ? (
+          <View>
+            <CommonTextInput
+              style={verifyMailScreenStyle.textInput}
+              textContentType="oneTimeCode"
+              accessibilityRole="text"
+              placeholder="인증번호"
+            />
+            <Text style={verifyMailScreenStyle.messageText}>
+              입력하신 이메일로 인증번호를 전송했습니다.{"\n"}
+              인증번호는 {timer}초 이후 만료됩니다.{" "}
+              <Text
+                style={verifyMailScreenStyle.messageTextButton}
+                onPress={() => {
+                  alert("재전송");
+                }}
+                accessibilityRole="button"
+              >
+                재전송
+              </Text>
+            </Text>
+          </View>
+        ) : null}
       </View>
     </View>
   );
@@ -156,7 +163,6 @@ const verifyMailScreenStyle = StyleSheet.create({
   textInput: {
     fontSize: bFont.xlarge,
     marginBottom: bSpace.large * 2,
-    borderBottomWidth: 2,
   },
   messageText: {
     flex: 1,
