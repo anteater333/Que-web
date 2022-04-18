@@ -57,7 +57,7 @@ export const buttonInsideStyles = (props: RoundedButtonProps) => {
         borderRadius: 4,
         width: "100%",
         height: "100%",
-        borderWidth: bSpace.small,
+        borderWidth: bSpace.small / 2,
         borderColor: colorSet.bdColor,
       },
       buttonImage: {

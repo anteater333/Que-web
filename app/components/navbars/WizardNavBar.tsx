@@ -1,16 +1,5 @@
-import {
-  GestureResponderEvent,
-  Image,
-  ImageSourcePropType,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from "react-native";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import navBarStyle, { iconStyles } from "./navbar.style";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useAssets } from "expo-asset";
+import { GestureResponderEvent, View, ViewProps } from "react-native";
+import navBarStyle from "./navbar.style";
 import RoundedButton from "../buttons/RoundedButton";
 
 /** 스타일 객체 */

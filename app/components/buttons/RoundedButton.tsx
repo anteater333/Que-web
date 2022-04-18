@@ -1,19 +1,14 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  GestureResponderEvent,
   Image,
   ImageSourcePropType,
   Pressable,
-  StyleSheet,
   Text,
   TextProps,
-  TextStyle,
   View,
-  ViewStyle,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { bFont } from "../../styles/base";
 import { buttonInsideStyles, buttonLayoutStyles } from "./RoundedButton.style";
 
 export type RoundedButtonType =
