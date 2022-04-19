@@ -6,9 +6,9 @@ import {
   RootStackParamList,
 } from "../navigators/RootNavigator";
 import MainScreen from "./MainScreen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import OnBoardingScreen from "./OnBoardingScreen";
+import OnBoardingScreen from "./OnBoardingScreen/OnBoardingScreen";
 
 /** 최상단 네비게이터 */
 const RootStack = createNativeStackNavigator<RootStackParamList>();

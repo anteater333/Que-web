@@ -1,144 +1,59 @@
-/** TBD: 모듈 하나의 크기가 비대해짐, 분리 필요 */
-
 import { useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAssets } from "expo-asset";
-import { StatusBar } from "expo-status-bar";
-import React, {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
-  NativeSyntheticEvent,
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInputKeyPressEventData,
   View,
 } from "react-native";
-import DummyComponent from "../components/common/DummyComponent";
-import CommonHeader from "../components/headers/CommonHeader";
-import CommonTextInput from "../components/inputs/CommonTextInput";
-import WizardNavBar from "../components/navbars/WizardNavBar";
-import {
-  OnBoardingStackScreenProp,
-  SignUpStackNavigationProp,
-  SignUpStackParamList,
-} from "../navigators/OnBoardingNavigator";
-import { bColors, bFont, bSpace } from "../styles/base";
-import screens from "../styles/screens";
-import { validateEmail } from "../utils/validator";
+import CommonTextInput from "../../../components/inputs/CommonTextInput";
+import { SignUpStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
+import { bColors, bFont, bSpace } from "../../../styles/base";
+import screens from "../../../styles/screens";
+import { validateEmail } from "../../../utils/validator";
+import { SignUpContext } from "./SignUpScreen";
 
-const SignUpStack = createNativeStackNavigator<SignUpStackParamList>();
-
-type SignUpContextType = {
-  buttonEnabled: boolean;
-  setButtonEnabled: Dispatch<SetStateAction<boolean>>;
-  buttonAction: { action: () => void }; // function을 바로 쓰지 않고 객체로 wrapping 해야 변경 가능합니다.
-  setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
-};
-const defaultSignUpContext: SignUpContextType = {
-  buttonEnabled: false,
-  setButtonEnabled: function (): void {
-    throw new Error("Function not implemented.");
+const verifyMailScreenStyle = StyleSheet.create({
+  titleContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
-  buttonAction: {
-    action: function (): void {
-      throw new Error("Function not implemented.");
-    },
+  titleLogo: { resizeMode: "contain", maxHeight: 72 },
+  titleText: {
+    fontWeight: "bold",
+    fontSize: bFont.xlarge,
+    marginTop: bSpace.middle,
+    marginBottom: bSpace.xlarge,
   },
-  setButtonAction: function (): void {
-    throw new Error("Function not implemented.");
+  bottomContainer: {
+    flex: 1,
+    marginTop: bSpace.middle,
+    marginHorizontal: bSpace.xlarge * 2,
   },
-};
-
-/**
- * 회원가입 흐름에 한정되어 사용할 Context
- */
-const SignUpContext = createContext<SignUpContextType>(defaultSignUpContext);
-
-/**
- * 회원 가입 화면
- */
-function SignUpScreen({
-  route,
-  navigation,
-}: OnBoardingStackScreenProp<"SignUp">) {
-  const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
-    action: useCallback(() => {}, []),
-  });
-
-  return (
-    <SafeAreaView style={screens.defaultScreenLayout}>
-      <StatusBar translucent={false} />
-      <SignUpContext.Provider
-        value={{
-          buttonEnabled,
-          setButtonEnabled,
-          buttonAction,
-          setButtonAction,
-        }}
-      >
-        <SignUpStack.Navigator
-          screenOptions={{
-            contentStyle: screens.defaultScreenLayout,
-            header: (props) => (
-              <CommonHeader replaceTitleWithLogo hideButton={true} {...props} />
-            ),
-          }}
-        >
-          <SignUpStack.Group>
-            <SignUpStack.Screen
-              options={{
-                header: (props) => (
-                  <CommonHeader hideButton={true} {...props} />
-                ),
-                title: "",
-              }}
-              name="VerifyMail"
-              component={VerifyMailScreen}
-            />
-            <SignUpStack.Screen name="SetPassword" component={DummyComponent} />
-          </SignUpStack.Group>
-          <SignUpStack.Group>
-            <SignUpStack.Screen
-              name="SetUserProfile"
-              component={DummyComponent}
-            />
-            <SignUpStack.Screen
-              name="SetUserDescription"
-              component={DummyComponent}
-            />
-          </SignUpStack.Group>
-        </SignUpStack.Navigator>
-        <SignUpContext.Consumer>
-          {({ buttonEnabled, buttonAction }) => (
-            <WizardNavBar
-              hideSkipButton={true}
-              enableNextButton={buttonEnabled}
-              onNext={buttonAction.action}
-            />
-          )}
-        </SignUpContext.Consumer>
-      </SignUpContext.Provider>
-    </SafeAreaView>
-  );
-}
+  textInput: {
+    fontSize: bFont.large,
+    marginBottom: bSpace.large * 2,
+  },
+  messageText: {
+    fontSize: bFont.middle,
+  },
+  errorMessageText: {
+    color: bColors.error,
+  },
+  messageTextButton: {
+    color: bColors.primary,
+  },
+});
 
 /**
  * Step 1. 이메일 확인
  * @returns
  */
-function VerifyMailScreen() {
+export default function VerifyMailScreen() {
   /** 사용자가 입력한 email 주소 */
   const [userEmail, setUserEmail] = useState<string>("");
   /** 메일 주소 검증, 메일 전송 실패 시 시각적 표시 용도 */
@@ -153,7 +68,9 @@ function VerifyMailScreen() {
   const [timer, setTimer] = useState<number>(0);
 
   /** 로고 표시용 에셋 접근 */
-  const [assets, error] = useAssets([require("../assets/custom/logo-big.png")]);
+  const [assets, error] = useAssets([
+    require("../../../assets/custom/logo-big.png"),
+  ]);
 
   /** SignUp 컨텍스트 사용 */
   const { buttonEnabled, setButtonEnabled, buttonAction, setButtonAction } =
@@ -165,7 +82,6 @@ function VerifyMailScreen() {
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
   // const textInputEmail = useRef();
   // const textInputCode = useRef();
-
   /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
   const sendVerificationMail = useCallback(() => {
     // TBD : 인증 메일 전송 API 호출
@@ -325,57 +241,3 @@ function VerifyMailScreen() {
     </SafeAreaView>
   );
 }
-
-const verifyMailScreenStyle = StyleSheet.create({
-  titleContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  titleLogo: { resizeMode: "contain", maxHeight: 72 },
-  titleText: {
-    fontWeight: "bold",
-    fontSize: bFont.xlarge,
-    marginTop: bSpace.middle,
-    marginBottom: bSpace.xlarge,
-  },
-  bottomContainer: {
-    flex: 1,
-    marginTop: bSpace.middle,
-    marginHorizontal: bSpace.xlarge * 2,
-  },
-  textInput: {
-    fontSize: bFont.large,
-    marginBottom: bSpace.large * 2,
-  },
-  messageText: {
-    fontSize: bFont.middle,
-  },
-  errorMessageText: {
-    color: bColors.error,
-  },
-  messageTextButton: {
-    color: bColors.primary,
-  },
-});
-
-/**
- * Step 2. 비밀번호 입력
- */
-function SetPasswordScreen() {}
-
-/**
- * Step 3. 프로필 설정
- */
-function SetUserProfileScreen() {}
-
-/**
- * Step 4. 자기소개하기
- */
-function SetUserDescriptionScreen() {}
-
-/**
- * TBD: 추가 개인화 작업
- */
-
-export default SignUpScreen;

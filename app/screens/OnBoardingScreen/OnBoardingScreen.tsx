@@ -11,19 +11,38 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
-import RoundedButton from "../components/buttons/RoundedButton";
+import RoundedButton from "../../components/buttons/RoundedButton";
 import {
   OnBoardingStackNavigationProp,
   OnBoardingStackParamList,
-} from "../navigators/OnBoardingNavigator";
-import { RootStackNavigationProp } from "../navigators/RootNavigator";
-import { bColors, bFont, bSpace } from "../styles/base";
-import screens from "../styles/screens";
-import SignInScreen from "./SignInScreen";
-import SignUpScreen from "./SignUpScreen";
+} from "../../navigators/OnBoardingNavigator";
+import { RootStackNavigationProp } from "../../navigators/RootNavigator";
+import { bColors, bFont, bSpace } from "../../styles/base";
+import screens from "../../styles/screens";
+import SignInScreen from "./SignInScreen/SignInScreen";
+import SignUpScreen from "./SignUpScreen/SignUpScreen";
+
+const styles = StyleSheet.create({
+  contextContainer: {
+    flexGrow: 0.1,
+    marginHorizontal: bSpace.xlarge * 2,
+  },
+  catchPhraseContainer: {
+    paddingTop: bSpace.large,
+  },
+  catchPhraseText: {
+    fontWeight: "bold",
+    fontSize: bFont.xlarge + bFont.middle,
+    color: bColors.white,
+  },
+  buttonContainer: {
+    paddingTop: bSpace.xlarge + bSpace.middle,
+  },
+  signInSuggestionText: { color: bColors.white, fontSize: bFont.middle },
+  signInButtonText: { color: bColors.primary },
+});
 
 const OnBoardingStack = createNativeStackNavigator<OnBoardingStackParamList>();
 
@@ -63,9 +82,9 @@ function CatchPhraseScreen() {
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   const [assets, error] = useAssets([
-    require("../assets/custom/logo-colored.png"),
-    require("../assets/custom/google-icon.png"),
-    require("../assets/custom/que-icon.png"),
+    require("../../assets/custom/logo-colored.png"),
+    require("../../assets/custom/google-icon.png"),
+    require("../../assets/custom/que-icon.png"),
   ]);
 
   /**
@@ -202,25 +221,5 @@ function CatchPhraseScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  contextContainer: {
-    flexGrow: 0.1,
-    marginHorizontal: bSpace.xlarge * 2,
-  },
-  catchPhraseContainer: {
-    paddingTop: bSpace.large,
-  },
-  catchPhraseText: {
-    fontWeight: "bold",
-    fontSize: bFont.xlarge + bFont.middle,
-    color: bColors.white,
-  },
-  buttonContainer: {
-    paddingTop: bSpace.xlarge + bSpace.middle,
-  },
-  signInSuggestionText: { color: bColors.white, fontSize: bFont.middle },
-  signInButtonText: { color: bColors.primary },
-});
 
 export default OnBoardingScreen;
