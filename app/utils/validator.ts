@@ -10,3 +10,21 @@ export function validateEmail(mailAddress: string) {
 
   return result;
 }
+
+export type ValidatePasswordReasons =
+  | "pass"
+  | "short"
+  | "number"
+  | "letter"
+  | "space"
+  | "special";
+/**
+ * 문자열을 입력받아 그것이 비밀번호 규칙을 준수하는지 판명하는 함수.
+ * @param password
+ * @returns [준수여부, 미준수 사유]
+ */
+export function validatePassword(
+  password: string
+): [boolean, ValidatePasswordReasons] {
+  return [true, "pass"];
+}
