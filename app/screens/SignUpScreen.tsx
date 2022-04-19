@@ -6,6 +6,8 @@ import { useAssets } from "expo-asset";
 import { StatusBar } from "expo-status-bar";
 import React, {
   createContext,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -39,9 +41,9 @@ const SignUpStack = createNativeStackNavigator<SignUpStackParamList>();
 
 type SignUpContextType = {
   buttonEnabled: boolean;
-  setButtonEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setButtonEnabled: Dispatch<SetStateAction<boolean>>;
   buttonAction: { action: () => void }; // function을 바로 쓰지 않고 객체로 wrapping 해야 변경 가능합니다.
-  setButtonAction: React.Dispatch<React.SetStateAction<{ action: () => void }>>;
+  setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
 };
 const defaultSignUpContext: SignUpContextType = {
   buttonEnabled: false,
@@ -137,10 +139,14 @@ function SignUpScreen({
  * @returns
  */
 function VerifyMailScreen() {
-  /** Email 주소 입력 데이터 */
+  /** 사용자가 입력한 email 주소 */
   const [userEmail, setUserEmail] = useState<string>("");
+  /** 메일 주소 검증, 메일 전송 실패 시 시각적 표시 용도 */
+  const [isMailInvalid, setIsMailInvalid] = useState<boolean>(false);
   /** 인증 코드 입력 데이터 */
   const [verifyingCode, setVerifyingCode] = useState<string>("");
+  /** 인증 코드 검증 성공 여부, 실패 시 시각적 표시 용도 */
+  const [isCodeMatching, setIsCodeMatching] = useState<boolean>(true);
   /** 메일 발송 여부 */
   const [sentMail, setSentMail] = useState<boolean>(false);
   /** 인증 가능 잔여 시간 표시 */
@@ -163,20 +169,36 @@ function VerifyMailScreen() {
   /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
   const sendVerificationMail = useCallback(() => {
     // TBD : 인증 메일 전송 API 호출
+    const mailOk = true;
 
-    // 메일 전송 결과에 따라 다음 UI 활성화
-    setSentMail(true);
-    setVerifyingCode("");
-    setButtonEnabled(false);
-    setTimer(300);
-  }, [sentMail, userEmail]);
+    if (!mailOk) {
+      // TBD : 메일 전송 과정에서 오류 발생 시 텍스트 인풋 컴포넌트 오류 표시하기
+      // setIsMailInavlid(true) // 유효하지 않은 메일 주소
+      setIsMailInvalid(true);
+    } else {
+      // 메일 전송 결과에 따라 다음 UI 활성화
+      setSentMail(true);
+      setVerifyingCode("");
+      setButtonEnabled(false);
+      setTimer(300);
+    }
+  }, [userEmail]);
 
-  /** 사용자가 입력한 코드를 검증한 다음 겨로가에 따라 다음 단계로 넘어갑니다. */
+  /** 사용자가 입력한 코드를 검증한 다음 결과에 따라 다음 단계로 넘어갑니다. */
   const verifyWithCode = useCallback(() => {
-    console.log(verifyingCode);
+    // 임시 코드
+    const tmpKey = "111111";
+    // TBD : 코드 검증 API 호출
+    const succeeded = verifyingCode == tmpKey;
 
-    // TBD 인증 결과 파악 후 다음 화면으로 이동
-    signUpNavigator.navigate("SetPassword");
+    if (succeeded) {
+      setIsCodeMatching(true);
+      // 다음 화면 이동
+      signUpNavigator.navigate("SetPassword");
+    } else {
+      // 에러 표시
+      setIsCodeMatching(false);
+    }
   }, [verifyingCode]);
 
   /** 진행 여부에 따라 navbar 버튼 활성화 로직 지정 */
@@ -205,7 +227,7 @@ function VerifyMailScreen() {
     } else {
       setButtonAction({ action: sendVerificationMail });
     }
-  }, [sentMail]);
+  }, [sentMail, userEmail, verifyingCode]); // Warning, 할당하려는 함수의 dependency도 고려해야함
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -227,6 +249,7 @@ function VerifyMailScreen() {
           <CommonTextInput
             style={verifyMailScreenStyle.textInput}
             autoFocus
+            invalid={isMailInvalid}
             accessibilityRole="text"
             textContentType="emailAddress"
             placeholder="이메일"
@@ -243,11 +266,24 @@ function VerifyMailScreen() {
             }}
           />
         </View>
+        {isMailInvalid ? (
+          <View>
+            <Text
+              style={[
+                verifyMailScreenStyle.messageText,
+                verifyMailScreenStyle.errorMessageText,
+              ]}
+            >
+              {`인증 메일을 전송하는 과정에서 오류가 발생했습니다.\n메일 주소를 다시 확인해주세요.`}
+            </Text>
+          </View>
+        ) : null}
         {sentMail ? (
           <View>
             <CommonTextInput
               style={verifyMailScreenStyle.textInput}
               autoFocus
+              invalid={!isCodeMatching}
               textContentType="oneTimeCode"
               accessibilityRole="text"
               placeholder="인증번호"
@@ -263,6 +299,16 @@ function VerifyMailScreen() {
                 }
               }}
             />
+            {isCodeMatching ? null : (
+              <Text
+                style={[
+                  verifyMailScreenStyle.messageText,
+                  verifyMailScreenStyle.errorMessageText,
+                ]}
+              >
+                {`잘못된 인증번호입니다. 다시 입력해주세요.`}
+              </Text>
+            )}
             <Text style={verifyMailScreenStyle.messageText}>
               {`입력하신 이메일로 인증번호를 전송했습니다.\n인증번호는 ${timer}초 이후 만료됩니다.`}
               <Text
@@ -304,6 +350,9 @@ const verifyMailScreenStyle = StyleSheet.create({
   },
   messageText: {
     fontSize: bFont.middle,
+  },
+  errorMessageText: {
+    color: bColors.error,
   },
   messageTextButton: {
     color: bColors.primary,
