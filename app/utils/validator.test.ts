@@ -40,20 +40,20 @@ describe("function validatePassword", () => {
     expect(result[1]).toBe("short");
   });
 
-  it("숫자만으로 이루어진 문자열을 입력받으면 거짓을 반환한다.", () => {
-    const inputStr = "12345678";
-    const result = validatePassword(inputStr);
-
-    expect(result[0]).not.toBeTruthy();
-    expect(result[1]).toBe("number");
-  });
-
-  it("영문자만으로 이루어진 문자열을 입력받으면 거짓을 반환한다.", () => {
-    const inputStr = "iamanteater";
+  it("영문자가 포함되지 않은 문자열을 입력받으면 거짓을 반환한다.", () => {
+    const inputStr = "12345678!!@#$";
     const result = validatePassword(inputStr);
 
     expect(result[0]).not.toBeTruthy();
     expect(result[1]).toBe("letter");
+  });
+
+  it("숫자가 포함되지 않은 문자열을 입력받으면 거짓을 반환한다.", () => {
+    const inputStr = "i am anteater";
+    const result = validatePassword(inputStr);
+
+    expect(result[0]).not.toBeTruthy();
+    expect(result[1]).toBe("number");
   });
 
   it("시작 혹은 끝이 공백으로 이루어진 문자열을 입력받으면 거짓을 반환한다.", () => {
@@ -73,8 +73,8 @@ describe("function validatePassword", () => {
   });
 
   it("허가받은 특수문자가 포함된 문자열을 입력받으면 참을 반환한다.", () => {
-    // ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ ＼ ] ^ _ ` { | } ~ \
-    const inputStr = "!``#$???!!?";
+    // ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` { | } ~ \
+    const inputStr = `1a ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ ] ^ _ \` { | } ~ \\`;
     const result = validatePassword(inputStr);
 
     expect(result[0]).toBeTruthy();

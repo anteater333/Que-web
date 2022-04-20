@@ -26,5 +26,12 @@ export type ValidatePasswordReasons =
 export function validatePassword(
   password: string
 ): [boolean, ValidatePasswordReasons] {
+  const SPECIALS = /[\w !"#$%&'()*+,\-.\/:;<=>?@[\]\^_`{\|}~\\]+$/;
+  if (password.length < 8) return [false, "short"];
+  if (!/\d/.test(password)) return [false, "number"];
+  if (!/[a-zA-Z]/.test(password)) return [false, "letter"];
+  if (password[0] === " " || password[password.length - 1] === " ")
+    return [false, "space"];
+  if (!SPECIALS.test(password)) return [false, "special"];
   return [true, "pass"];
 }
