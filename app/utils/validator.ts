@@ -18,6 +18,7 @@ export type ValidatePasswordReasons =
   | "letter"
   | "space"
   | "special";
+
 /**
  * 문자열을 입력받아 그것이 비밀번호 규칙을 준수하는지 판명하는 함수.
  * @param password
@@ -26,7 +27,7 @@ export type ValidatePasswordReasons =
 export function validatePassword(
   password: string
 ): [boolean, ValidatePasswordReasons] {
-  const SPECIALS = /[\w !"#$%&'()*+,\-.\/:;<=>?@[\]\^_`{\|}~\\]+$/;
+  const SPECIALS = /^[\w !"#$%&'()*+,\-.\/:;<=>?@[\]\^_`{\|}~\\]+$/;
   if (password.length < 8) return [false, "short"];
   if (!/\d/.test(password)) return [false, "number"];
   if (!/[a-zA-Z]/.test(password)) return [false, "letter"];
@@ -34,4 +35,12 @@ export function validatePassword(
     return [false, "space"];
   if (!SPECIALS.test(password)) return [false, "special"];
   return [true, "pass"];
+}
+
+/**
+ * 문자열을 입력받아 이름 규칙을 준수하는지 판명하는 함수.
+ */
+export function validateNickname(nickname: string): boolean {
+  if (nickname.length < 2 || nickname.length > 12) return false;
+  return /^[가-힣|\w]+$/.test(nickname);
 }

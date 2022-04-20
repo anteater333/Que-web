@@ -43,6 +43,7 @@ export default function VerifyMailScreen() {
     buttonAction,
     setButtonAction,
     signUpNavigator,
+    setHideSkipButton,
   } = useContext(SignUpContext);
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
@@ -82,6 +83,11 @@ export default function VerifyMailScreen() {
       setIsCodeMatching(false);
     }
   }, [verifyingCode]);
+
+  /** 최초 렌더링 시 건너뛰기 버튼 숨기기 */
+  useEffect(() => {
+    setHideSkipButton(true);
+  }, []);
 
   /** 진행 여부에 따라 navbar 버튼 활성화 로직 지정 */
   useEffect(() => {

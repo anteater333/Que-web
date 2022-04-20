@@ -1,7 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
@@ -26,10 +30,13 @@ function SignUpScreen({
   route,
   navigation,
 }: OnBoardingStackScreenProp<"SignUp">) {
-  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
   const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
     action: useCallback(() => {}, []),
   });
+
+  /** 건너뛰기 버튼 여부 */
+  const [hideSkipButton, setHideSkipButton] = useState<boolean>(true);
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
@@ -44,6 +51,8 @@ function SignUpScreen({
           buttonAction,
           setButtonAction,
           signUpNavigator,
+          hideSkipButton,
+          setHideSkipButton,
         }}
       >
         <SignUpStack.Navigator
@@ -82,10 +91,14 @@ function SignUpScreen({
           </SignUpStack.Group>
         </SignUpStack.Navigator>
         <SignUpContext.Consumer>
-          {({ buttonEnabled, buttonAction }) => (
+          {({ buttonEnabled, buttonAction, hideSkipButton }) => (
             <WizardNavBar
-              hideSkipButton={true}
+              hideSkipButton={hideSkipButton}
               enableNextButton={buttonEnabled}
+              onSkip={() => {
+                // TBD 건너뛰기 구현
+                alert("다음에 하시겠습니까?");
+              }}
               onNext={buttonAction.action}
             />
           )}

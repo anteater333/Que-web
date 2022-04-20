@@ -1,4 +1,4 @@
-import { validateEmail, validatePassword } from "./validator";
+import { validateEmail, validatePassword, validateNickname } from "./validator";
 
 describe("function validateEmail", () => {
   it("문자열을 입력받아 참/거짓을 반환한다.", () => {
@@ -79,5 +79,40 @@ describe("function validatePassword", () => {
 
     expect(result[0]).toBeTruthy();
     expect(result[1]).toBe("pass");
+  });
+});
+
+describe("function validateNickname", () => {
+  it("문자열을 입력받아 참/거짓을 반환한다.", () => {
+    const inputStr = "Anteater";
+    const result = validateNickname(inputStr);
+
+    expect(typeof result).toBe("boolean");
+  });
+
+  it("길이 제한을 지키지 않는 문자열은 거짓을 반환한다.", () => {
+    const inputStr = "a";
+    const result = validateNickname(inputStr);
+
+    expect(result).not.toBeTruthy();
+
+    const inputStr2 = "123456789abcdefg";
+    const result2 = validateNickname(inputStr2);
+
+    expect(result2).not.toBeTruthy();
+  });
+
+  it("특수문자가 포함된 문자열은 거짓을 반환한다.", () => {
+    const inputStr = "!이지훈";
+    const result = validateNickname(inputStr);
+
+    expect(result).not.toBeTruthy();
+  });
+
+  it("한글로 이루어진 문자열은 참을 반환한다.", () => {
+    const inputStr = "이지훈";
+    const result = validateNickname(inputStr);
+
+    expect(result).toBeTruthy();
   });
 });

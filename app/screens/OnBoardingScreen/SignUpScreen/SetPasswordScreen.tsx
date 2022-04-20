@@ -44,6 +44,7 @@ export default function SetPasswordScreen() {
     buttonAction,
     setButtonAction,
     signUpNavigator,
+    setHideSkipButton,
   } = useContext(SignUpContext);
 
   /** 사용자가 입력한 비밀번호를 실제 사용할 수 있도록 서버에 등록 */
@@ -53,6 +54,11 @@ export default function SetPasswordScreen() {
     // 다음 화면으로 이동
     signUpNavigator!.navigate("SetUserProfile");
   }, [password]);
+
+  /** 최초 렌더링 시 건너뛰기 버튼 숨기기 */
+  useEffect(() => {
+    setHideSkipButton(true);
+  }, []);
 
   /** 사용 가능한 비밀번호인지 검증 */
   useEffect(() => {

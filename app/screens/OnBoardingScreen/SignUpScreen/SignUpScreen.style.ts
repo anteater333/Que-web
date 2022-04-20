@@ -31,8 +31,13 @@ export const signUpScreenStyle = StyleSheet.create({
     fontSize: bFont.large,
     marginTop: bSpace.large,
   },
+  textInputNickname: {
+    marginTop: bSpace.xlarge,
+    fontSize: bFont.xlarge,
+    textAlign: "center",
+  },
   messageText: {
-    marginTop: bSpace.small,
+    marginTop: bSpace.middle,
     fontSize: bFont.middle,
     color: bColors.black,
   },
@@ -41,5 +46,40 @@ export const signUpScreenStyle = StyleSheet.create({
   },
   messageTextButton: {
     color: bColors.primary,
+  },
+  textAlignCenter: {
+    textAlign: "center",
+  },
+  profileUploadButtonInside: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  uploadButtonContainer: {
+    width: bFont.xlarge * 12,
+    height: bFont.xlarge * 12,
+    borderRadius: bFont.xlarge * 12,
+    borderWidth: bFont.small,
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  withImage: {
+    borderColor: bColors.greyPrimary,
+    borderWidth: 1,
+    borderStyle: "solid",
+  },
+  uploadButtonIcon: {
+    fontSize: bFont.xlarge * 8,
+  },
+  uploadButtonMessage: {
+    fontSize: bFont.middle,
+    marginTop: -bSpace.xlarge - bSpace.large,
+  },
+  uploadedImage: {
+    resizeMode: "cover",
+    height: bFont.xlarge * 12,
+    width: bFont.xlarge * 12,
+    borderRadius: bFont.xlarge * 12,
   },
 });
