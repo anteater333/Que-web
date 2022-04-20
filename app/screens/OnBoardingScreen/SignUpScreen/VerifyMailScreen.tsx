@@ -1,53 +1,17 @@
-import { useNavigation } from "@react-navigation/native";
 import { useAssets } from "expo-asset";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
-import { SignUpStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
-import { bColors, bFont, bSpace } from "../../../styles/base";
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
-import { SignUpContext } from "./SignUpScreen";
-
-const verifyMailScreenStyle = StyleSheet.create({
-  titleContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  titleLogo: { resizeMode: "contain", maxHeight: 72 },
-  titleText: {
-    fontWeight: "bold",
-    fontSize: bFont.xlarge,
-    marginTop: bSpace.middle,
-    marginBottom: bSpace.xlarge,
-  },
-  bottomContainer: {
-    flex: 1,
-    marginTop: bSpace.middle,
-    marginHorizontal: bSpace.xlarge * 2,
-  },
-  textInput: {
-    fontSize: bFont.large,
-    marginBottom: bSpace.large * 2,
-  },
-  messageText: {
-    fontSize: bFont.middle,
-  },
-  errorMessageText: {
-    color: bColors.error,
-  },
-  messageTextButton: {
-    color: bColors.primary,
-  },
-});
+import { SignUpContext } from "./SignUpContext";
+import { signUpScreenStyle } from "./SignUpScreen.style";
 
 /**
  * Step 1. 이메일 확인
@@ -73,11 +37,13 @@ export default function VerifyMailScreen() {
   ]);
 
   /** SignUp 컨텍스트 사용 */
-  const { buttonEnabled, setButtonEnabled, buttonAction, setButtonAction } =
-    useContext(SignUpContext);
-
-  /** 다음 화면으로 이동하기 위한 네비게이터 */
-  const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
+  const {
+    buttonEnabled,
+    setButtonEnabled,
+    buttonAction,
+    setButtonAction,
+    signUpNavigator,
+  } = useContext(SignUpContext);
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
   // const textInputEmail = useRef();
@@ -110,7 +76,7 @@ export default function VerifyMailScreen() {
     if (succeeded) {
       setIsCodeMatching(true);
       // 다음 화면 이동
-      signUpNavigator.navigate("SetPassword");
+      signUpNavigator!.navigate("SetPassword");
     } else {
       // 에러 표시
       setIsCodeMatching(false);
@@ -148,27 +114,27 @@ export default function VerifyMailScreen() {
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <View
-        style={verifyMailScreenStyle.titleContainer}
+        style={signUpScreenStyle.titleContainer}
         testID="signUpTitleContainer"
       >
         {assets ? (
           <Image
-            style={verifyMailScreenStyle.titleLogo}
+            style={signUpScreenStyle.titleLogo}
             source={assets[0] as ImageSourcePropType}
           />
         ) : null}
-        <Text style={verifyMailScreenStyle.titleText}>회원가입</Text>
+        <Text style={signUpScreenStyle.titleText}>회원가입</Text>
       </View>
 
-      <View style={verifyMailScreenStyle.bottomContainer}>
+      <View style={signUpScreenStyle.bottomContainer}>
         <View>
           <CommonTextInput
-            style={verifyMailScreenStyle.textInput}
+            style={signUpScreenStyle.textInput}
             autoFocus
             invalid={isMailInvalid}
             accessibilityRole="text"
             textContentType="emailAddress"
-            placeholder="이메일"
+            placeholder="이메일 주소를 입력해주세요."
             onChangeText={(newStr) => setUserEmail(newStr)}
             value={userEmail}
             onKeyPress={(event) => {
@@ -186,8 +152,8 @@ export default function VerifyMailScreen() {
           <View>
             <Text
               style={[
-                verifyMailScreenStyle.messageText,
-                verifyMailScreenStyle.errorMessageText,
+                signUpScreenStyle.messageText,
+                signUpScreenStyle.errorMessageText,
               ]}
             >
               {`인증 메일을 전송하는 과정에서 오류가 발생했습니다.\n메일 주소를 다시 확인해주세요.`}
@@ -197,7 +163,7 @@ export default function VerifyMailScreen() {
         {sentMail ? (
           <View>
             <CommonTextInput
-              style={verifyMailScreenStyle.textInput}
+              style={signUpScreenStyle.textInput}
               autoFocus
               invalid={!isCodeMatching}
               textContentType="oneTimeCode"
@@ -218,17 +184,17 @@ export default function VerifyMailScreen() {
             {isCodeMatching ? null : (
               <Text
                 style={[
-                  verifyMailScreenStyle.messageText,
-                  verifyMailScreenStyle.errorMessageText,
+                  signUpScreenStyle.messageText,
+                  signUpScreenStyle.errorMessageText,
                 ]}
               >
                 {`잘못된 인증번호입니다. 다시 입력해주세요.`}
               </Text>
             )}
-            <Text style={verifyMailScreenStyle.messageText}>
+            <Text style={signUpScreenStyle.messageText}>
               {`입력하신 이메일로 인증번호를 전송했습니다.\n인증번호는 ${timer}초 이후 만료됩니다.`}
               <Text
-                style={verifyMailScreenStyle.messageTextButton}
+                style={signUpScreenStyle.messageTextButton}
                 onPress={sendVerificationMail}
                 accessibilityRole="button"
               >
