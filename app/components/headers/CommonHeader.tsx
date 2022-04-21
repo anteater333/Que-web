@@ -20,7 +20,11 @@ import RoundedButton, { RoundedButtonProps } from "../buttons/RoundedButton";
 const styles = commonHeaderStyle;
 
 type CommonHeaderProps = NativeStackHeaderProps &
-  RoundedButtonProps & { hideButton?: boolean; replaceTitleWithLogo?: boolean };
+  RoundedButtonProps & {
+    hideBackButton?: boolean;
+    hideButton?: boolean;
+    replaceTitleWithLogo?: boolean;
+  };
 
 /**
  * 홈 스크린 적용 헤더
@@ -34,7 +38,9 @@ function CommonHeader(props: CommonHeaderProps) {
     <SafeAreaView style={styles.default} testID="commonHeader">
       <View style={styles.backButtonContainer}>
         {/* TBD 혹시라도 뒤로 갈 수 없는 경우(canGoBack() 이 false인 경우 메인 화면으로 이동하기) */}
-        <HeaderBackButton onPress={() => props.navigation.goBack()} />
+        {props.hideBackButton ? null : (
+          <HeaderBackButton onPress={() => props.navigation.goBack()} />
+        )}
       </View>
       <View style={styles.titleContainer}>
         {props.replaceTitleWithLogo && assets ? (

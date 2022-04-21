@@ -22,6 +22,9 @@ const styles = signUpScreenStyle;
 const SIZE_LIMIT = 1024;
 
 export default function SetUserProfileScreen() {
+  // TBD 뒤로가기 버튼 캐치해서 메인 화면으로 보내기
+  // 이전 단게에서 사용자 로그인은 됐다는 것을 상정하고.
+
   /** 사용자가 업로드한 프로필 사진 정보 */
   const [profileURL, setProfileURL] = useState<string>("");
   /** 사용자가 입력한 이름 */
@@ -30,12 +33,12 @@ export default function SetUserProfileScreen() {
   const [isValidName, setIsValidName] = useState<boolean>(false);
 
   const {
-    setHideSkipButton,
     buttonAction,
     setButtonAction,
     buttonEnabled,
     setButtonEnabled,
     signUpNavigator,
+    userInfo,
   } = useContext(SignUpContext);
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
@@ -82,11 +85,6 @@ export default function SetUserProfileScreen() {
 
     signUpNavigator!.navigate("SetUserDescription");
   }, [profileURL, userNickname]);
-
-  /** 최초 렌더링 시 건너뛰기 버튼 표시하기 */
-  useEffect(() => {
-    setHideSkipButton(false);
-  }, []);
 
   /** 닉네임 유효성 검증 */
   useEffect(() => {

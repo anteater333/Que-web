@@ -74,6 +74,8 @@ function OnBoardingScreen() {
  * @returns
  */
 function CatchPhraseScreen() {
+  /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
+
   /** TBD: 영상 교체하기 */
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
 

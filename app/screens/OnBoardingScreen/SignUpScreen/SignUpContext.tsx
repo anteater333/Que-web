@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { createContext, Dispatch, SetStateAction } from "react";
 import { SignUpStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
+import UserType from "../../../types/User";
 
 type SignUpContextType = {
   signUpNavigator: SignUpStackNavigationProp | undefined;
@@ -8,8 +9,8 @@ type SignUpContextType = {
   setButtonEnabled: Dispatch<SetStateAction<boolean>>;
   buttonAction: { action: () => void }; // function을 바로 쓰지 않고 객체로 wrapping 해야 변경 가능합니다.
   setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
-  hideSkipButton: boolean;
-  setHideSkipButton: Dispatch<SetStateAction<boolean>>;
+  userInfo: UserType;
+  setUserInfo: Dispatch<SetStateAction<UserType>>;
 };
 const defaultSignUpContext: SignUpContextType = {
   signUpNavigator: undefined,
@@ -25,8 +26,8 @@ const defaultSignUpContext: SignUpContextType = {
   setButtonAction: function (): void {
     throw new Error("Function not implemented.");
   },
-  hideSkipButton: true,
-  setHideSkipButton: function (value: SetStateAction<boolean>): void {
+  userInfo: {},
+  setUserInfo: function (value: SetStateAction<UserType>): void {
     throw new Error("Function not implemented.");
   },
 };

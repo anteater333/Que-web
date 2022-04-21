@@ -15,6 +15,7 @@ import {
   SignUpStackParamList,
 } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
+import UserType from "../../../types/User";
 import SetPasswordScreen from "./SetPasswordScreen";
 import SetUserDescriptionScreen from "./SetUserDescriptionScreen";
 import SetUserProfileScreen from "./SetUserProfileScreen";
@@ -34,9 +35,7 @@ function SignUpScreen({
   const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
     action: useCallback(() => {}, []),
   });
-
-  /** 건너뛰기 버튼 여부 */
-  const [hideSkipButton, setHideSkipButton] = useState<boolean>(true);
+  const [userInfo, setUserInfo] = useState<UserType>({});
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
@@ -51,8 +50,8 @@ function SignUpScreen({
           buttonAction,
           setButtonAction,
           signUpNavigator,
-          hideSkipButton,
-          setHideSkipButton,
+          userInfo,
+          setUserInfo,
         }}
       >
         <SignUpStack.Navigator
@@ -66,9 +65,7 @@ function SignUpScreen({
           <SignUpStack.Group>
             <SignUpStack.Screen
               options={{
-                header: (props) => (
-                  <CommonHeader hideButton={true} {...props} />
-                ),
+                header: (props) => <CommonHeader hideButton {...props} />,
                 title: "",
               }}
               name="VerifyMail"
@@ -81,6 +78,11 @@ function SignUpScreen({
           </SignUpStack.Group>
           <SignUpStack.Group>
             <SignUpStack.Screen
+              options={{
+                header: (props) => (
+                  <CommonHeader hideBackButton hideButton {...props} />
+                ),
+              }}
               name="SetUserProfile"
               component={SetUserProfileScreen}
             />
@@ -91,9 +93,9 @@ function SignUpScreen({
           </SignUpStack.Group>
         </SignUpStack.Navigator>
         <SignUpContext.Consumer>
-          {({ buttonEnabled, buttonAction, hideSkipButton }) => (
+          {({ buttonEnabled, buttonAction, userInfo }) => (
             <WizardNavBar
-              hideSkipButton={hideSkipButton}
+              hideSkipButton={!userInfo.userId}
               enableNextButton={buttonEnabled}
               onSkip={() => {
                 // TBD 건너뛰기 구현

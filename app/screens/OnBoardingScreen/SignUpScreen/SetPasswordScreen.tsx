@@ -44,21 +44,19 @@ export default function SetPasswordScreen() {
     buttonAction,
     setButtonAction,
     signUpNavigator,
-    setHideSkipButton,
+    setUserInfo,
   } = useContext(SignUpContext);
 
   /** 사용자가 입력한 비밀번호를 실제 사용할 수 있도록 서버에 등록 */
   const postUserPassword = useCallback(() => {
     // TBD 비밀번호 등록
 
+    // TBD 비밀번호 등록 후 로그인 하기 (토큰 받아오고 userInfo에 등록하기)
+    setUserInfo({ userId: "test" });
+
     // 다음 화면으로 이동
     signUpNavigator!.navigate("SetUserProfile");
   }, [password]);
-
-  /** 최초 렌더링 시 건너뛰기 버튼 숨기기 */
-  useEffect(() => {
-    setHideSkipButton(true);
-  }, []);
 
   /** 사용 가능한 비밀번호인지 검증 */
   useEffect(() => {

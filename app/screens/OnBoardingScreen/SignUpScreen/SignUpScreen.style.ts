@@ -50,6 +50,9 @@ export const signUpScreenStyle = StyleSheet.create({
   textAlignCenter: {
     textAlign: "center",
   },
+  textAlignRight: {
+    textAlign: "right",
+  },
   profileUploadButtonInside: {
     flex: 1,
     alignItems: "center",
