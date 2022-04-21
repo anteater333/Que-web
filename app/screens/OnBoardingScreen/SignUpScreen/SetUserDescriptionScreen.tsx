@@ -15,12 +15,16 @@ const styles = signUpScreenStyle;
 
 const maxLength = 140;
 
+/**
+ * 4. 사용자 자기소개 화면
+ * @returns
+ */
 export default function SetUserDescriptionScreen() {
   /** 자기소개 입력 정보 */
   const [description, setDescription] = useState<string>("");
   /** 길이 초과 여부 */
   const [isLengthOver, setIsLengthOver] = useState<boolean>(false);
-  
+
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** SignUp 컨텍스트 */

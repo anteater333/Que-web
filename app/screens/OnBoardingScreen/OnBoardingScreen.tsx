@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import RoundedButton from "../../components/buttons/RoundedButton";
+import CommonHeader from "../../components/headers/CommonHeader";
 import {
   OnBoardingStackNavigationProp,
   OnBoardingStackParamList,
@@ -57,7 +58,14 @@ function OnBoardingScreen() {
           name="CatchPhrase"
           component={CatchPhraseScreen}
         />
-        <OnBoardingStack.Screen name="SignIn" component={SignInScreen} />
+        <OnBoardingStack.Screen
+          options={{
+            headerShown: true,
+            header: (props) => <CommonHeader hideButton {...props} />,
+          }}
+          name="SignIn"
+          component={SignInScreen}
+        />
         <OnBoardingStack.Screen
           name="SignUp"
           component={SignUpScreen}
@@ -122,18 +130,7 @@ function CatchPhraseScreen() {
         style={{ flex: 1 }}
         resizeMode="cover"
       >
-        <View testID="emptySpace" style={{ flex: 1 }}>
-          <Text
-            style={{
-              fontSize: bFont.xlarge,
-              color: bColors.greyPrimary,
-              alignSelf: "center",
-              paddingTop: bSpace.small,
-            }}
-          >
-            임시 영상입니다.
-          </Text>
-        </View>
+        <View testID="emptySpace" style={{ flex: 1 }}></View>
         <LinearGradient
           testID="darkOverlay"
           colors={["transparent", bColors.black]}
@@ -209,7 +206,7 @@ function CatchPhraseScreen() {
               <Text
                 style={[styles.signInSuggestionText, styles.signInButtonText]}
                 onPress={() => {
-                  rootNavigator.navigate("Main");
+                  onBoardingNavigator.navigate("SignIn");
                   // onBoardingNavigator.navigate("SignIn");
                 }}
                 accessibilityRole="button"

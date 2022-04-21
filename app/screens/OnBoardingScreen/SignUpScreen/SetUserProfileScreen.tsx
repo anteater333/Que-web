@@ -21,6 +21,10 @@ const styles = signUpScreenStyle;
 
 const SIZE_LIMIT = 1024;
 
+/**
+ * 3. 사용자 프로필 설정 화면
+ * @returns
+ */
 export default function SetUserProfileScreen() {
   // TBD 뒤로가기 버튼 캐치해서 메인 화면으로 보내기
   // 이전 단게에서 사용자 로그인은 됐다는 것을 상정하고.

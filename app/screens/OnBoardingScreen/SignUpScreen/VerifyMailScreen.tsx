@@ -134,6 +134,7 @@ export default function VerifyMailScreen() {
             invalid={isMailInvalid}
             accessibilityRole="text"
             textContentType="emailAddress"
+            keyboardType="email-address"
             placeholder="이메일 주소를 입력해주세요."
             onChangeText={(newStr) => setUserEmail(newStr)}
             value={userEmail}
@@ -167,6 +168,7 @@ export default function VerifyMailScreen() {
               autoFocus
               invalid={!isCodeMatching}
               textContentType="oneTimeCode"
+              keyboardType="default"
               accessibilityRole="text"
               placeholder="인증번호"
               onChangeText={(newStr) => setVerifyingCode(newStr)}
