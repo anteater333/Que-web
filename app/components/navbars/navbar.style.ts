@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bFont, bMargin, bPadding } from "../../styles/base";
+import { bColors, bFont, bSpace } from "../../styles/base";
 
 /** VideoCard 컴포넌트에 적용될 스타일 */
 const navBarStyle = StyleSheet.create({
@@ -11,7 +11,7 @@ const navBarStyle = StyleSheet.create({
     flexDirection: "row",
     borderTopColor: bColors.greyTetiary,
     borderTopWidth: 1,
-    paddingHorizontal: bPadding.xlarge + bPadding.middle,
+    paddingHorizontal: bSpace.xlarge + bSpace.middle,
   },
   buttonTouchableArea: {
     flex: 1,
@@ -19,7 +19,7 @@ const navBarStyle = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: "center",
-    marginTop: bMargin.small,
+    marginTop: bSpace.small,
   },
   uploadButtonImage: {
     height: bFont.xlarge * 2,
@@ -31,6 +31,23 @@ const navBarStyle = StyleSheet.create({
   buttonFontSelected: {
     fontSize: bFont.small,
     color: bColors.primary,
+  },
+  wizardNavBarContainer: {
+    paddingHorizontal: bSpace.xlarge,
+    justifyContent: "space-between",
+  },
+  wizardButtonContainer: {
+    width: bSpace.large * 6,
+    height: bFont.large * 2,
+  },
+  wizardButton: {
+    flex: 1,
+  },
+  skipButton: {
+    fontSize: bFont.middle,
+  },
+  nextButton: {
+    fontSize: bFont.large,
   },
 });
 

@@ -30,34 +30,37 @@ export const bColors = {
   tpSecondary: "99",
   /** 투명도 추가 40% */
   tpTetiary: "66",
+  /** 완전 투명 */
+  transparent: "#00000000",
+  error: "#DD3730",
+  errorDark: "#BA1B1B",
+  errorLight: "#FFB4A9",
 };
 
 /**
- * 컴포넌트 내부 여백 스타일
+ * 컴포넌트 여백 수치 단위
  */
-export const bPadding = {
+export const bSpace = {
+  /** 4 */
   small: 4,
+  /** 8 */
   middle: 8,
+  /** 12 */
   large: 12,
+  /** 16 */
   xlarge: 16,
 };
 
 /**
- * 컴포넌트 간 간격 스타일
- */
-export const bMargin = {
-  small: 4,
-  middle: 8,
-  large: 12,
-  xlarge: 16,
-};
-
-/**
- * 폰트 크기 스타일
+ * 폰트 크기 단위
  */
 export const bFont = {
+  /** 8 */
   small: 8,
+  /** 12 */
   middle: 12,
-  large: 18,
+  /** 16 */
+  large: 16,
+  /** 24 */
   xlarge: 24,
 };

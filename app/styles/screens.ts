@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { bColors } from "./base";
 
 /** 스크린 단위 공통 스타일 클래스 */
 export default StyleSheet.create({
@@ -7,5 +8,6 @@ export default StyleSheet.create({
    */
   defaultScreenLayout: {
     flex: 1,
+    backgroundColor: bColors.white,
   },
 });

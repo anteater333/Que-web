@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DummyComponent from "../components/common/DummyComponent";
 import MainScreenHeader from "../components/headers/MainScreenHeader";
 import { MainStackParamList } from "../navigators/MainNavigator";
 import screens from "../styles/screens";
@@ -40,11 +41,6 @@ function MainScreen() {
       </MainStack.Navigator>
     </SafeAreaView>
   );
-}
-
-/** 더미 컴포넌트를 인라인으로 전달할 경우 발생하는 에러 방지 */
-function DummyComponent() {
-  return null;
 }
 
 export default MainScreen;

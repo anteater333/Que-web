@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DummyComponent from "../components/common/DummyComponent";
 import HomeNavBar from "../components/navbars/HomeNavbar";
 import { HomeTabParamList } from "../navigators/HomeNavigator";
-import screens from "../styles/screens";
 import PreferenceScreen from "./PreferenceScreen";
 import TimelineScreen from "./TimelineScreen";
 
@@ -14,7 +15,7 @@ const HomeTab = createBottomTabNavigator<HomeTabParamList>();
  */
 function HomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <HomeTab.Navigator
         tabBar={(props) => <HomeNavBar {...props} />}
         screenOptions={{ headerShown: false }}
@@ -31,13 +32,7 @@ function HomeScreen() {
           options={{ title: "설정" }}
         />
       </HomeTab.Navigator>
-    </SafeAreaView>
+    </View>
   );
 }
-
-/** 더미 컴포넌트를 인라인으로 전달할 경우 발생하는 에러 방지 */
-function DummyComponent() {
-  return null;
-}
-
 export default HomeScreen;
