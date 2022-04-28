@@ -20,3 +20,42 @@ export interface QueResourceAPI {
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
 }
+
+/**
+ * 사용자 인증과 관련된 요청의 결과 추상화
+ */
+export enum QueAuthResponse {
+  // Bad Requests
+  BadBody = 400,
+  AlreadyExist = 409,
+  TooManyRequest = 429,
+  Wrong = 403,
+  NotFound = 404,
+  Timeout = 408,
+  // Server Error
+  ServerError = 500,
+  // OK
+  OK = 200,
+  Created = 201,
+  AlreadyPassed = 208,
+}
+
+/**
+ * 사용자 인증 관련 인터페이스 입니다.
+ */
+export interface QueAuthAPI {
+  /** 메일 검증 코드가 담긴 메일을 전송하도록 요청합니다. */
+  requestVerificationCodeMail(mailAddr: string): Promise<QueAuthResponse>;
+  /** 사용자가 입력한 검증 코드를 검증 서버에 전달해 검증 결과를 반환합니다. */
+  sendVerificationCode(
+    mailAddr: string,
+    code: string
+  ): Promise<QueAuthResponse>;
+  /** Que 자체 서비스 회원 가입을 진행합니다. */
+  signUpWithQueSelfManaged(
+    mailAddr: string,
+    password: string
+  ): Promise<QueAuthResponse>;
+  // signUpWithGoogle
+  // signInWithQueSelfManaged
+}
