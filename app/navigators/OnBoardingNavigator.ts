@@ -28,7 +28,7 @@ export type OnBoardingStackScreenProp<
 /** 신규 회원 가입, 순차적으로 진행 */
 export type SignUpStackParamList = {
   VerifyMail: undefined;
-  SetPassword: undefined;
+  SetPassword: { userEmail: string };
   SetUserProfile: undefined;
   SetUserDescription: undefined;
 };

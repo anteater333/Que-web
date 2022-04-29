@@ -55,6 +55,7 @@ function SignUpScreen({
         }}
       >
         <SignUpStack.Navigator
+          initialRouteName="VerifyMail"
           screenOptions={{
             contentStyle: screens.defaultScreenLayout,
             header: (props) => (

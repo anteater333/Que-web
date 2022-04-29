@@ -1,6 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { QueAuthResponse } from "../../../api/interfaces";
+import authClient from "../../../api/QueAuthUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
+import { SignUpStackScreenProp } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
 import {
   validatePassword,
@@ -24,7 +27,10 @@ const guidanceTextSet: { [key in ValidatePasswordReasons]: string } = {
  * Step 2. 비밀번호 설정 화면
  * @returns
  */
-export default function SetPasswordScreen() {
+export default function SetPasswordScreen({
+  route,
+  navigation,
+}: SignUpStackScreenProp<"SetPassword">) {
   /** 사용자 입력 비밀번호 데이터 */
   const [password, setPassword] = useState<string>("");
   /** 사용자 입력 비밀번호 검증 */
@@ -47,15 +53,31 @@ export default function SetPasswordScreen() {
     setUserInfo,
   } = useContext(SignUpContext);
 
-  /** 사용자가 입력한 비밀번호를 실제 사용할 수 있도록 서버에 등록 */
-  const postUserPassword = useCallback(() => {
-    // TBD 비밀번호 등록
+  /** 사용자의 비밀번호를 서버에 등록, 회원가입 요청 수행됨 */
+  const postUserPassword = useCallback(async () => {
+    try {
+      // 회원가입 요청
+      const reqResult = await authClient.signUpWithQueSelfManaged(
+        route.params.userEmail,
+        password
+      );
 
-    // TBD 비밀번호 등록 후 로그인 하기 (토큰 받아오고 userInfo에 등록하기)
-    setUserInfo({ userId: "test" });
+      if (reqResult === QueAuthResponse.Created) {
+        // 회원 가입 성공함
 
-    // 다음 화면으로 이동
-    signUpNavigator!.navigate("SetUserProfile");
+        // TBD 로그인 하기 (토큰 받아오고 Redux에 저장하기)
+        setUserInfo({ userId: "test" });
+
+        // 다음 화면으로 이동
+        signUpNavigator!.navigate("SetUserProfile");
+      } else {
+        alert(
+          `비밀번호 설정 과정에서 에러가 발생했습니다. : 에러 코드 ${reqResult}`
+        );
+      }
+    } catch (error) {
+      alert(`비밀번호 설정 과정에서 에러가 발생했습니다. : ` + error);
+    }
   }, [password]);
 
   /** 사용 가능한 비밀번호인지 검증 */

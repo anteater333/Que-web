@@ -25,7 +25,7 @@ export const signUpScreenStyle = StyleSheet.create({
   },
   textInput: {
     fontSize: bFont.large,
-    marginBottom: bSpace.large * 2,
+    marginTop: bSpace.large * 2,
   },
   textInputUpper: {
     fontSize: bFont.large,

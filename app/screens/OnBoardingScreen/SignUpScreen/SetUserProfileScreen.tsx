@@ -29,6 +29,9 @@ export default function SetUserProfileScreen() {
   // TBD 뒤로가기 버튼 캐치해서 메인 화면으로 보내기
   // 이전 단게에서 사용자 로그인은 됐다는 것을 상정하고.
 
+  // TBD 이 화면부터 어플리케이션이 로그인 토큰을 가지고 있어야 함
+  // Redux 사용
+
   /** 사용자가 업로드한 프로필 사진 정보 */
   const [profileURL, setProfileURL] = useState<string>("");
   /** 사용자가 입력한 이름 */

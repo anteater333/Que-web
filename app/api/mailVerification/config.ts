@@ -5,7 +5,7 @@ const verificationServerConfig = {
   PROTOCOL: "http",
   HOST: "localhost",
   PORT: 18080,
-  PREFIX: "/v1/api",
+  PREFIX: "/api/v1",
 };
 
 export default verificationServerConfig;
