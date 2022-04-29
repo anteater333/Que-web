@@ -1,12 +1,9 @@
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native";
+import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
 import {
@@ -36,6 +33,7 @@ function SignUpScreen({
     action: useCallback(() => {}, []),
   });
   const [userInfo, setUserInfo] = useState<UserType>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
@@ -52,6 +50,8 @@ function SignUpScreen({
           signUpNavigator,
           userInfo,
           setUserInfo,
+          isLoading,
+          setIsLoading,
         }}
       >
         <SignUpStack.Navigator
@@ -106,6 +106,7 @@ function SignUpScreen({
             />
           )}
         </SignUpContext.Consumer>
+        {isLoading ? <ScreenCoverLoadingSpinner /> : null}
       </SignUpContext.Provider>
     </SafeAreaView>
   );

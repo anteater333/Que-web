@@ -51,10 +51,12 @@ export default function SetPasswordScreen({
     setButtonAction,
     signUpNavigator,
     setUserInfo,
+    setIsLoading,
   } = useContext(SignUpContext);
 
   /** 사용자의 비밀번호를 서버에 등록, 회원가입 요청 수행됨 */
   const postUserPassword = useCallback(async () => {
+    setIsLoading(true);
     try {
       // 회원가입 요청
       const reqResult = await authClient.signUpWithQueSelfManaged(
@@ -78,7 +80,14 @@ export default function SetPasswordScreen({
     } catch (error) {
       alert(`비밀번호 설정 과정에서 에러가 발생했습니다. : ` + error);
     }
+    setIsLoading(false);
   }, [password]);
+
+  /** 첫 렌더링 시 입력 데이터 초기화 */
+  useEffect(() => {
+    setPassword("");
+    setConfirmPassword("");
+  }, []);
 
   /** 사용 가능한 비밀번호인지 검증 */
   useEffect(() => {

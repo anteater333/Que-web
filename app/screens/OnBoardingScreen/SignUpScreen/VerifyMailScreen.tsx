@@ -71,6 +71,7 @@ export default function VerifyMailScreen() {
     buttonAction,
     setButtonAction,
     signUpNavigator,
+    setIsLoading,
   } = useContext(SignUpContext);
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
@@ -79,6 +80,7 @@ export default function VerifyMailScreen() {
 
   /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
   const sendVerificationMail = useCallback(async () => {
+    setIsLoading(true);
     try {
       // 메일 요청
       const mailReqResult = await authClient.requestVerificationCodeMail(
@@ -112,10 +114,12 @@ export default function VerifyMailScreen() {
       setFailMessage(failMessages.default);
       alert("메일 전송 요청 과정에서 에러가 발생했습니다 : " + error);
     }
+    setIsLoading(false);
   }, [userEmail]);
 
   /** 사용자가 입력한 코드를 검증한 다음 결과에 따라 다음 단계로 넘어갑니다. */
   const verifyWithCode = useCallback(async () => {
+    setIsLoading(true);
     try {
       // 코드 인증 요청
       const reqResult = await authClient.sendVerificationCode(
@@ -145,7 +149,13 @@ export default function VerifyMailScreen() {
       setCodeMatchingMessage(codeMatchingMessages.default);
       alert(`인증 과정에서 에러가 발생했습니다 : ${error}`);
     }
+    setIsLoading(false);
   }, [userEmail, verifyingCode]);
+
+  /** 첫 렌더링 시 입력 데이터 초기화 */
+  useEffect(() => {
+    setVerifyingCode("");
+  }, []);
 
   /** 진행 여부에 따라 navbar 버튼 활성화 로직 지정 */
   useEffect(() => {

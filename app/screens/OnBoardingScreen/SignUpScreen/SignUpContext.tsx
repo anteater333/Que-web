@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { createContext, Dispatch, SetStateAction } from "react";
 import { SignUpStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
 import UserType from "../../../types/User";
@@ -11,6 +10,8 @@ type SignUpContextType = {
   setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
   userInfo: UserType;
   setUserInfo: Dispatch<SetStateAction<UserType>>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 };
 const defaultSignUpContext: SignUpContextType = {
   signUpNavigator: undefined,
@@ -28,6 +29,10 @@ const defaultSignUpContext: SignUpContextType = {
   },
   userInfo: {},
   setUserInfo: function (value: SetStateAction<UserType>): void {
+    throw new Error("Function not implemented.");
+  },
+  isLoading: false,
+  setIsLoading: function (value: SetStateAction<boolean>): void {
     throw new Error("Function not implemented.");
   },
 };
