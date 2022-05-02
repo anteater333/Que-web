@@ -56,6 +56,7 @@ export interface QueAuthAPI {
     mailAddr: string,
     password: string
   ): Promise<QueAuthResponse>;
-  // signUpWithGoogle
+  /** Google 계정을 사용한 로그인을 진행합니다. */
+  signInWithGoogle(): Promise<boolean>;
   // signInWithQueSelfManaged
 }

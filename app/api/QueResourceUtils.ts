@@ -6,7 +6,7 @@
 
 import { QueResourceAPI } from "./interfaces";
 
-import FirebaseResourceClient from "./firebase/firebaseClient";
+import { FirebaseResourceClient } from "./firebase/firebaseClient";
 import TestApiClient from "./testApi/testApiClient";
 
 /**
@@ -14,12 +14,27 @@ import TestApiClient from "./testApi/testApiClient";
  */
 let QueResourceClient: QueResourceAPI;
 if (process.env.NODE_ENV !== "test")
-  // 백엔드 구현체에 따라 인스턴스를 변경하면 됩니다.
-  // QueResourceClient = new FirebaseResourceClient();
-  QueResourceClient = new TestApiClient();
+  // // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
+  // const resourceClient = FirebaseResourceClient
+  // QueResourceClient = {
+  //   getImageDownloadURL: resourceClient.getImageDownloadURL,
+  //   getVideoCardData: resourceClient.getVideoCardData,
+  //   getVideoDownloadURL: resourceClient.getVideoDownloadURL
+  // }
+
+  // 개발중이니까 일단은 테스트로
+  QueResourceClient = {
+    getImageDownloadURL: TestApiClient.getImageDownloadURL,
+    getVideoCardData: TestApiClient.getVideoCardData,
+    getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+  };
 else {
   // 테스트용 Mock API
-  QueResourceClient = new TestApiClient();
+  QueResourceClient = {
+    getImageDownloadURL: TestApiClient.getImageDownloadURL,
+    getVideoCardData: TestApiClient.getVideoCardData,
+    getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+  };
 }
 
 export const getVideoDownloadURL = QueResourceClient.getVideoDownloadURL;

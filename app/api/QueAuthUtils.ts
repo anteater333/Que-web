@@ -6,7 +6,7 @@
 
 import { QueResourceAPI, QueAuthAPI, QueAuthResponse } from "./interfaces";
 
-import FirebaseResourceClient from "./firebase/firebaseClient";
+import { FirebaseAuthClient } from "./firebase/firebaseClient";
 import MailVerificationClient from "./mailVerification/mailVerificationClient";
 import TestApiClient from "./testApi/testApiClient";
 
@@ -17,27 +17,30 @@ let QueAuthClient: QueAuthAPI;
 if (process.env.NODE_ENV !== "test") {
   /** 메일 검증서버 API 클라이언트 */
   const verificationClient = MailVerificationClient;
-  // TBD OAuth 인증 구현
-  // const firebaseClient = FirebaseCient;
+  /** Firebase 직접 사용 인증 클라이언트 */
+  const authClient = FirebaseAuthClient;
 
   QueAuthClient = {
     requestVerificationCodeMail: verificationClient.requestVerificationCodeMail,
     sendVerificationCode: verificationClient.sendVerificationCode,
     signUpWithQueSelfManaged: verificationClient.signUpWithQueSelfManaged,
+    signInWithGoogle: authClient.signInWithGoogle,
   };
 } else {
-  const verificationClient = MailVerificationClient;
+  // TBD 테스트용 메소드들
   QueAuthClient = {
-    requestVerificationCodeMail: verificationClient.requestVerificationCodeMail,
-    sendVerificationCode: verificationClient.sendVerificationCode,
-    signUpWithQueSelfManaged: verificationClient.signUpWithQueSelfManaged,
+    requestVerificationCodeMail: async () => QueAuthResponse.OK,
+    sendVerificationCode: async () => QueAuthResponse.OK,
+    signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
+    signInWithGoogle: async () => true,
   };
-  // // TBD 테스트용 메소드들
-  // QueAuthClient = {
-  //   requestVerificationCodeMail: async () => QueAuthResponse.OK,
-  //   sendVerificationCode: async () => QueAuthResponse.OK,
-  //   signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
-  // };
 }
 
 export default QueAuthClient;
+
+export const requestVerificationCodeMail =
+  QueAuthClient.requestVerificationCodeMail;
+
+export const sendVerificationCode = QueAuthClient.sendVerificationCode;
+
+export const signUpWithQueSelfManaged = QueAuthClient.signUpWithQueSelfManaged;

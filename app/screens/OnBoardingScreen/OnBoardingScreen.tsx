@@ -13,6 +13,7 @@ import {
   Text,
   View,
 } from "react-native";
+import QueAuthClient from "../../api/QueAuthUtils";
 import RoundedButton from "../../components/buttons/RoundedButton";
 import CommonHeader from "../../components/headers/CommonHeader";
 import {
@@ -102,18 +103,19 @@ function CatchPhraseScreen() {
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
-  const signWithGoogle = useCallback(() => {
-    /** TBD : Do something about Google Auth */
-    const userAlreadyExist = false;
+  const signWithGoogle = useCallback(async () => {
+    try {
+      const result = await QueAuthClient.signInWithGoogle();
 
-    if (userAlreadyExist) {
-      // 전역 인증 상태를 갱신하고 메인 화면으로
-      rootNavigator.navigate("Main");
-    } else {
-      // navigate to signup screen with google user info
-      onBoardingNavigator.navigate("SignUp", {
-        someGoogleTokenShit: { userName: "삼식이" },
-      });
+      if (result) {
+        // 로그인 성공함
+        // navigate to signup screen with google user info
+        onBoardingNavigator.navigate("SignUp", {
+          someGoogleTokenShit: { userName: "삼식이" },
+        });
+      }
+    } catch (error) {
+      alert(`Google 로그인 중 문제가 발생했습니다.\n${error}`);
     }
   }, []);
 
