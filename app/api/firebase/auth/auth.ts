@@ -4,7 +4,16 @@ import {
   signInWithPopup,
   AuthError,
   AuthErrorCodes,
+  AuthCredential,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signInWithRedirect,
 } from "firebase/auth";
+
+import * as WebBrowser from "expo-web-browser";
+import { ResponseType } from "expo-auth-session";
+import * as Google from "expo-auth-session/providers/google";
+import { Platform } from "react-native";
 
 /**
  * firebase auth를 사용해 Google 계정으로 로그인을 진행합니다.
@@ -30,5 +39,17 @@ export async function signInWithGoogle(): Promise<boolean> {
         throw error;
       }
     }
+  }
+}
+
+export async function signInWithGoogleMob(idToken: string): Promise<boolean> {
+  const auth = getAuth();
+  const credential = GoogleAuthProvider.credential(idToken);
+
+  try {
+    const signInResult = await signInWithCredential(auth, credential);
+    return true;
+  } catch (error) {
+    throw error;
   }
 }

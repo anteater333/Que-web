@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "944223797321",
+    "project_id": "que-backend-dev",
+    "storage_bucket": "que-backend-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:944223797321:android:99ad38da2a038144a83f98",
+        "android_client_info": {
+          "package_name": "com.que.queandroidclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA94SS5czUVEITzVBDEQTNBlw4sFiuZJEM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "944223797321-btlbg3kqav2uicn03cpc0qvea1f0fq6j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.que.que-ios-client"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

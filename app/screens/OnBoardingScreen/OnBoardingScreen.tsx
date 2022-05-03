@@ -3,11 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Image,
   ImageBackground,
   ImageSourcePropType,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -25,6 +26,9 @@ import { bColors, bFont, bSpace } from "../../styles/base";
 import screens from "../../styles/screens";
 import SignInScreen from "./SignInScreen/SignInScreen";
 import SignUpScreen from "./SignUpScreen/SignUpScreen";
+
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
 
 const styles = StyleSheet.create({
   contextContainer: {
@@ -77,6 +81,8 @@ function OnBoardingScreen() {
   );
 }
 
+WebBrowser.maybeCompleteAuthSession();
+
 /**
  * 캐치프레이즈 & 회원가입 권유
  * 백그라운드에 휘황찬란한 GIF
@@ -98,26 +104,52 @@ function CatchPhraseScreen() {
     require("../../assets/custom/que-icon.png"),
   ]);
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    responseType: "id_token",
+    clientId:
+      "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
+  });
+
+  useEffect(() => {
+    // console.log(response);
+    // if (response?.type === "success") {
+    //   const { id_token } = response.params;
+    //   QueAuthClient.signInWithGoogleMob(id_token)
+    //     .then((result) => {})
+    //     .catch((error) => {
+    //       console.error(error);
+    //     });
+    // }
+  }, [response]);
+
   /**
    * Google Auth를 통한 계정 인증
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
   const signWithGoogle = useCallback(async () => {
-    try {
-      const result = await QueAuthClient.signInWithGoogle();
+    const result = await promptAsync();
 
-      if (result) {
-        // 로그인 성공함
-        // navigate to signup screen with google user info
-        onBoardingNavigator.navigate("SignUp", {
-          someGoogleTokenShit: { userName: "삼식이" },
-        });
+    if (result.type === "success") {
+      const { id_token } = result.params;
+
+      try {
+        await QueAuthClient.signInWithGoogleMob(id_token);
+      } catch (error) {
+        alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
       }
-    } catch (error) {
-      alert(`Google 로그인 중 문제가 발생했습니다.\n${error}`);
+    } else {
+      // 오류 처리
     }
-  }, []);
+
+    // if (result) {
+    //   // 로그인 성공함
+    //   // navigate to signup screen with google user info
+    //   onBoardingNavigator.navigate("SignUp", {
+    //     someGoogleTokenShit: { userName: "삼식이" },
+    //   });
+    // }
+  }, [response, request]);
 
   const signUpNewQueUser = useCallback(() => {
     onBoardingNavigator.navigate("SignUp", {});
@@ -164,7 +196,7 @@ function CatchPhraseScreen() {
           <View testID="signUpButtonContainer" style={styles.buttonContainer}>
             <RoundedButton
               testID="googleSignButton"
-              buttonType="white"
+              buttonType={request ? "white" : "disabled"}
               style={{
                 height: bFont.xlarge + bFont.large,
                 marginBottom: bSpace.xlarge,
