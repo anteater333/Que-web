@@ -25,7 +25,6 @@ if (process.env.NODE_ENV !== "test") {
     sendVerificationCode: verificationClient.sendVerificationCode,
     signUpWithQueSelfManaged: verificationClient.signUpWithQueSelfManaged,
     signInWithGoogle: authClient.signInWithGoogle,
-    signInWithGoogleMob: authClient.signInWithGoogleMob,
   };
 } else {
   // TBD 테스트용 메소드들
@@ -34,7 +33,6 @@ if (process.env.NODE_ENV !== "test") {
     sendVerificationCode: async () => QueAuthResponse.OK,
     signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
     signInWithGoogle: async () => true,
-    signInWithGoogleMob: async (idToken) => true,
   };
 }
 

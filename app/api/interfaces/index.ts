@@ -57,8 +57,5 @@ export interface QueAuthAPI {
     password: string
   ): Promise<QueAuthResponse>;
   /** Google 계정을 사용한 로그인을 진행합니다. */
-  signInWithGoogle(): Promise<boolean>;
-  /** Google 계정을 사용한 로그인을 모바일 환경에서 진행합니다. */
-  signInWithGoogleMob(idToken: string): Promise<boolean>;
-  // signInWithQueSelfManaged
+  signInWithGoogle(idToken: string): Promise<boolean>;
 }

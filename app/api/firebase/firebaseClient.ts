@@ -3,7 +3,7 @@ import { QueResourceAPI } from "../interfaces";
 import firebaseConfig from "./config";
 import { getMediaFromStorage } from "./storage/storage";
 import { getVideoCardDataFromFirestore } from "./firestore/firestore";
-import { signInWithGoogle, signInWithGoogleMob } from "./auth/auth";
+import { signInWithGoogle } from "./auth/auth";
 
 // initializing firebase client
 if (!getApps().length) {
@@ -18,5 +18,4 @@ export const FirebaseResourceClient = {
 
 export const FirebaseAuthClient = {
   signInWithGoogle: signInWithGoogle,
-  signInWithGoogleMob: signInWithGoogleMob,
 };

@@ -134,7 +134,7 @@ function CatchPhraseScreen() {
       const { id_token } = result.params;
 
       try {
-        await QueAuthClient.signInWithGoogleMob(id_token);
+        await QueAuthClient.signInWithGoogle(id_token);
       } catch (error) {
         alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
       }
