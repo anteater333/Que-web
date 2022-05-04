@@ -1,19 +1,10 @@
 import {
   GoogleAuthProvider,
   getAuth,
-  signInWithPopup,
-  AuthError,
-  AuthErrorCodes,
-  AuthCredential,
   signInWithCredential,
+  User,
   signInWithEmailAndPassword,
-  signInWithRedirect,
 } from "firebase/auth";
-
-import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
-import * as Google from "expo-auth-session/providers/google";
-import { Platform } from "react-native";
 
 /**
  * Google 로그인 팝업에서 반환받은 id_token 사용해
@@ -25,6 +16,8 @@ export async function signInWithGoogle(idToken: string): Promise<boolean> {
 
   try {
     const signInResult = await signInWithCredential(auth, credential);
+
+    console.log(signInResult.user);
 
     return true;
   } catch (error) {

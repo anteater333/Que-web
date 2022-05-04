@@ -18,7 +18,14 @@ import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
 
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import QueAuthClient from "../../../api/QueAuthUtils";
+import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
+
 const styles = signInScreenStyle;
+
+WebBrowser.maybeCompleteAuthSession();
 
 /**
  * 사용자 로그인 화면
@@ -30,10 +37,20 @@ function SignInScreen() {
   /** 로그인 버튼 활성화 여부 */
   const [isTriable, setIsTriable] = useState<boolean>(false);
 
+  /** 로딩 컴포넌트 표시 여부 */
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   /** 로고 표시용 에셋 */
   const [assets, error] = useAssets([
     require("../../../assets/custom/logo-big.png"),
   ]);
+
+  // TBD DRY
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    responseType: "id_token",
+    clientId:
+      "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
+  });
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
@@ -45,10 +62,36 @@ function SignInScreen() {
     onBoardingNavigator.navigate("CatchPhrase");
   }, []);
 
-  /** 구글 로그인 버튼 */
-  const loginWithGoogle = useCallback(() => {
-    alert("구현예정입니다.");
-  }, []);
+  /**
+   * Google Auth를 통한 계정 인증
+   * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
+   * 등록된 Google 계정이 없으면 회원 가입 화면으로
+   */
+  const signWithGoogle = useCallback(async () => {
+    setIsLoading(true);
+    const result = await promptAsync();
+
+    if (result.type === "success") {
+      const { id_token } = result.params;
+
+      try {
+        await QueAuthClient.signInWithGoogle(id_token);
+      } catch (error) {
+        alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
+      }
+    } else {
+      // 오류 처리
+    }
+
+    // if (result) {
+    //   // 로그인 성공함
+    //   // navigate to signup screen with google user info
+    //   onBoardingNavigator.navigate("SignUp", {
+    //     someGoogleTokenShit: { userName: "삼식이" },
+    //   });
+    // }
+    setIsLoading(false);
+  }, [response, request]);
 
   /** 이메일과 비밀번호가 입력되었으면 버튼 활성화 */
   useEffect(() => {
@@ -99,11 +142,12 @@ function SignInScreen() {
         <View>
           <SocialLoginButton
             buttonType="google"
-            onPress={loginWithGoogle}
+            onPress={signWithGoogle}
           ></SocialLoginButton>
         </View>
       </View>
 
+      {isLoading ? <ScreenCoverLoadingSpinner /> : null}
       <WizardNavBar
         enableNextButton={isTriable}
         hideSkipButton={true}
