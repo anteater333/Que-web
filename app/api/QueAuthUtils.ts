@@ -15,6 +15,8 @@ import TestApiClient from "./testApi/testApiClient";
  */
 let QueAuthClient: QueAuthAPI;
 if (process.env.NODE_ENV !== "test") {
+  // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
+
   /** 메일 검증서버 API 클라이언트 */
   const verificationClient = MailVerificationClient;
   /** Firebase 직접 사용 인증 클라이언트 */
@@ -25,6 +27,7 @@ if (process.env.NODE_ENV !== "test") {
     sendVerificationCode: verificationClient.sendVerificationCode,
     signUpWithQueSelfManaged: verificationClient.signUpWithQueSelfManaged,
     signInWithGoogle: authClient.signInWithGoogle,
+    signInWithQueSelfManaged: authClient.signInWithQueSelfManaged,
   };
 } else {
   // TBD 테스트용 메소드들
@@ -32,7 +35,8 @@ if (process.env.NODE_ENV !== "test") {
     requestVerificationCodeMail: async () => QueAuthResponse.OK,
     sendVerificationCode: async () => QueAuthResponse.OK,
     signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
-    signInWithGoogle: async () => true,
+    signInWithQueSelfManaged: async () => QueAuthResponse.OK,
+    signInWithGoogle: async () => QueAuthResponse.OK,
   };
 }
 

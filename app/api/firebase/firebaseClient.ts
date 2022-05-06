@@ -1,9 +1,8 @@
 import { getApps, initializeApp } from "firebase/app";
-import { QueResourceAPI } from "../interfaces";
 import firebaseConfig from "./config";
 import { getMediaFromStorage } from "./storage/storage";
 import { getVideoCardDataFromFirestore } from "./firestore/firestore";
-import { signInWithGoogle } from "./auth/auth";
+import { signInWithEmail, signInWithGoogle } from "./auth/auth";
 
 // initializing firebase client
 if (!getApps().length) {
@@ -18,4 +17,5 @@ export const FirebaseResourceClient = {
 
 export const FirebaseAuthClient = {
   signInWithGoogle: signInWithGoogle,
+  signInWithQueSelfManaged: signInWithEmail,
 };

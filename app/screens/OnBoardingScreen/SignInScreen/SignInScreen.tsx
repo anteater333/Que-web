@@ -47,20 +47,29 @@ function SignInScreen() {
 
   // TBD DRY
   const [request, response, promptAsync] = Google.useAuthRequest({
-    responseType: "id_token",
     clientId:
       "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
+    selectAccount: true,
   });
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** 로그인 진행 */
-  const loginWithQue = useCallback(() => {
-    alert("로그인 구현해");
+  const loginWithQue = useCallback(async () => {
+    try {
+      const result = await QueAuthClient.signInWithQueSelfManaged(
+        userEmail,
+        password
+      );
+
+      console.log(result);
+    } catch (error) {
+      alert(`에러처리 하시오 ${error}`);
+    }
 
     // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-    onBoardingNavigator.navigate("CatchPhrase");
-  }, []);
+    //    onBoardingNavigator.navigate("CatchPhrase");
+  }, [userEmail, password]);
 
   /**
    * Google Auth를 통한 계정 인증
@@ -72,10 +81,11 @@ function SignInScreen() {
     const result = await promptAsync();
 
     if (result.type === "success") {
-      const { id_token } = result.params;
+      const accessToken = result.authentication?.accessToken!;
 
       try {
-        await QueAuthClient.signInWithGoogle(id_token);
+        const result = await QueAuthClient.signInWithGoogle(accessToken);
+        console.log(result);
       } catch (error) {
         alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
       }
