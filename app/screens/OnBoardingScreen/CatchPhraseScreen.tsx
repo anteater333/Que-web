@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   ImageSourcePropType,
+  Platform,
   SafeAreaView,
   Text,
   View,
@@ -20,8 +21,8 @@ import screens from "../../styles/screens";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
-import { getAuth } from "firebase/auth";
 import { styles } from "./OnBoardingScreen";
+import { useToast, ToastType } from "react-native-toast-notifications";
 
 WebBrowser.maybeCompleteAuthSession();
 /**
@@ -30,6 +31,8 @@ WebBrowser.maybeCompleteAuthSession();
  * @returns
  */
 export function CatchPhraseScreen() {
+  const toast = useToast();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
@@ -78,11 +81,15 @@ export function CatchPhraseScreen() {
       const accessToken = result.authentication?.accessToken!;
 
       try {
-        const result = await QueAuthClient.signInWithGoogle(accessToken);
+        const signInResult = await QueAuthClient.signInWithGoogle(accessToken);
 
-        console.log(result);
+        console.log(signInResult);
+
+        toast.show(`result : ${signInResult}`);
       } catch (error) {
-        alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
+        toast.show(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`, {
+          type: "danger",
+        });
       }
     } else {
       // 오류 처리

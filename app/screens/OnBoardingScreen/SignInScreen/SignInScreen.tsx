@@ -17,6 +17,7 @@ import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNav
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
+import { useToast } from "react-native-toast-notifications";
 
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -52,6 +53,8 @@ function SignInScreen() {
     selectAccount: true,
   });
 
+  const toast = useToast();
+
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** 로그인 진행 */
@@ -63,6 +66,8 @@ function SignInScreen() {
       );
 
       console.log(result);
+
+      toast.show(`result : ${result}`, { type: "danger" });
     } catch (error) {
       alert(`에러처리 하시오 ${error}`);
     }

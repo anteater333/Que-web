@@ -8,6 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { bColors } from "./app/styles/base";
 import RootScreen from "./app/screens/RootScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ToastProvider } from "react-native-toast-notifications";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -68,18 +69,23 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.rootBackground}>
-      <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
-        <NavigationContainer
-          linking={{ enabled: true, prefixes: ["https://localhost", "que://"] }}
-        >
-          <RootScreen userSignedIn={userSignedIn} />
-        </NavigationContainer>
-      </SafeAreaView>
-      <StatusBar
-        translucent={false}
-        style="auto"
-        backgroundColor={bColors.transparent}
-      />
+      <ToastProvider>
+        <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
+          <NavigationContainer
+            linking={{
+              enabled: true,
+              prefixes: ["https://localhost", "que://"],
+            }}
+          >
+            <RootScreen userSignedIn={userSignedIn} />
+          </NavigationContainer>
+        </SafeAreaView>
+        <StatusBar
+          translucent={false}
+          style="auto"
+          backgroundColor={bColors.transparent}
+        />
+      </ToastProvider>
     </SafeAreaProvider>
   );
 }
