@@ -26,20 +26,20 @@ export interface QueResourceAPI {
  */
 export enum QueAuthResponse {
   // Bad Requests
-  BadBody = 400,
-  AlreadyExist = 409,
-  TooManyRequest = 429,
-  Wrong = 403,
-  NotFound = 404,
-  Timeout = 408,
-  SignInRequired = 401,
-  Gone = 410,
+  BadBody = "400",
+  AlreadyExist = "409",
+  TooManyRequest = "429",
+  Wrong = "403",
+  NotFound = "404",
+  Timeout = "408",
+  SignInRequired = "401",
+  Gone = "410",
   // Server Error
-  ServerError = 500,
+  ServerError = "500",
   // OK
-  OK = 200,
-  Created = 201,
-  AlreadyPassed = 208,
+  OK = "200",
+  Created = "201",
+  AlreadyPassed = "208",
 }
 
 /**

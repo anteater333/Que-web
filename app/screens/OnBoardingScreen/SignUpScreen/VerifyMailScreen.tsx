@@ -17,7 +17,7 @@ import { signUpScreenStyle } from "./SignUpScreen.style";
 
 /** 메일 입력 후 오류 안내 메세지 */
 const failMessages: {
-  [key: string]: string;
+  [key in QueAuthResponse | "default"]?: string;
 } = {
   "429":
     "해당 메일로 너무 많은 요청이 들어왔습니다. \n나중에 다시 시도해주세요.",
@@ -27,7 +27,7 @@ const failMessages: {
 
 /** 인증번호 입력 후 오류 안내 메세지 */
 const codeMatchingMessages: {
-  [key: string]: string;
+  [key in QueAuthResponse | "default"]?: string;
 } = {
   "429": `너무 많이 틀렸습니다!\n인증 번호를 다시 요청해주세요.`,
   "408": `입력 시간을 초과했습니다.\n인증 번호를 다시 요청해주세요`,
@@ -45,15 +45,17 @@ export default function VerifyMailScreen() {
   /** 메일 주소 검증, 메일 전송 실패 시 시각적 표시 용도 */
   const [isMailInvalid, setIsMailInvalid] = useState<boolean>(false);
   /** 매일 전송 실패 시 메세지 설정 */
-  const [failMessage, setFailMessage] = useState<string>(failMessages.default);
+  const [failMessage, setFailMessage] = useState<string | undefined>(
+    failMessages.default
+  );
   /** 인증 코드 입력 데이터 */
   const [verifyingCode, setVerifyingCode] = useState<string>("");
   /** 인증 코드 검증 성공 여부, 실패 시 시각적 표시 용도 */
   const [isCodeMatching, setIsCodeMatching] = useState<boolean>(true);
   /** 인증 코드 입력 실패 시 메세지 설정  */
-  const [codeMatchingMessage, setCodeMatchingMessage] = useState<string>(
-    codeMatchingMessages.default
-  );
+  const [codeMatchingMessage, setCodeMatchingMessage] = useState<
+    string | undefined
+  >(codeMatchingMessages.default);
   /** 메일 발송 요청 여부 */
   const [sentMail, setSentMail] = useState<boolean>(false);
   /** 인증 가능 잔여 시간 표시 */
@@ -102,7 +104,7 @@ export default function VerifyMailScreen() {
         // 메일 전송 실패
         setIsMailInvalid(true);
 
-        const strStatusCode = mailReqResult.toString();
+        const strStatusCode = mailReqResult;
         if (strStatusCode in failMessages) {
           setFailMessage(failMessages[strStatusCode]);
         } else {
@@ -137,7 +139,7 @@ export default function VerifyMailScreen() {
         // 에러 표시
         setIsCodeMatching(false);
 
-        const strStatusCode = reqResult.toString();
+        const strStatusCode = reqResult;
         if (strStatusCode in codeMatchingMessages) {
           setCodeMatchingMessage(codeMatchingMessages[strStatusCode]);
         } else {

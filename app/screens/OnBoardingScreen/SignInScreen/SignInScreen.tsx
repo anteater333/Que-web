@@ -23,10 +23,24 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import QueAuthClient from "../../../api/QueAuthUtils";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
+import { QueAuthResponse } from "../../../api/interfaces";
 
 const styles = signInScreenStyle;
 
 WebBrowser.maybeCompleteAuthSession();
+
+// TBD 로그인 인터페이스에서 타입 지정, 그 리턴 타입을 키로써 가지도록 강제하기.
+/** 로그인 과정에서의 에러 메세지 */
+const loginErrorMessages: {
+  [key in QueAuthResponse | "default"]?: string;
+} = {
+  "403": `비밀번호를 다시 확인해주세요.`,
+  "404": `이메일을 다시 확인해주세요.`,
+  "409": `다른 방식으로 로그인해주세요.`,
+  "410": `정지된 계정입니다. 문의 부탁드립니다.`,
+  "400": `유효하지 않은 이메일입니다.`,
+  default: `로그인 과정에서 오류가 발생했습니다.`,
+};
 
 /**
  * 사용자 로그인 화면
@@ -59,21 +73,42 @@ function SignInScreen() {
 
   /** 로그인 진행 */
   const loginWithQue = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const result = await QueAuthClient.signInWithQueSelfManaged(
+      const loginResult = await QueAuthClient.signInWithQueSelfManaged(
         userEmail,
         password
       );
 
-      console.log(result);
+      console.log(loginResult);
 
-      toast.show(`result : ${result}`, { type: "danger" });
+      /** 에러 발생 시 토스트에 표시할 메세지 */
+      let errMsg: string | undefined;
+
+      switch (loginResult) {
+        case QueAuthResponse.OK: {
+          // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
+          //    onBoardingNavigator.navigate("CatchPhrase");
+          toast.show("로그인했습니다."); // 임시
+          break;
+        }
+        default: {
+          errMsg = loginErrorMessages[loginResult];
+          break;
+        }
+      }
+
+      if (errMsg) {
+        toast.show(errMsg, { type: "danger" });
+      }
     } catch (error) {
-      alert(`에러처리 하시오 ${error}`);
+      const errorMessage = loginErrorMessages.default + `\n${error}`;
+      toast.show(errorMessage, {
+        type: "danger",
+      });
     }
 
-    // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-    //    onBoardingNavigator.navigate("CatchPhrase");
+    setIsLoading(false);
   }, [userEmail, password]);
 
   /**
@@ -89,10 +124,34 @@ function SignInScreen() {
       const accessToken = result.authentication?.accessToken!;
 
       try {
-        const result = await QueAuthClient.signInWithGoogle(accessToken);
-        console.log(result);
+        const loginResult = await QueAuthClient.signInWithGoogle(accessToken);
+
+        console.log(loginResult);
+
+        /** 에러 발생 시 토스트에 표시할 메세지 */
+        let errMsg: string | undefined;
+
+        switch (loginResult) {
+          case QueAuthResponse.OK: {
+            // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
+            //    onBoardingNavigator.navigate("CatchPhrase");
+            toast.show("로그인했습니다."); // 임시
+            break;
+          }
+          default: {
+            errMsg = loginErrorMessages[loginResult];
+            break;
+          }
+        }
+
+        if (errMsg) {
+          toast.show(errMsg, { type: "danger" });
+        }
       } catch (error) {
-        alert(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`);
+        const errorMessage = loginErrorMessages.default + `\n${error}`;
+        toast.show(errorMessage, {
+          type: "danger",
+        });
       }
     } else {
       // 오류 처리
