@@ -24,6 +24,12 @@ import * as Google from "expo-auth-session/providers/google";
 import QueAuthClient from "../../../api/QueAuthUtils";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import { QueAuthResponse } from "../../../api/interfaces";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthState, setCredential } from "../../../reducers/authReducer";
+import UserType from "../../../types/User";
+import { RootState } from "../../../store";
+import { useAppDispatch } from "../../../hooks/store";
+import { useAuth } from "../../../hooks/useAuth";
 
 const styles = signInScreenStyle;
 
@@ -67,7 +73,19 @@ function SignInScreen() {
     selectAccount: true,
   });
 
+  /** 로그인 과정 에러 메세지 표시용 토스트 */
   const toast = useToast();
+
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setCredential({ user: { userId: "12432134" }, token: null }));
+  }, []);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
