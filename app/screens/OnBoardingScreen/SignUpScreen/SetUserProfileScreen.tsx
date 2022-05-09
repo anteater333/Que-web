@@ -45,7 +45,7 @@ export default function SetUserProfileScreen() {
     buttonEnabled,
     setButtonEnabled,
     signUpNavigator,
-    userInfo,
+    setHideButton,
   } = useContext(SignUpContext);
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
@@ -92,6 +92,13 @@ export default function SetUserProfileScreen() {
 
     signUpNavigator!.navigate("SetUserDescription");
   }, [profileURL, userNickname]);
+
+  /** 화면 초기화 */
+  useEffect(() => {
+    setHideButton(false);
+    setUserNickname("");
+    setProfileURL("");
+  }, []);
 
   /** 닉네임 유효성 검증 */
   useEffect(() => {

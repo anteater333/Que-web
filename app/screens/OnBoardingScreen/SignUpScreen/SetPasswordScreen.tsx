@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { QueAuthResponse } from "../../../api/interfaces";
 import authClient from "../../../api/QueAuthUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
+import { useSignInWithQue } from "../../../hooks/useSign";
 import { SignUpStackScreenProp } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
 import {
@@ -47,12 +48,18 @@ export default function SetPasswordScreen({
   const {
     buttonEnabled,
     setButtonEnabled,
+    setHideButton,
     buttonAction,
     setButtonAction,
     signUpNavigator,
-    setUserInfo,
     setIsLoading,
   } = useContext(SignUpContext);
+
+  const signIn = useSignInWithQue(
+    route.params.userEmail,
+    password,
+    setIsLoading
+  );
 
   /** 사용자의 비밀번호를 서버에 등록, 회원가입 요청 수행됨 */
   const postUserPassword = useCallback(async () => {
@@ -67,8 +74,8 @@ export default function SetPasswordScreen({
       if (reqResult === QueAuthResponse.Created) {
         // 회원 가입 성공함
 
-        // TBD 로그인 하기 (토큰 받아오고 Redux에 저장하기)
-        setUserInfo({ userId: "test" });
+        // 회원 가입에 사용한 정보를 통해 로그인
+        await signIn();
 
         // 다음 화면으로 이동
         signUpNavigator!.navigate("SetUserProfile");
@@ -87,6 +94,7 @@ export default function SetPasswordScreen({
   useEffect(() => {
     setPassword("");
     setConfirmPassword("");
+    setHideButton(true);
   }, []);
 
   /** 사용 가능한 비밀번호인지 검증 */

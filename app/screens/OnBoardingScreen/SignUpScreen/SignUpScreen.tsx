@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
+import { useAuth } from "../../../hooks/useAuth";
 import {
   OnBoardingStackScreenProp,
   SignUpStackNavigationProp,
@@ -29,11 +30,13 @@ function SignUpScreen({
   navigation,
 }: OnBoardingStackScreenProp<"SignUp">) {
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
+  const [hideButton, setHideButton] = useState<boolean>(true);
   const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
     action: useCallback(() => {}, []),
   });
-  const [userInfo, setUserInfo] = useState<UserType>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { user: currentUser } = useAuth();
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
@@ -45,11 +48,11 @@ function SignUpScreen({
         value={{
           buttonEnabled,
           setButtonEnabled,
+          hideButton,
+          setHideButton,
           buttonAction,
           setButtonAction,
           signUpNavigator,
-          userInfo,
-          setUserInfo,
           isLoading,
           setIsLoading,
         }}
@@ -94,9 +97,9 @@ function SignUpScreen({
           </SignUpStack.Group>
         </SignUpStack.Navigator>
         <SignUpContext.Consumer>
-          {({ buttonEnabled, buttonAction, userInfo }) => (
+          {({ buttonEnabled, buttonAction, hideButton }) => (
             <WizardNavBar
-              hideSkipButton={!userInfo.userId}
+              hideSkipButton={hideButton}
               enableNextButton={buttonEnabled}
               onSkip={() => {
                 // TBD 건너뛰기 구현

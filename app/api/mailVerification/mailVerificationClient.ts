@@ -13,9 +13,13 @@ const MailVerificationClient = {
       /** 메일 전송 요청 */
       const result = await fetch(reqUrl);
 
+      const statusCode = result.status.toString();
+
       // 요청 결과 다듬어서 반환하기.
-      if (result.status in QueAuthResponse) {
-        return result.status;
+      if (
+        Object.values(QueAuthResponse).includes(statusCode as QueAuthResponse)
+      ) {
+        return statusCode as QueAuthResponse;
       } else {
         // 지정하지 않은 에러 발생
         throw new Error(`Undefined error code : ${result.status}`);
@@ -39,9 +43,13 @@ const MailVerificationClient = {
         body: JSON.stringify({ mail: mailAddr, code: code }),
       });
 
+      const statusCode = result.status.toString();
+
       // 요청 결과 다듬어서 반환하기.
-      if (result.status in QueAuthResponse) {
-        return result.status;
+      if (
+        Object.values(QueAuthResponse).includes(statusCode as QueAuthResponse)
+      ) {
+        return statusCode as QueAuthResponse;
       } else {
         // 지정하지 않은 에러 발생
         throw new Error(`Undefined error code : ${result.status}`);
@@ -65,9 +73,13 @@ const MailVerificationClient = {
         body: JSON.stringify({ mail: mailAddr, password: password }),
       });
 
+      const statusCode = result.status.toString();
+
       // 요청 결과 다듬어서 반환하기.
-      if (result.status in QueAuthResponse) {
-        return result.status;
+      if (
+        Object.values(QueAuthResponse).includes(statusCode as QueAuthResponse)
+      ) {
+        return statusCode as QueAuthResponse;
       } else {
         // 지정하지 않은 에러 발생
         throw new Error(`Undefined error code : ${result.status}`);

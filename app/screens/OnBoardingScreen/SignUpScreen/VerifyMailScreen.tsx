@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useToast } from "react-native-toast-notifications";
 import { QueAuthResponse } from "../../../api/interfaces";
 import authClient from "../../../api/QueAuthUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
@@ -70,11 +71,15 @@ export default function VerifyMailScreen() {
   const {
     buttonEnabled,
     setButtonEnabled,
+    setHideButton,
     buttonAction,
     setButtonAction,
     signUpNavigator,
     setIsLoading,
   } = useContext(SignUpContext);
+
+  /** 이미 인증 번호 제출한 경우를 위한 토스트 */
+  const toast = useToast();
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
   // const textInputEmail = useRef();
@@ -99,6 +104,7 @@ export default function VerifyMailScreen() {
       } else if (mailReqResult === QueAuthResponse.AlreadyPassed) {
         // 메일 인증 이미 성공한 계정
         // 코드 인증 생략하고 비밀번호 설정 화면으로
+        toast.show(`저장된 인증 정보를 확인했습니다.`);
         signUpNavigator!.navigate("SetPassword", { userEmail: userEmail });
       } else {
         // 메일 전송 실패
@@ -157,6 +163,7 @@ export default function VerifyMailScreen() {
   /** 첫 렌더링 시 입력 데이터 초기화 */
   useEffect(() => {
     setVerifyingCode("");
+    setHideButton(true);
   }, []);
 
   /** 진행 여부에 따라 navbar 버튼 활성화 로직 지정 */
