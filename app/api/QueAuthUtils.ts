@@ -35,8 +35,12 @@ if (process.env.NODE_ENV !== "test") {
     requestVerificationCodeMail: async () => QueAuthResponse.OK,
     sendVerificationCode: async () => QueAuthResponse.OK,
     signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
-    signInWithQueSelfManaged: async () => QueAuthResponse.OK,
-    signInWithGoogle: async () => QueAuthResponse.OK,
+    signInWithQueSelfManaged: async () => {
+      return { status: QueAuthResponse.OK, token: "", user: {} };
+    },
+    signInWithGoogle: async () => {
+      return { status: QueAuthResponse.OK, token: "", user: {} };
+    },
   };
 }
 

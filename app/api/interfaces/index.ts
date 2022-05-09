@@ -1,3 +1,4 @@
+import UserType from "../../types/User";
 import VideoType from "../../types/Video";
 
 /**
@@ -42,6 +43,23 @@ export enum QueAuthResponse {
   AlreadyPassed = "208",
 }
 
+// 로그인 관련 API 리턴 타입
+/** 로그인 성공시 반환 */
+export interface QueSignInSucceeded {
+  status: QueAuthResponse.OK | QueAuthResponse.Created;
+  user: UserType;
+  token: string;
+}
+/** 로그인 실패시 반환 */
+export interface QueSignInFailed {
+  status:
+    | QueAuthResponse.AlreadyExist
+    | QueAuthResponse.Wrong
+    | QueAuthResponse.NotFound
+    | QueAuthResponse.Gone
+    | QueAuthResponse.BadBody;
+}
+
 /**
  * 사용자 인증 관련 인터페이스 입니다.
  */
@@ -62,7 +80,9 @@ export interface QueAuthAPI {
   signInWithQueSelfManaged(
     mailAddr: string,
     password: string
-  ): Promise<QueAuthResponse>;
+  ): Promise<QueSignInFailed | QueSignInSucceeded>;
   /** Google 계정을 사용한 로그인을 진행합니다. */
-  signInWithGoogle(accessToken: string): Promise<QueAuthResponse>;
+  signInWithGoogle(
+    accessToken: string
+  ): Promise<QueSignInFailed | QueSignInSucceeded>;
 }

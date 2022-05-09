@@ -7,7 +7,12 @@ import {
   AuthError,
   AuthErrorCodes,
 } from "firebase/auth";
-import { QueAuthResponse } from "../../interfaces";
+import UserType from "../../../types/User";
+import {
+  QueAuthResponse,
+  QueSignInFailed,
+  QueSignInSucceeded,
+} from "../../interfaces";
 
 /** Access token을 통해 사용자 email 확인 */
 async function fetchUserEmail(token: string): Promise<string> {
@@ -32,7 +37,7 @@ async function fetchUserEmail(token: string): Promise<string> {
  */
 export async function signInWithGoogle(
   accessToken: string
-): Promise<QueAuthResponse> {
+): Promise<QueSignInFailed | QueSignInSucceeded> {
   const auth = getAuth();
   const credential = GoogleAuthProvider.credential(undefined, accessToken);
 
@@ -46,41 +51,57 @@ export async function signInWithGoogle(
       // 회원가입 쪽으로 넘기기
       const signInResult = await signInWithCredential(auth, credential);
 
-      console.log(signInResult.user);
-      // TBD 사용자 로그인 여부 저장하기
+      // TBD 유저 정보 생성
+      const signedUser: UserType = {
+        userId: signInResult.user.uid,
+      };
 
-      return QueAuthResponse.Created;
+      const token = await signInResult.user.getIdToken(true);
+
+      return {
+        status: QueAuthResponse.Created,
+        token: token,
+        user: signedUser,
+      };
     } else if (signInMethods.includes("google.com")) {
       // 구글 로그인 가능
       console.log("user already exist");
       const signInResult = await signInWithCredential(auth, credential);
 
-      console.log(signInResult.user);
-      // TBD 사용자 로그인 여부 저장하기
+      // TBD 유저 정보 생성
+      const signedUser: UserType = {
+        userId: signInResult.user.uid,
+      };
 
-      return QueAuthResponse.OK;
+      const token = await signInResult.user.getIdToken(true);
+
+      return {
+        status: QueAuthResponse.OK,
+        token: token,
+        user: signedUser,
+      };
     } else {
       // 로그인 불가
       // TBD 사용자 설정에서 계정 연동하도록 유도 or firebase에서 이메일당 계정 연동 가능하도록 설정 후 로그인
       console.log("no google account");
 
-      return QueAuthResponse.AlreadyExist;
+      return { status: QueAuthResponse.AlreadyExist };
     }
   } catch (error) {
     if ((error as AuthError).code) {
       const errorCode = (error as AuthError).code;
       if (errorCode === AuthErrorCodes.INVALID_PASSWORD)
         // 비밀번호가 틀림
-        return QueAuthResponse.Wrong;
+        return { status: QueAuthResponse.Wrong };
       else if (errorCode === AuthErrorCodes.USER_DELETED)
         // 사용자 없음
-        return QueAuthResponse.NotFound;
+        return { status: QueAuthResponse.NotFound };
       else if (errorCode === AuthErrorCodes.USER_DISABLED) {
         // 사용자 계정 정지됨
-        return QueAuthResponse.Gone;
+        return { status: QueAuthResponse.Gone };
       } else if (errorCode === AuthErrorCodes.INVALID_EMAIL) {
         // 유효하지 않은 이메일
-        return QueAuthResponse.BadBody;
+        return { status: QueAuthResponse.BadBody };
       } else {
         throw error;
       }
@@ -99,7 +120,7 @@ export async function signInWithGoogle(
 export async function signInWithEmail(
   email: string,
   password: string
-): Promise<QueAuthResponse> {
+): Promise<QueSignInFailed | QueSignInSucceeded> {
   const auth = getAuth();
   try {
     const signInResult = await signInWithEmailAndPassword(
@@ -109,24 +130,28 @@ export async function signInWithEmail(
     );
 
     // TBD 로그인 여부 저장
-    console.log(signInResult);
+    const signedUser: UserType = {
+      userId: signInResult.user.uid,
+    };
 
-    return QueAuthResponse.OK;
+    const token = await signInResult.user.getIdToken(true);
+
+    return { status: QueAuthResponse.OK, user: signedUser, token: token };
   } catch (error) {
     if ((error as AuthError).code) {
       const errorCode = (error as AuthError).code;
       if (errorCode === AuthErrorCodes.INVALID_PASSWORD)
         // 비밀번호가 틀림
-        return QueAuthResponse.Wrong;
+        return { status: QueAuthResponse.Wrong };
       else if (errorCode === AuthErrorCodes.USER_DELETED)
         // 사용자 없음
-        return QueAuthResponse.NotFound;
+        return { status: QueAuthResponse.NotFound };
       else if (errorCode === AuthErrorCodes.USER_DISABLED) {
         // 사용자 계정 정지됨
-        return QueAuthResponse.Gone;
+        return { status: QueAuthResponse.Gone };
       } else if (errorCode === AuthErrorCodes.INVALID_EMAIL) {
         // 유효하지 않은 이메일
-        return QueAuthResponse.BadBody;
+        return { status: QueAuthResponse.BadBody };
       } else {
         throw error;
       }

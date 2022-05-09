@@ -7,22 +7,19 @@ import {
   Image,
   ImageBackground,
   ImageSourcePropType,
-  Platform,
   SafeAreaView,
   Text,
   View,
 } from "react-native";
-import QueAuthClient from "../../api/QueAuthUtils";
 import RoundedButton from "../../components/buttons/RoundedButton";
 import { OnBoardingStackNavigationProp } from "../../navigators/OnBoardingNavigator";
 import { RootStackNavigationProp } from "../../navigators/RootNavigator";
 import { bColors, bFont, bSpace } from "../../styles/base";
 import screens from "../../styles/screens";
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
 import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
 import { styles } from "./OnBoardingScreen";
-import { useToast, ToastType } from "react-native-toast-notifications";
+import { useSignWithGoogle } from "../../hooks/useSign";
 
 WebBrowser.maybeCompleteAuthSession();
 /**
@@ -31,8 +28,6 @@ WebBrowser.maybeCompleteAuthSession();
  * @returns
  */
 export function CatchPhraseScreen() {
-  const toast = useToast();
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
@@ -49,61 +44,12 @@ export function CatchPhraseScreen() {
     require("../../assets/custom/que-icon.png"),
   ]);
 
-  // TBD DRY
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId:
-      "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
-    selectAccount: true,
-  });
-
-  useEffect(() => {
-    // console.log(response);
-    // if (response?.type === "success") {
-    //   const { id_token } = response.params;
-    //   QueAuthClient.signInWithGoogleMob(id_token)
-    //     .then((result) => {})
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-    // }
-  }, [response]);
-
   /**
    * Google Auth를 통한 계정 인증
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
-  const signWithGoogle = useCallback(async () => {
-    setIsLoading(true);
-    const result = await promptAsync();
-
-    if (result.type === "success") {
-      const accessToken = result.authentication?.accessToken!;
-
-      try {
-        const signInResult = await QueAuthClient.signInWithGoogle(accessToken);
-
-        console.log(signInResult);
-
-        toast.show(`result : ${signInResult}`);
-      } catch (error) {
-        toast.show(`구글 로그인 과정에서 오류가 발생했습니다. ${error}`, {
-          type: "danger",
-        });
-      }
-    } else {
-      // 오류 처리
-    }
-
-    // if (result) {
-    //   // 로그인 성공함
-    //   // navigate to signup screen with google user info
-    //   onBoardingNavigator.navigate("SignUp", {
-    //     someGoogleTokenShit: { userName: "삼식이" },
-    //   });
-    // }
-    setIsLoading(false);
-  }, [response, request]);
+  const signWithGoogle = useSignWithGoogle(setIsLoading);
 
   const signUpNewQueUser = useCallback(() => {
     onBoardingNavigator.navigate("SignUp", {});
@@ -150,7 +96,7 @@ export function CatchPhraseScreen() {
           <View testID="signUpButtonContainer" style={styles.buttonContainer}>
             <RoundedButton
               testID="googleSignButton"
-              buttonType={request ? "white" : "disabled"}
+              buttonType="white"
               style={{
                 height: bFont.xlarge + bFont.large,
                 marginBottom: bSpace.xlarge,

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useAssets } from "expo-asset";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import {
   Button,
   Image,
@@ -17,36 +17,15 @@ import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNav
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
-import { useToast } from "react-native-toast-notifications";
 
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import QueAuthClient from "../../../api/QueAuthUtils";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
-import { QueAuthResponse } from "../../../api/interfaces";
-import { useDispatch, useSelector } from "react-redux";
-import { AuthState, setCredential } from "../../../reducers/authReducer";
-import UserType from "../../../types/User";
-import { RootState } from "../../../store";
-import { useAppDispatch } from "../../../hooks/store";
 import { useAuth } from "../../../hooks/useAuth";
+import { useSignInWithQue, useSignWithGoogle } from "../../../hooks/useSign";
 
 const styles = signInScreenStyle;
 
 WebBrowser.maybeCompleteAuthSession();
-
-// TBD 로그인 인터페이스에서 타입 지정, 그 리턴 타입을 키로써 가지도록 강제하기.
-/** 로그인 과정에서의 에러 메세지 */
-const loginErrorMessages: {
-  [key in QueAuthResponse | "default"]?: string;
-} = {
-  "403": `비밀번호를 다시 확인해주세요.`,
-  "404": `이메일을 다시 확인해주세요.`,
-  "409": `다른 방식으로 로그인해주세요.`,
-  "410": `정지된 계정입니다. 문의 부탁드립니다.`,
-  "400": `유효하지 않은 이메일입니다.`,
-  default: `로그인 과정에서 오류가 발생했습니다.`,
-};
 
 /**
  * 사용자 로그인 화면
@@ -66,22 +45,7 @@ function SignInScreen() {
     require("../../../assets/custom/logo-big.png"),
   ]);
 
-  // TBD DRY
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId:
-      "944223797321-3fc5f5sn2l4vl3k3feuf61ckb7mirheb.apps.googleusercontent.com",
-    selectAccount: true,
-  });
-
-  /** 로그인 과정 에러 메세지 표시용 토스트 */
-  const toast = useToast();
-
   const { user } = useAuth();
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(setCredential({ user: { userId: "12432134" }, token: null }));
-  }, []);
 
   useEffect(() => {
     console.log(user);
@@ -89,101 +53,15 @@ function SignInScreen() {
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
-  /** 로그인 진행 */
-  const loginWithQue = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const loginResult = await QueAuthClient.signInWithQueSelfManaged(
-        userEmail,
-        password
-      );
-
-      console.log(loginResult);
-
-      /** 에러 발생 시 토스트에 표시할 메세지 */
-      let errMsg: string | undefined;
-
-      switch (loginResult) {
-        case QueAuthResponse.OK: {
-          // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-          //    onBoardingNavigator.navigate("CatchPhrase");
-          toast.show("로그인했습니다."); // 임시
-          break;
-        }
-        default: {
-          errMsg = loginErrorMessages[loginResult];
-          break;
-        }
-      }
-
-      if (errMsg) {
-        toast.show(errMsg, { type: "danger" });
-      }
-    } catch (error) {
-      const errorMessage = loginErrorMessages.default + `\n${error}`;
-      toast.show(errorMessage, {
-        type: "danger",
-      });
-    }
-
-    setIsLoading(false);
-  }, [userEmail, password]);
+  /** 이메일과 비밀번호를 통해 로그인 진행 */
+  const loginWithQue = useSignInWithQue(userEmail, password, setIsLoading);
 
   /**
    * Google Auth를 통한 계정 인증
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
-  const signWithGoogle = useCallback(async () => {
-    setIsLoading(true);
-    const result = await promptAsync();
-
-    if (result.type === "success") {
-      const accessToken = result.authentication?.accessToken!;
-
-      try {
-        const loginResult = await QueAuthClient.signInWithGoogle(accessToken);
-
-        console.log(loginResult);
-
-        /** 에러 발생 시 토스트에 표시할 메세지 */
-        let errMsg: string | undefined;
-
-        switch (loginResult) {
-          case QueAuthResponse.OK: {
-            // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-            //    onBoardingNavigator.navigate("CatchPhrase");
-            toast.show("로그인했습니다."); // 임시
-            break;
-          }
-          default: {
-            errMsg = loginErrorMessages[loginResult];
-            break;
-          }
-        }
-
-        if (errMsg) {
-          toast.show(errMsg, { type: "danger" });
-        }
-      } catch (error) {
-        const errorMessage = loginErrorMessages.default + `\n${error}`;
-        toast.show(errorMessage, {
-          type: "danger",
-        });
-      }
-    } else {
-      // 오류 처리
-    }
-
-    // if (result) {
-    //   // 로그인 성공함
-    //   // navigate to signup screen with google user info
-    //   onBoardingNavigator.navigate("SignUp", {
-    //     someGoogleTokenShit: { userName: "삼식이" },
-    //   });
-    // }
-    setIsLoading(false);
-  }, [response, request]);
+  const signWithGoogle = useSignWithGoogle(setIsLoading);
 
   /** 이메일과 비밀번호가 입력되었으면 버튼 활성화 */
   useEffect(() => {
