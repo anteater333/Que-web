@@ -12,6 +12,8 @@ type SignUpContextType = {
   setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
+  newUserProfile: UserType;
+  setNewUserProfile: Dispatch<SetStateAction<UserType>>;
 };
 const defaultSignUpContext: SignUpContextType = {
   signUpNavigator: undefined,
@@ -33,6 +35,10 @@ const defaultSignUpContext: SignUpContextType = {
   },
   hideButton: false,
   setHideButton: function (value: SetStateAction<boolean>): void {
+    throw new Error("Function not implemented.");
+  },
+  newUserProfile: {},
+  setNewUserProfile: function (value: SetStateAction<UserType>): void {
     throw new Error("Function not implemented.");
   },
 };

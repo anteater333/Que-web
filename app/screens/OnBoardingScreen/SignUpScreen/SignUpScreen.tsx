@@ -35,8 +35,7 @@ function SignUpScreen({
     action: useCallback(() => {}, []),
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const { user: currentUser } = useAuth();
+  const [newUserProfile, setNewUserProfile] = useState<UserType>({});
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
@@ -55,6 +54,8 @@ function SignUpScreen({
           signUpNavigator,
           isLoading,
           setIsLoading,
+          newUserProfile,
+          setNewUserProfile,
         }}
       >
         <SignUpStack.Navigator

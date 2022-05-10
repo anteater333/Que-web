@@ -13,9 +13,9 @@ import TestApiClient from "./testApi/testApiClient";
  * Concrete API Instance
  */
 let QueResourceClient: QueResourceAPI;
-if (process.env.NODE_ENV !== "test")
+if (process.env.NODE_ENV !== "test") {
   // // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
-  // const resourceClient = FirebaseResourceClient
+  const resourceClient = FirebaseResourceClient;
   // QueResourceClient = {
   //   getImageDownloadURL: resourceClient.getImageDownloadURL,
   //   getVideoCardData: resourceClient.getVideoCardData,
@@ -27,18 +27,26 @@ if (process.env.NODE_ENV !== "test")
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    updateUserProfile: resourceClient.updateUserProfile,
   };
-else {
+} else {
   // 테스트용 Mock API
   QueResourceClient = {
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    updateUserProfile: async (user) => {
+      return { success: true };
+    },
   };
 }
+
+export default QueResourceClient;
 
 export const getVideoDownloadURL = QueResourceClient.getVideoDownloadURL;
 
 export const getImageDownloadURL = QueResourceClient.getImageDownloadURL;
 
 export const getVideoCardData = QueResourceClient.getVideoCardData;
+
+export const updateUserProfile = QueResourceClient.updateUserProfile;

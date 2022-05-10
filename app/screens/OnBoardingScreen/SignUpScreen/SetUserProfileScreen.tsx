@@ -46,6 +46,7 @@ export default function SetUserProfileScreen() {
     setButtonEnabled,
     signUpNavigator,
     setHideButton,
+    setNewUserProfile,
   } = useContext(SignUpContext);
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
@@ -79,16 +80,20 @@ export default function SetUserProfileScreen() {
     }
   }, []);
 
-  /** 사용자가 입력한 프로필 정보를 서버에 등록하는 함수 */
-  const postUserProfile = useCallback(() => {
-    // TBD 로직
-
+  /** 사용자가 입력한 프로필 정보를 컨텍스트에 저장하는 함수 */
+  const saveUserProfile = useCallback(() => {
     if (!profileURL) {
-      // TBD 프로필 없이 할건지 물어보기 (Yes or No)
-      alert("프로필 사진 없이 진행");
+      // TBD 프로필 없이 할건지 물어보기 (Yes or No 입력 받아서 진행 or 진행안함)
+      alert("TBD 프로필 사진 없이 진행 하시겠습니까?");
     }
 
-    console.log(`${userNickname}\n${profileURL}`);
+    setNewUserProfile((prevState) => {
+      return {
+        profilePictureUrl: profileURL,
+        nickname: userNickname,
+        description: prevState.description,
+      };
+    });
 
     signUpNavigator!.navigate("SetUserDescription");
   }, [profileURL, userNickname]);
@@ -111,7 +116,7 @@ export default function SetUserProfileScreen() {
     setButtonEnabled(isValidName);
 
     if (isValidName) {
-      setButtonAction({ action: postUserProfile });
+      setButtonAction({ action: saveUserProfile });
     }
   }, [isValidName, userNickname]);
 
