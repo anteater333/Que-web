@@ -4,13 +4,13 @@ import { SafeAreaView, Text, View } from "react-native";
 import { updateUserProfile } from "../../../api/QueResourceUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
-import {
-  RootStackNavigationProp,
-  RootStackParamList,
-} from "../../../navigators/RootNavigator";
+import { getUserProfileData } from "../../../api/QueResourceUtils";
 import screens from "../../../styles/screens";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
+import { useAppDispatch } from "../../../hooks/store";
+import { setCredential } from "../../../reducers/authReducer";
+import { useAuth } from "../../../hooks/useAuth";
 
 const styles = signUpScreenStyle;
 
@@ -25,6 +25,10 @@ export default function SetUserDescriptionScreen() {
   const [description, setDescription] = useState<string>("");
   /** 길이 초과 여부 */
   const [isLengthOver, setIsLengthOver] = useState<boolean>(false);
+
+  /** 업데이트 된 프로필을 store에 적용하기 위한 dispatcher */
+  const dispatch = useAppDispatch();
+  const { user: currentUser, token: currentToken } = useAuth(); // API 호출 대신 이걸 사용
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
@@ -58,13 +62,21 @@ export default function SetUserDescriptionScreen() {
     });
 
     if (result.success) {
+      setIsLoading(false);
+      // 업데이트한 프로필을 클라이언트에도 적용
+      dispatch(
+        setCredential({
+          user: { ...currentUser, ...newUserProfile, description: description },
+          token: currentToken,
+        })
+      );
       // 온보딩 화면 처음으로 이동 -> 해당 화면에서 로그인 여부 판단 -> 메인화면으로 이동
       onBoardingNavigator.navigate("CatchPhrase");
     } else {
+      setIsLoading(false);
       // TBD 업데이트 과정 에러 처리
       alert(`프로필 등록 과정에서 에러가 발생했습니다. : ` + result.errorType);
     }
-    setIsLoading(false);
   }, [newUserProfile.nickname, newUserProfile.profilePictureUrl, description]);
 
   /** 화면 초기화 */

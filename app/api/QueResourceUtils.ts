@@ -27,6 +27,7 @@ if (process.env.NODE_ENV !== "test") {
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    getUserProfileData: resourceClient.getUserProfileData,
     updateUserProfile: resourceClient.updateUserProfile,
   };
 } else {
@@ -38,6 +39,9 @@ if (process.env.NODE_ENV !== "test") {
     updateUserProfile: async (user) => {
       return { success: true };
     },
+    getUserProfileData: async (userId) => {
+      return { user: {} };
+    },
   };
 }
 
@@ -48,5 +52,7 @@ export const getVideoDownloadURL = QueResourceClient.getVideoDownloadURL;
 export const getImageDownloadURL = QueResourceClient.getImageDownloadURL;
 
 export const getVideoCardData = QueResourceClient.getVideoCardData;
+
+export const getUserProfileData = QueResourceClient.getUserProfileData;
 
 export const updateUserProfile = QueResourceClient.updateUserProfile;

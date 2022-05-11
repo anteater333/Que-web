@@ -24,6 +24,7 @@ export interface QueResourceResponse {
  * 리소스 서버 접근 관련 인터페이스 입니다.
  */
 export interface QueResourceAPI {
+  ////////////////////////////////////////////////// 비디오 관련 인터페이스
   /**
    * 리소스 서버에 접근해 원본 비디오를 다운받을 수 있는 url을 반환합니다.
    */
@@ -39,6 +40,14 @@ export interface QueResourceAPI {
    * @param page 페이지 번호 (0이면 처음부터, 1이면 다음부터)
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
+
+  ////////////////////////////////////////////////// 유저 관련 인터페이스
+  /**
+   * userId를 통해 특정 사용자의 프로필 데이터를 가져옵니다.
+   */
+  getUserProfileData(
+    userId: string
+  ): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }>;
   /**
    * 리소스 서버에 접근해 사용자 정보를 변경합니다.
    * 전달받은 속성만 변경되며, 정의되지 않은 속성은 변경되지 않습니다.

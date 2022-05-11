@@ -22,6 +22,8 @@ interface ProfilePictureProps extends TouchableOpacityProps {
   style?: StyleProp<ViewStyle & { fontSize?: number }>;
 }
 
+// TBD 프로퍼티로 userProfilePictureURL을 받아 표시. 해당속성이 없으면 userEmail or userId로 Avvvatars or Boring-avatars 생성해서 임시 프로필 보여주기
+
 /** 프로필 사진을 포함한 버튼, 누르면 사용자 페이지로 이동합니다. TouchableOpacity 처럼 작동합니다. */
 function ProfilePicture(props: ProfilePictureProps) {
   /** 페이지 전환을 위한 메인 네비게이터 사용 */
