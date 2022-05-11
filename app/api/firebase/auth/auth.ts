@@ -69,7 +69,6 @@ export async function signInWithGoogle(
       };
     } else if (signInMethods.includes("google.com")) {
       // 구글 로그인 가능
-      console.log("user already exist");
       const signInResult = await signInWithCredential(auth, credential);
 
       // 유저 정보 생성

@@ -20,6 +20,8 @@ import * as WebBrowser from "expo-web-browser";
 import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
 import { styles } from "./OnBoardingScreen";
 import { useSignWithGoogle } from "../../hooks/useSign";
+import { useAuth } from "../../hooks/useAuth";
+import { Toast } from "native-base";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -39,6 +41,9 @@ export function CatchPhraseScreen() {
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
+  /** 사용자 로그인 여부 파악 */
+  const { user } = useAuth();
+
   const [assets, error] = useAssets([
     require("../../assets/custom/logo-colored.png"),
     require("../../assets/custom/google-icon.png"),
@@ -47,13 +52,22 @@ export function CatchPhraseScreen() {
 
   /** 화면이 뒤로가기 버튼을 통해 표시되더라도 useEffect 발동시키기 */
   const isFocused = useIsFocused();
+
+  /** 로그인 여부 파악 */
   useEffect(() => {
-    setIsLoading(true);
-    /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
-    setTimeout(() => {
+    if (isFocused) {
+      let signed = false;
+      setIsLoading(true);
+      if (user.userId) {
+        signed = true;
+      }
       setIsLoading(false);
-    }, 500);
-  }, [isFocused]);
+      if (signed) {
+        // 로그인 되어 있다면 메인 화면으로
+        rootNavigator.navigate("Main");
+      }
+    }
+  }, [isFocused, user.userId]);
 
   /**
    * Google Auth를 통한 계정 인증

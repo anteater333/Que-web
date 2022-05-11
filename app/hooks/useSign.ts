@@ -1,4 +1,4 @@
-import { useToast } from "react-native-toast-notifications";
+import { Toast } from "native-base";
 import * as Google from "expo-auth-session/providers/google";
 import React, { SetStateAction, useCallback } from "react";
 import QueAuthClient from "../api/QueAuthUtils";
@@ -31,13 +31,10 @@ const googleClientId =
 export const useSignWithGoogle = (
   setIsLoading: React.Dispatch<SetStateAction<boolean>>
 ) => {
-  const toast = useToast();
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId: googleClientId,
-    selectAccount: true,
   });
 
-  /** 새 계정 생성시를 위한 네비게이터 */
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   const dispatch = useAppDispatch();
@@ -57,10 +54,6 @@ export const useSignWithGoogle = (
 
         switch (loginResult.status) {
           case QueAuthResponse.OK: {
-            // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-            //    onBoardingNavigator.navigate("CatchPhrase");
-            toast.show("로그인했습니다."); // 임시
-
             // 로그인 정보 설정
             dispatch(
               setCredential({
@@ -69,11 +62,16 @@ export const useSignWithGoogle = (
               })
             );
 
+            // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
+            onBoardingNavigator.navigate("CatchPhrase");
+
             break;
           }
           case QueAuthResponse.Created: {
             // 새 계정이 생성됨, 프로필 설정 화면으로 이동.
-            toast.show("Google 계정을 통해 새 Que 계정을 생성합니다.");
+            Toast.show({
+              description: "Google 계정을 통해 새 Que 계정을 생성합니다.",
+            });
 
             // 로그인 정보 설정
             dispatch(
@@ -95,13 +93,11 @@ export const useSignWithGoogle = (
         }
 
         if (errMsg) {
-          toast.show(errMsg, { type: "danger" });
+          Toast.show({ description: errMsg });
         }
       } catch (error) {
         const errorMessage = signInErrorMessages.default + `\n${error}`;
-        toast.show(errorMessage, {
-          type: "danger",
-        });
+        Toast.show({ description: errorMessage });
       }
     } else {
       // 구글 로그인 팝업 오류 처리
@@ -119,8 +115,9 @@ export const useSignInWithQue = (
   password: string,
   setIsLoading: React.Dispatch<SetStateAction<boolean>>
 ) => {
-  const toast = useToast();
   const dispatch = useAppDispatch();
+
+  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   return useCallback(async () => {
     setIsLoading(true);
@@ -137,7 +134,6 @@ export const useSignInWithQue = (
         case QueAuthResponse.OK: {
           // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
           //    onBoardingNavigator.navigate("CatchPhrase");
-          toast.show("로그인했습니다."); // 임시
 
           // 로그인 정보 설정
           dispatch(
@@ -147,6 +143,7 @@ export const useSignInWithQue = (
             })
           );
 
+          onBoardingNavigator.navigate("CatchPhrase");
           break;
         }
         default: {
@@ -156,13 +153,11 @@ export const useSignInWithQue = (
       }
 
       if (errMsg) {
-        toast.show(errMsg, { type: "danger" });
+        Toast.show({ description: errMsg });
       }
     } catch (error) {
       const errorMessage = signInErrorMessages.default + `\n${error}`;
-      toast.show(errorMessage, {
-        type: "danger",
-      });
+      Toast.show({ description: errorMessage });
     }
 
     setIsLoading(false);

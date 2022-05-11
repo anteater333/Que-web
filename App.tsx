@@ -8,10 +8,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { bColors } from "./app/styles/base";
 import RootScreen from "./app/screens/RootScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { ToastProvider } from "react-native-toast-notifications";
+import { NativeBaseProvider } from "native-base";
 import { Provider } from "react-redux";
 import store, { persistor } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { useAuth } from "./app/hooks/useAuth";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -22,7 +23,7 @@ LogBox.ignoreLogs(["Setting a timer"]);
  */
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  // TBD 전역 상태로 바꾸기
+  // TBD 어플리케이션을 꺼도 로그인이 계속 유지되도록 하기
   const [userSignedIn, setUserSignedIn] = useState(false);
 
   /**
@@ -51,11 +52,6 @@ export default function App() {
     prepare();
   }, []);
 
-  /**
-   * TBD 사용자 로그인 여부 정보를 읽어서 상태 관리 객체에 담기
-   */
-  useEffect(() => {}, []);
-
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
       // 이 코드는 스플래시 화면이 바로 사라지게 만듬
@@ -73,8 +69,8 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider style={styles.rootBackground}>
-          <ToastProvider>
+        <NativeBaseProvider>
+          <SafeAreaProvider style={styles.rootBackground}>
             <SafeAreaView
               onLayout={onLayoutRootView}
               style={styles.rootContainer}
@@ -85,7 +81,7 @@ export default function App() {
                   prefixes: ["https://localhost", "que://"],
                 }}
               >
-                <RootScreen userSignedIn={userSignedIn} />
+                <RootScreen />
               </NavigationContainer>
             </SafeAreaView>
             <StatusBar
@@ -93,8 +89,8 @@ export default function App() {
               style="auto"
               backgroundColor={bColors.transparent}
             />
-          </ToastProvider>
-        </SafeAreaProvider>
+          </SafeAreaProvider>
+        </NativeBaseProvider>
       </PersistGate>
     </Provider>
   );

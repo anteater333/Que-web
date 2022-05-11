@@ -1,8 +1,9 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DummyComponent from "../components/common/DummyComponent";
 import MainScreenHeader from "../components/headers/MainScreenHeader";
+import { useAuth } from "../hooks/useAuth";
 import { MainStackParamList } from "../navigators/MainNavigator";
 import screens from "../styles/screens";
 import HomeScreen from "./HomeScreen";
@@ -17,6 +18,13 @@ const MainStack = createNativeStackNavigator<MainStackParamList>();
  * 어플리케이션 메인 스크린
  */
 function MainScreen() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    // 굳이 토스트 씩이나 써서 메세지 띄울 필요는 없는듯.
+    console.log(`안녕하세요. ${user.nickname}님.`);
+  }, []);
+
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <MainStack.Navigator
