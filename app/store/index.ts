@@ -5,16 +5,47 @@
  */
 
 import { configureStore } from "@reduxjs/toolkit";
-import reducers from "../reducers";
+import rootReducer from "../reducers";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage"; // local storage
+// import session from "redux-persist/lib/storage/session"; // session storage
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage: storage,
+};
+/**
+ * redux-persist
+ * 새로고침 시에도 redux state가 유지되도록 합니다.
+ */
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 /**
  * Globalized app store
  */
 const store = configureStore({
-  reducer: reducers,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    });
+  },
   devTools: process.env.NODE_ENV !== "production",
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export default store;
+export const persistor = persistStore(store);

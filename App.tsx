@@ -10,7 +10,8 @@ import RootScreen from "./app/screens/RootScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Provider } from "react-redux";
-import store from "./app/store";
+import store, { persistor } from "./app/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -71,28 +72,30 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider style={styles.rootBackground}>
-        <ToastProvider>
-          <SafeAreaView
-            onLayout={onLayoutRootView}
-            style={styles.rootContainer}
-          >
-            <NavigationContainer
-              linking={{
-                enabled: true,
-                prefixes: ["https://localhost", "que://"],
-              }}
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider style={styles.rootBackground}>
+          <ToastProvider>
+            <SafeAreaView
+              onLayout={onLayoutRootView}
+              style={styles.rootContainer}
             >
-              <RootScreen userSignedIn={userSignedIn} />
-            </NavigationContainer>
-          </SafeAreaView>
-          <StatusBar
-            translucent={false}
-            style="auto"
-            backgroundColor={bColors.transparent}
-          />
-        </ToastProvider>
-      </SafeAreaProvider>
+              <NavigationContainer
+                linking={{
+                  enabled: true,
+                  prefixes: ["https://localhost", "que://"],
+                }}
+              >
+                <RootScreen userSignedIn={userSignedIn} />
+              </NavigationContainer>
+            </SafeAreaView>
+            <StatusBar
+              translucent={false}
+              style="auto"
+              backgroundColor={bColors.transparent}
+            />
+          </ToastProvider>
+        </SafeAreaProvider>
+      </PersistGate>
     </Provider>
   );
 }
