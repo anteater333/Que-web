@@ -7,12 +7,12 @@ import {
   AuthError,
   AuthErrorCodes,
 } from "firebase/auth";
-import UserType from "../../../types/User";
 import {
   QueAuthResponse,
   QueSignInFailed,
   QueSignInSucceeded,
 } from "../../interfaces";
+import { getUserProfile } from "../firestore/firestore";
 
 /** Access token을 통해 사용자 email 확인 */
 async function fetchUserEmail(token: string): Promise<string> {
@@ -51,11 +51,10 @@ export async function signInWithGoogle(
       // 회원가입 쪽으로 넘기기
       const signInResult = await signInWithCredential(auth, credential);
 
-      // TBD 유저 정보 생성
-      const signedUser: UserType = {
-        userId: signInResult.user.uid,
-      };
+      // 유저 정보 생성
+      const signedUser = (await getUserProfile(signInResult.user.uid)).user;
 
+      // 토큰 정보 저장
       const token = await signInResult.user.getIdToken(true);
 
       return {
@@ -68,11 +67,10 @@ export async function signInWithGoogle(
       console.log("user already exist");
       const signInResult = await signInWithCredential(auth, credential);
 
-      // TBD 유저 정보 생성
-      const signedUser: UserType = {
-        userId: signInResult.user.uid,
-      };
+      // 유저 정보 생성
+      const signedUser = (await getUserProfile(signInResult.user.uid)).user;
 
+      // 토큰 정보 저장
       const token = await signInResult.user.getIdToken(true);
 
       return {
@@ -129,11 +127,11 @@ export async function signInWithEmail(
       password
     );
 
-    // TBD 로그인 여부 저장
-    const signedUser: UserType = {
-      userId: signInResult.user.uid,
-    };
+    // 로그인 여부 저장
+    // 유저 정보 생성
+    const signedUser = (await getUserProfile(signInResult.user.uid)).user;
 
+    // 토큰 정보 저장
     const token = await signInResult.user.getIdToken(true);
 
     return { status: QueAuthResponse.OK, user: signedUser, token: token };

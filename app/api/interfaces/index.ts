@@ -1,9 +1,23 @@
 import UserType from "../../types/User";
 import VideoType from "../../types/Video";
 
+export enum QueResourceResponseErrorType {
+  // Bad Requests
+  BadBody = "400",
+  AlreadyExist = "409",
+  TooManyRequest = "429",
+  Wrong = "403",
+  NotFound = "404",
+  Timeout = "408",
+  SignInRequired = "401",
+  Gone = "410",
+  // Server Error
+  UndefinedError = "500",
+}
+
 export interface QueResourceResponse {
   success: boolean;
-  errorMsg?: string;
+  errorType?: QueResourceResponseErrorType;
 }
 
 /**
@@ -29,7 +43,7 @@ export interface QueResourceAPI {
    * 리소스 서버에 접근해 사용자 정보를 변경합니다.
    * 전달받은 속성만 변경되며, 정의되지 않은 속성은 변경되지 않습니다.
    */
-  updateUserProfile(updateData: UserType): Promise<QueResourceResponse>; // TBD 에러 메세지 정리
+  updateUserProfile(updateData: UserType): Promise<QueResourceResponse>;
 }
 
 /**

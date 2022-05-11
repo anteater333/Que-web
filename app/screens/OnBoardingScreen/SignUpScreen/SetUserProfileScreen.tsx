@@ -16,6 +16,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { validateNickname } from "../../../utils/validator";
 
 import * as ImagePicker from "expo-image-picker";
+import { useToast } from "react-native-toast-notifications";
 
 const styles = signUpScreenStyle;
 
@@ -39,6 +40,10 @@ export default function SetUserProfileScreen() {
   /** 이름 유효성 검사 */
   const [isValidName, setIsValidName] = useState<boolean>(false);
 
+  /** Toast 컴포넌트 사용 */
+  const toast = useToast();
+
+  /** SignUp context */
   const {
     buttonAction,
     setButtonAction,
@@ -71,8 +76,12 @@ export default function SetUserProfileScreen() {
 
     if (!pickerResult.cancelled) {
       if (pickerResult.height > SIZE_LIMIT || pickerResult.width > SIZE_LIMIT) {
-        // TBD 경고 메세지 출력하기
-        alert("사진이 너무 큽니다.");
+        toast.show(
+          `사진이 너무 큽니다! (크기 제한 : ${SIZE_LIMIT}*${SIZE_LIMIT})`,
+          {
+            type: "danger",
+          }
+        );
         return;
       }
 

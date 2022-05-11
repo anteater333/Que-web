@@ -6,7 +6,6 @@ import { QueAuthResponse } from "../api/interfaces";
 import { useAppDispatch } from "./store";
 import { setCredential } from "../reducers/authReducer";
 
-// TBD 로그인 인터페이스에서 타입 지정, 그 리턴 타입을 키로써 가지도록 강제하기.
 /** 로그인 과정에서의 에러 메세지 */
 const signInErrorMessages: {
   [key in QueAuthResponse | "default"]?: string;

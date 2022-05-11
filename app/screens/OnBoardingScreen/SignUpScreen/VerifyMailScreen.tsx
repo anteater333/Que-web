@@ -82,6 +82,7 @@ export default function VerifyMailScreen() {
   const toast = useToast();
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
+  // ref 사용방법 갈구하란 의미입니다.
   // const textInputEmail = useRef();
   // const textInputCode = useRef();
 

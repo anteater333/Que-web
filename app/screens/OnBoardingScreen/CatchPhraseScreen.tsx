@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
@@ -22,15 +22,16 @@ import { styles } from "./OnBoardingScreen";
 import { useSignWithGoogle } from "../../hooks/useSign";
 
 WebBrowser.maybeCompleteAuthSession();
+
 /**
  * 캐치프레이즈 & 회원가입 권유
  * 백그라운드에 휘황찬란한 GIF
  * @returns
  */
 export function CatchPhraseScreen() {
+  /** 회원가입 / 로그인 시 로딩 표시 */
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
   /** TBD: 영상 교체하기 */
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
 
@@ -43,6 +44,16 @@ export function CatchPhraseScreen() {
     require("../../assets/custom/google-icon.png"),
     require("../../assets/custom/que-icon.png"),
   ]);
+
+  /** 화면이 뒤로가기 버튼을 통해 표시되더라도 useEffect 발동시키기 */
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    setIsLoading(true);
+    /** TBD: 화면 최초 렌더링 후 현재 인증정보 확인해서 main screen으로 넘어가기 */
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, [isFocused]);
 
   /**
    * Google Auth를 통한 계정 인증

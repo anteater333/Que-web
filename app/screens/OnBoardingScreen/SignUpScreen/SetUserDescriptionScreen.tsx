@@ -51,7 +51,6 @@ export default function SetUserDescriptionScreen() {
   /** 버튼 액션, 자기소개를 서버에 등록하기 */
   const postUserDescription = useCallback(async () => {
     setIsLoading(true);
-    // TBD 자기소개 등록하기 API 호출
     const result = await updateUserProfile({
       nickname: newUserProfile.nickname,
       profilePictureUrl: newUserProfile.profilePictureUrl,
@@ -63,7 +62,7 @@ export default function SetUserDescriptionScreen() {
       onBoardingNavigator.navigate("CatchPhrase");
     } else {
       // TBD 업데이트 과정 에러 처리
-      alert(`프로필 등록 과정에서 에러가 발생했습니다. : ` + result.errorMsg);
+      alert(`프로필 등록 과정에서 에러가 발생했습니다. : ` + result.errorType);
     }
     setIsLoading(false);
   }, [newUserProfile.nickname, newUserProfile.profilePictureUrl, description]);

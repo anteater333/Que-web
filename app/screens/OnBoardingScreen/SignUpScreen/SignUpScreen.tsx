@@ -117,7 +117,7 @@ function SignUpScreen({
 }
 
 /**
- * TBD: 추가 개인화 화면 기획 & 개발
+ * TBD: 추가 개인화 화면 기획 & 개발, 장기계획
  */
 
 export default SignUpScreen;
