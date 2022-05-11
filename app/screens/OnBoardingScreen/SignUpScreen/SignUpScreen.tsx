@@ -8,6 +8,7 @@ import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
 import { useAuth } from "../../../hooks/useAuth";
 import {
+  OnBoardingStackParamList,
   OnBoardingStackScreenProp,
   SignUpStackNavigationProp,
   SignUpStackParamList,
@@ -29,6 +30,7 @@ function SignUpScreen({
   route,
   navigation,
 }: OnBoardingStackScreenProp<"SignUp">) {
+  // Context states
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
   const [hideButton, setHideButton] = useState<boolean>(true);
   const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
@@ -59,7 +61,9 @@ function SignUpScreen({
         }}
       >
         <SignUpStack.Navigator
-          initialRouteName="VerifyMail"
+          initialRouteName={
+            route.params.hasProvider ? "SetUserProfile" : "VerifyMail"
+          }
           screenOptions={{
             contentStyle: screens.defaultScreenLayout,
             header: (props) => (

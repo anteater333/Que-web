@@ -17,6 +17,7 @@ import { validateNickname } from "../../../utils/validator";
 
 import * as ImagePicker from "expo-image-picker";
 import { useToast } from "react-native-toast-notifications";
+import { useAuth } from "../../../hooks/useAuth";
 
 const styles = signUpScreenStyle;
 
@@ -39,6 +40,9 @@ export default function SetUserProfileScreen() {
   const [userNickname, setUserNickname] = useState<string>("");
   /** 이름 유효성 검사 */
   const [isValidName, setIsValidName] = useState<boolean>(false);
+
+  /** OAuth Provider 통한 계정 생성 시 미리 설정된 닉네임 불러오기 용도 */
+  const { user } = useAuth();
 
   /** Toast 컴포넌트 사용 */
   const toast = useToast();
@@ -96,6 +100,7 @@ export default function SetUserProfileScreen() {
       alert("TBD 프로필 사진 없이 진행 하시겠습니까?");
     }
 
+    // 회원가입 컨텍스트에 임시로 등록
     setNewUserProfile((prevState) => {
       return {
         profilePictureUrl: profileURL,
@@ -114,6 +119,13 @@ export default function SetUserProfileScreen() {
     setProfileURL("");
   }, []);
 
+  /** Provider를 통한 신규 계정 생성 시 미리 닉네임 설정 */
+  useEffect(() => {
+    if (user.nickname) {
+      setUserNickname(user.nickname);
+    }
+  }, [user.nickname]);
+
   /** 닉네임 유효성 검증 */
   useEffect(() => {
     const valid = userNickname.length != 0 && validateNickname(userNickname);
@@ -127,7 +139,7 @@ export default function SetUserProfileScreen() {
     if (isValidName) {
       setButtonAction({ action: saveUserProfile });
     }
-  }, [isValidName, userNickname]);
+  }, [isValidName, profileURL, userNickname]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -164,6 +176,8 @@ export default function SetUserProfileScreen() {
       <View style={styles.bottomContainer}>
         <CommonTextInput
           style={[styles.textInputNickname]}
+          autoFocus
+          selectTextOnFocus
           placeholder="당신의 이름은?"
           textContentType="name"
           accessibilityRole="text"

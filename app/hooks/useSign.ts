@@ -5,6 +5,8 @@ import QueAuthClient from "../api/QueAuthUtils";
 import { QueAuthResponse } from "../api/interfaces";
 import { useAppDispatch } from "./store";
 import { setCredential } from "../reducers/authReducer";
+import { useNavigation } from "@react-navigation/native";
+import { OnBoardingStackNavigationProp } from "../navigators/OnBoardingNavigator";
 
 /** 로그인 과정에서의 에러 메세지 */
 const signInErrorMessages: {
@@ -34,6 +36,9 @@ export const useSignWithGoogle = (
     clientId: googleClientId,
     selectAccount: true,
   });
+
+  /** 새 계정 생성시를 위한 네비게이터 */
+  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   const dispatch = useAppDispatch();
 
@@ -67,8 +72,8 @@ export const useSignWithGoogle = (
             break;
           }
           case QueAuthResponse.Created: {
-            // TBD google 계정으로 새 계정으로 생성된 경우
-            toast.show("새 계정을 생성합니다."); // 임시
+            // 새 계정이 생성됨, 프로필 설정 화면으로 이동.
+            toast.show("Google 계정을 통해 새 Que 계정을 생성합니다.");
 
             // 로그인 정보 설정
             dispatch(
@@ -77,6 +82,9 @@ export const useSignWithGoogle = (
                 token: loginResult.token,
               })
             );
+
+            // 네비게이션
+            onBoardingNavigator.navigate("SignUp", { hasProvider: true });
 
             break;
           }
@@ -96,16 +104,9 @@ export const useSignWithGoogle = (
         });
       }
     } else {
-      // 오류 처리
+      // 구글 로그인 팝업 오류 처리
     }
 
-    // if (result) {
-    //   // 로그인 성공함
-    //   // navigate to signup screen with google user info
-    //   onBoardingNavigator.navigate("SignUp", {
-    //     someGoogleTokenShit: { userName: "삼식이" },
-    //   });
-    // }
     setIsLoading(false);
   }, [response, request]);
 };

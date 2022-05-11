@@ -7,6 +7,7 @@ import {
   AuthError,
   AuthErrorCodes,
 } from "firebase/auth";
+import UserType from "../../../types/User";
 import {
   QueAuthResponse,
   QueSignInFailed,
@@ -50,9 +51,13 @@ export async function signInWithGoogle(
       // 기존 가입 계정 없음
       // 회원가입 쪽으로 넘기기
       const signInResult = await signInWithCredential(auth, credential);
+      const userResult = signInResult.user;
 
-      // 유저 정보 생성
-      const signedUser = (await getUserProfile(signInResult.user.uid)).user;
+      // 임시로 새 유저 정보 생성
+      const signedUser: UserType = {
+        userId: userResult.uid,
+        nickname: userResult.displayName!,
+      };
 
       // 토큰 정보 저장
       const token = await signInResult.user.getIdToken(true);
