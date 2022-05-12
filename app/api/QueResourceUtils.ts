@@ -47,12 +47,10 @@ if (process.env.NODE_ENV !== "test") {
 
 export default QueResourceClient;
 
-export const getVideoDownloadURL = QueResourceClient.getVideoDownloadURL;
-
-export const getImageDownloadURL = QueResourceClient.getImageDownloadURL;
-
-export const getVideoCardData = QueResourceClient.getVideoCardData;
-
-export const getUserProfileData = QueResourceClient.getUserProfileData;
-
-export const updateUserProfile = QueResourceClient.updateUserProfile;
+export const {
+  getImageDownloadURL,
+  getUserProfileData,
+  getVideoCardData,
+  getVideoDownloadURL,
+  updateUserProfile,
+} = QueResourceClient;

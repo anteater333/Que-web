@@ -58,11 +58,10 @@ function ProfilePicture(props: ProfilePictureProps) {
       {...props}
       testID={props.testID ? props.testID : "profileButton"}
       onPress={navigateToUserPage}
-      style={[styles.default, props.style]}
+      style={[props.style, styles.default]}
     >
       {assets ? (
         <Image
-          resizeMode="contain"
           style={[styles.profilePic]}
           source={assets[0] as ImageSourcePropType}
         />

@@ -4,9 +4,10 @@ import React, { SetStateAction, useCallback } from "react";
 import QueAuthClient from "../api/QueAuthUtils";
 import { QueAuthResponse } from "../api/interfaces";
 import { useAppDispatch } from "./store";
-import { setCredential } from "../reducers/authReducer";
+import { clearCredential, setCredential } from "../reducers/authReducer";
 import { useNavigation } from "@react-navigation/native";
 import { OnBoardingStackNavigationProp } from "../navigators/OnBoardingNavigator";
+import { RootStackNavigationProp } from "../navigators/RootNavigator";
 
 /** 로그인 과정에서의 에러 메세지 */
 const signInErrorMessages: {
@@ -62,6 +63,8 @@ export const useSignWithGoogle = (
               })
             );
 
+            setIsLoading(false);
+
             // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
             onBoardingNavigator.navigate("CatchPhrase");
 
@@ -81,6 +84,8 @@ export const useSignWithGoogle = (
               })
             );
 
+            setIsLoading(false);
+
             // 네비게이션
             onBoardingNavigator.navigate("SignUp", { hasProvider: true });
 
@@ -88,6 +93,8 @@ export const useSignWithGoogle = (
           }
           default: {
             errMsg = signInErrorMessages[loginResult.status];
+
+            setIsLoading(false);
             break;
           }
         }
@@ -98,12 +105,14 @@ export const useSignWithGoogle = (
       } catch (error) {
         const errorMessage = signInErrorMessages.default + `\n${error}`;
         Toast.show({ description: errorMessage });
+
+        setIsLoading(false);
       }
     } else {
       // 구글 로그인 팝업 오류 처리
-    }
 
-    setIsLoading(false);
+      setIsLoading(false);
+    }
   }, [response, request]);
 };
 
@@ -162,4 +171,26 @@ export const useSignInWithQue = (
 
     setIsLoading(false);
   }, [userEmail, password]);
+};
+
+/**
+ * 로그아웃을 진행하고 첫 화면으로 이동합니다.
+ */
+export const useSignOut = () => {
+  const dispatch = useAppDispatch();
+
+  const rootNavigator = useNavigation<RootStackNavigationProp>();
+
+  return useCallback(async () => {
+    // TBD 정말 로그아웃 하시겠습니까? 물어보기 Modal 등을 통해
+    try {
+      await QueAuthClient.signOut();
+
+      dispatch(clearCredential());
+
+      rootNavigator.navigate("OnBoarding");
+    } catch (error) {
+      alert(`로그아웃 중 에러가 발생했습니다. ${error}`);
+    }
+  }, []);
 };

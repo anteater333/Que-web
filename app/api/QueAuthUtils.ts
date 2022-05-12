@@ -28,6 +28,7 @@ if (process.env.NODE_ENV !== "test") {
     signUpWithQueSelfManaged: verificationClient.signUpWithQueSelfManaged,
     signInWithGoogle: authClient.signInWithGoogle,
     signInWithQueSelfManaged: authClient.signInWithQueSelfManaged,
+    signOut: authClient.signOut,
   };
 } else {
   // TBD 테스트용 메소드들
@@ -41,14 +42,17 @@ if (process.env.NODE_ENV !== "test") {
     signInWithGoogle: async () => {
       return { status: QueAuthResponse.OK, token: "", user: {} };
     },
+    signOut: async () => {},
   };
 }
 
 export default QueAuthClient;
 
-export const requestVerificationCodeMail =
-  QueAuthClient.requestVerificationCodeMail;
-
-export const sendVerificationCode = QueAuthClient.sendVerificationCode;
-
-export const signUpWithQueSelfManaged = QueAuthClient.signUpWithQueSelfManaged;
+export const {
+  requestVerificationCodeMail,
+  sendVerificationCode,
+  signInWithGoogle,
+  signInWithQueSelfManaged,
+  signOut,
+  signUpWithQueSelfManaged,
+} = QueAuthClient;

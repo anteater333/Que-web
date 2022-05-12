@@ -118,4 +118,6 @@ export interface QueAuthAPI {
   signInWithGoogle(
     accessToken: string
   ): Promise<QueSignInFailed | QueSignInSucceeded>;
+  /** 로그아웃 합니다. */
+  signOut(): Promise<void>;
 }

@@ -6,7 +6,11 @@ import {
   getVideoCardDataFromFirestore,
   updateCurrentUserProfile,
 } from "./firestore/firestore";
-import { signInWithEmail, signInWithGoogle } from "./auth/auth";
+import {
+  signInWithEmail,
+  signInWithGoogle,
+  signOutFirebase,
+} from "./auth/auth";
 
 // initializing firebase client
 if (!getApps().length) {
@@ -24,4 +28,5 @@ export const FirebaseResourceClient = {
 export const FirebaseAuthClient = {
   signInWithGoogle: signInWithGoogle,
   signInWithQueSelfManaged: signInWithEmail,
+  signOut: signOutFirebase,
 };

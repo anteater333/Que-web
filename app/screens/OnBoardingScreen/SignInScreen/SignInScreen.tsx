@@ -1,26 +1,16 @@
-import { useNavigation } from "@react-navigation/native";
 import { useAssets } from "expo-asset";
 import { StatusBar } from "expo-status-bar";
-import { SetStateAction, useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  Image,
-  ImageSourcePropType,
-  SafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Image, ImageSourcePropType, SafeAreaView, View } from "react-native";
 import SocialLoginButton from "../../../components/buttons/SocialLoginButton";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
-import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
 
 import * as WebBrowser from "expo-web-browser";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
-import { useAuth } from "../../../hooks/useAuth";
 import { useSignInWithQue, useSignWithGoogle } from "../../../hooks/useSign";
 
 const styles = signInScreenStyle;
@@ -44,14 +34,6 @@ function SignInScreen() {
   const [assets, error] = useAssets([
     require("../../../assets/custom/logo-big.png"),
   ]);
-
-  const { user } = useAuth();
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
-  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** 이메일과 비밀번호를 통해 로그인 진행 */
   const loginWithQue = useSignInWithQue(userEmail, password, setIsLoading);

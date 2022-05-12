@@ -162,3 +162,11 @@ export async function signInWithEmail(
     }
   }
 }
+
+/**
+ * firebase 계정 로그아웃.
+ * 조촐합니다.
+ */
+export async function signOutFirebase(): Promise<void> {
+  await getAuth().signOut();
+}

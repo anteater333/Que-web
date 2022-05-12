@@ -21,7 +21,6 @@ import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadin
 import { styles } from "./OnBoardingScreen";
 import { useSignWithGoogle } from "../../hooks/useSign";
 import { useAuth } from "../../hooks/useAuth";
-import { Toast } from "native-base";
 
 WebBrowser.maybeCompleteAuthSession();
 
