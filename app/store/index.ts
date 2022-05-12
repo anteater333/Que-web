@@ -16,13 +16,14 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // local storage
+import AsyncStorage from "@react-native-async-storage/async-storage"; // v6
+// import storage from "redux-persist/lib/storage"; // local storage
 // import session from "redux-persist/lib/storage/session"; // session storage
 
 const persistConfig = {
   key: "root",
   version: 1,
-  storage: storage,
+  storage: AsyncStorage,
 };
 /**
  * redux-persist
