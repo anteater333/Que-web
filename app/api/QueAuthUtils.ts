@@ -29,6 +29,7 @@ if (process.env.NODE_ENV !== "test") {
     signInWithGoogle: authClient.signInWithGoogle,
     signInWithQueSelfManaged: authClient.signInWithQueSelfManaged,
     signOut: authClient.signOut,
+    refreshUser: authClient.refreshUser,
   };
 } else {
   // TBD 테스트용 메소드들
@@ -43,6 +44,7 @@ if (process.env.NODE_ENV !== "test") {
       return { status: QueAuthResponse.OK, token: "", user: {} };
     },
     signOut: async () => {},
+    refreshUser: async () => {},
   };
 }
 

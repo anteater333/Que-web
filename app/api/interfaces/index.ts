@@ -120,4 +120,6 @@ export interface QueAuthAPI {
   ): Promise<QueSignInFailed | QueSignInSucceeded>;
   /** 로그아웃 합니다. */
   signOut(): Promise<void>;
+  /** 사용자 토큰을 갱신합니다. */
+  refreshUser(): Promise<void>;
 }

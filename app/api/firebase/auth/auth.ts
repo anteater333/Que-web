@@ -170,3 +170,11 @@ export async function signInWithEmail(
 export async function signOutFirebase(): Promise<void> {
   await getAuth().signOut();
 }
+
+/**
+ * 최초 실행 시 호출해 로그인을 유지하도록 한다.
+ */
+export async function refreshUser(): Promise<void> {
+  // 직접 자동 로그인 구현해줄 필요가 없는 것 같습니다.
+  // Do nothing
+}

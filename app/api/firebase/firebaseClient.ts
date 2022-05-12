@@ -7,6 +7,7 @@ import {
   updateCurrentUserProfile,
 } from "./firestore/firestore";
 import {
+  refreshUser,
   signInWithEmail,
   signInWithGoogle,
   signOutFirebase,
@@ -29,4 +30,5 @@ export const FirebaseAuthClient = {
   signInWithGoogle: signInWithGoogle,
   signInWithQueSelfManaged: signInWithEmail,
   signOut: signOutFirebase,
+  refreshUser: refreshUser,
 };
