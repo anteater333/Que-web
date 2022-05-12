@@ -66,7 +66,9 @@ export const useSignWithGoogle = (
             setIsLoading(false);
 
             // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-            onBoardingNavigator.navigate("CatchPhrase");
+            const curNavState = onBoardingNavigator.getState();
+            if (curNavState.routes[curNavState.index].name !== "CatchPhrase")
+              onBoardingNavigator.navigate("CatchPhrase");
 
             break;
           }

@@ -20,11 +20,6 @@ const MainStack = createNativeStackNavigator<MainStackParamList>();
 function MainScreen() {
   const { user } = useAuth();
 
-  useEffect(() => {
-    // 굳이 토스트 씩이나 써서 메세지 띄울 필요는 없는듯.
-    console.log(`안녕하세요. ${user.nickname}님.`);
-  }, []);
-
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <MainStack.Navigator

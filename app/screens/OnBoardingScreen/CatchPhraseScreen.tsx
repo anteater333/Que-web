@@ -18,9 +18,10 @@ import { bColors, bFont, bSpace } from "../../styles/base";
 import screens from "../../styles/screens";
 import * as WebBrowser from "expo-web-browser";
 import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
-import { styles } from "./OnBoardingScreen";
+import { styles } from "./OnBoardingScreen.style";
 import { useSignWithGoogle } from "../../hooks/useSign";
 import { useAuth } from "../../hooks/useAuth";
+import { Toast } from "native-base";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -32,6 +33,9 @@ WebBrowser.maybeCompleteAuthSession();
 export function CatchPhraseScreen() {
   /** 회원가입 / 로그인 시 로딩 표시 */
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  /** 로그인 여부 */
+  const [signed, setSigned] = useState<boolean>(false);
 
   /** TBD: 영상 교체하기 */
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
@@ -52,21 +56,21 @@ export function CatchPhraseScreen() {
   /** 화면이 뒤로가기 버튼을 통해 표시되더라도 useEffect 발동시키기 */
   const isFocused = useIsFocused();
 
-  /** 로그인 여부 파악 */
+  /** 로그인 여부 저장 */
   useEffect(() => {
     if (isFocused) {
-      let signed = false;
-      setIsLoading(true);
-      if (user.userId) {
-        signed = true;
-      }
-      setIsLoading(false);
-      if (signed) {
-        // 로그인 되어 있다면 메인 화면으로
-        rootNavigator.navigate("Main");
-      }
+      setSigned(!!user.userId);
     }
   }, [isFocused, user.userId]);
+
+  /** 로그인 여부 파악 완료되면 화면 전환 */
+  useEffect(() => {
+    if (isFocused && signed && !!user.userId) {
+      Toast.show({ description: `안녕하세요. ${user.nickname}님.` });
+      // 로그인 되어 있다면 메인 화면으로
+      rootNavigator.navigate("Main");
+    }
+  }, [isFocused, signed, user.userId]);
 
   /**
    * Google Auth를 통한 계정 인증
