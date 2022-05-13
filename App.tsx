@@ -1,13 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, LogBox, SafeAreaView } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
-import { Entypo } from "@expo/vector-icons";
-import * as SplashScreen from "expo-splash-screen";
-import * as Font from "expo-font";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet, LogBox } from "react-native";
+import React from "react";
 import { bColors } from "./app/styles/base";
-import RootScreen from "./app/screens/RootScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NativeBaseProvider } from "native-base";
+import { Provider } from "react-redux";
+import store, { persistor } from "./app/store";
+import { PersistGate } from "redux-persist/integration/react";
+import AppContainer from "./app/AppContainer";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -17,70 +16,16 @@ LogBox.ignoreLogs(["Setting a timer"]);
  * TBD: 최소한의 로직만 남겨두기
  */
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
-  // TBD 전역 상태로 바꾸기
-  const [userSignedIn, setUserSignedIn] = useState(false);
-
-  /**
-   * 빈 배열을 전달한 useEffect는 최초 렌더링에서만 실행된다.
-   */
-  useEffect(() => {
-    /**
-     * Splash screen 함수
-     */
-    async function prepare() {
-      try {
-        // 리소스를 fetch하는 동안 splash를 보이게 하기
-        await SplashScreen.preventAutoHideAsync();
-
-        // 폰트  미리 로드. 여기다가 원하는 API콜을 만들 수 있음
-        await Font.loadAsync(Entypo.font);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // 어플리케이션에게 준비됐다고 말하기
-        setAppIsReady(true);
-      }
-    }
-
-    // 함수 호출
-    prepare();
-  }, []);
-
-  /**
-   * TBD 사용자 로그인 여부 정보를 읽어서 상태 관리 객체에 담기
-   */
-  useEffect(() => {}, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // 이 코드는 스플래시 화면이 바로 사라지게 만듬
-      // 우리가 'setAppIsReady' 다음 호출하면
-      // 앱이 미처 렌더링 되기 전의 빈 화면을 볼 수도 있음.
-      // 그러니까 root view가 layout을 생성한 것을 인식한 다음 사라지게 하는게 좋다.
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
-
   return (
-    <SafeAreaProvider style={styles.rootBackground}>
-      <SafeAreaView onLayout={onLayoutRootView} style={styles.rootContainer}>
-        <NavigationContainer
-          linking={{ enabled: true, prefixes: ["https://localhost", "que://"] }}
-        >
-          <RootScreen userSignedIn={userSignedIn} />
-        </NavigationContainer>
-      </SafeAreaView>
-      <StatusBar
-        translucent={false}
-        style="auto"
-        backgroundColor={bColors.transparent}
-      />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NativeBaseProvider>
+          <SafeAreaProvider style={styles.rootBackground}>
+            <AppContainer />
+          </SafeAreaProvider>
+        </NativeBaseProvider>
+      </PersistGate>
+    </Provider>
   );
 }
 
@@ -92,18 +37,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: bColors.white,
     alignItems: "center",
-  },
-  rootContainer: {
-    width: "100%",
-    flex: 1,
-    maxWidth: 480,
-    shadowColor: bColors.black,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 50,
-    elevation: 5,
   },
 });

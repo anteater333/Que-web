@@ -20,7 +20,7 @@ export function formatCount(count: number) {
  * @returns
  */
 export function formatTimer(length: number) {
-  // TBD : 시간도 대응하기, 근데 서비스 특성 상 그럴 일이나 있겠어요?
+  // TBD : 시간(hh)도 대응하기, 근데 서비스 특성 상 그럴 일이나 있겠어요?
   let min, sec;
   min = Math.floor(length / 60);
   sec = length % 60;

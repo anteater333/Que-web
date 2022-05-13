@@ -32,9 +32,11 @@ export const mainScreenHeaderStyle = StyleSheet.create({
     justifyContent: "flex-end",
     marginRight: bSpace.xlarge,
   },
+  headerButtonView: {
+    marginLeft: bSpace.xlarge,
+  },
   headerButtonIcon: {
     fontSize: sharedSize,
-    marginLeft: bSpace.xlarge,
   },
 });
 

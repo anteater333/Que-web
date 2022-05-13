@@ -6,12 +6,20 @@ import {
   limit,
   startAfter,
   QueryDocumentSnapshot,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 
-import { VideoCollection } from "./collections";
+import { getAuth } from "firebase/auth";
+
+import { VideoCollection, UserCollection } from "./collections";
 
 import VideoType from "../../../types/Video";
 import UserType from "../../../types/User";
+import {
+  QueResourceResponse,
+  QueResourceResponseErrorType,
+} from "../../interfaces";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
@@ -79,4 +87,62 @@ export async function getVideoCardDataFromFirestore(
 
     return [];
   }
+}
+
+/**
+ * userId를 입력받아 특정 유저에 대한 프로필 데이터를 가져옴
+ * @param userId
+ * @returns
+ */
+export async function getUserProfile(
+  userId: string
+): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }> {
+  try {
+    const userDataSnap = await getDoc<UserType>(doc(UserCollection, userId));
+
+    if (!userDataSnap.exists()) {
+      console.error(`getUserProfile: 404`);
+      return { user: {}, errorType: QueResourceResponseErrorType.NotFound };
+    } else {
+      return { user: { userId: userId, ...userDataSnap.data() } };
+    }
+  } catch (error) {
+    console.error(error);
+    return { user: {}, errorType: QueResourceResponseErrorType.UndefinedError };
+  }
+}
+
+/**
+ * 현재 유저의 프로필을 업데이트
+ * 어차피 사용자가 수정할 수 있는 유저 프로필은 자기 자신밖에 없습니다.
+ */
+export async function updateCurrentUserProfile(
+  updateData: UserType
+): Promise<QueResourceResponse> {
+  const currentUser = getAuth().currentUser;
+  if (!currentUser) {
+    // 로그인 해주세요
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  const uid = currentUser.uid;
+  try {
+    await updateDoc<UserType>(doc(UserCollection, uid), {
+      // 프로필만 수정될 수 있도록 제한할 것
+      description: updateData.description,
+      nickname: updateData.nickname,
+      profilePictureUrl: updateData.profilePictureUrl,
+    });
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
+  }
+
+  return { success: true };
 }

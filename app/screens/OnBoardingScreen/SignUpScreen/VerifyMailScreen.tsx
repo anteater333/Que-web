@@ -7,11 +7,34 @@ import {
   Text,
   View,
 } from "react-native";
+import { Toast } from "native-base";
+import { QueAuthResponse } from "../../../api/interfaces";
+import authClient from "../../../api/QueAuthUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
+
+/** 메일 입력 후 오류 안내 메세지 */
+const failMessages: {
+  [key in QueAuthResponse | "default"]?: string;
+} = {
+  "429":
+    "해당 메일로 너무 많은 요청이 들어왔습니다. \n나중에 다시 시도해주세요.",
+  "409": "해당 메일로 이미 가입한 사용자가 존재합니다.",
+  default: `인증 메일을 전송하는 과정에서 오류가 발생했습니다.\n메일 주소를 다시 확인해주세요.`,
+};
+
+/** 인증번호 입력 후 오류 안내 메세지 */
+const codeMatchingMessages: {
+  [key in QueAuthResponse | "default"]?: string;
+} = {
+  "429": `너무 많이 틀렸습니다!\n인증 번호를 다시 요청해주세요.`,
+  "408": `입력 시간을 초과했습니다.\n인증 번호를 다시 요청해주세요`,
+  "403": `잘못된 인증번호입니다. 다시 입력해주세요.`,
+  default: `인증 과정에서 오류가 발생했습니다.`,
+};
 
 /**
  * Step 1. 이메일 확인
@@ -22,11 +45,19 @@ export default function VerifyMailScreen() {
   const [userEmail, setUserEmail] = useState<string>("");
   /** 메일 주소 검증, 메일 전송 실패 시 시각적 표시 용도 */
   const [isMailInvalid, setIsMailInvalid] = useState<boolean>(false);
+  /** 매일 전송 실패 시 메세지 설정 */
+  const [failMessage, setFailMessage] = useState<string | undefined>(
+    failMessages.default
+  );
   /** 인증 코드 입력 데이터 */
   const [verifyingCode, setVerifyingCode] = useState<string>("");
   /** 인증 코드 검증 성공 여부, 실패 시 시각적 표시 용도 */
   const [isCodeMatching, setIsCodeMatching] = useState<boolean>(true);
-  /** 메일 발송 여부 */
+  /** 인증 코드 입력 실패 시 메세지 설정  */
+  const [codeMatchingMessage, setCodeMatchingMessage] = useState<
+    string | undefined
+  >(codeMatchingMessages.default);
+  /** 메일 발송 요청 여부 */
   const [sentMail, setSentMail] = useState<boolean>(false);
   /** 인증 가능 잔여 시간 표시 */
   const [timer, setTimer] = useState<number>(0);
@@ -40,48 +71,98 @@ export default function VerifyMailScreen() {
   const {
     buttonEnabled,
     setButtonEnabled,
+    setHideButton,
     buttonAction,
     setButtonAction,
     signUpNavigator,
+    setIsLoading,
   } = useContext(SignUpContext);
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
+  // ref 사용방법 갈구하란 의미입니다.
   // const textInputEmail = useRef();
   // const textInputCode = useRef();
-  /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
-  const sendVerificationMail = useCallback(() => {
-    // TBD : 인증 메일 전송 API 호출
-    const mailOk = true;
 
-    if (!mailOk) {
-      // TBD : 메일 전송 과정에서 오류 발생 시 텍스트 인풋 컴포넌트 오류 표시하기
-      // setIsMailInavlid(true) // 유효하지 않은 메일 주소
+  /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
+  const sendVerificationMail = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // 메일 요청
+      const mailReqResult = await authClient.requestVerificationCodeMail(
+        userEmail
+      );
+
+      if (mailReqResult === QueAuthResponse.OK) {
+        // 메일 전송 성공에 따라 다음 UI 활성화
+        setIsMailInvalid(false);
+        setSentMail(true);
+        setVerifyingCode("");
+        setButtonEnabled(false);
+        setTimer(300);
+      } else if (mailReqResult === QueAuthResponse.AlreadyPassed) {
+        // 메일 인증 이미 성공한 계정
+        // 코드 인증 생략하고 비밀번호 설정 화면으로
+        Toast.show({ description: `저장된 인증 정보를 확인했습니다.` });
+        signUpNavigator!.navigate("SetPassword", { userEmail: userEmail });
+      } else {
+        // 메일 전송 실패
+        setIsMailInvalid(true);
+
+        const strStatusCode = mailReqResult;
+        if (strStatusCode in failMessages) {
+          setFailMessage(failMessages[strStatusCode]);
+        } else {
+          setFailMessage(failMessages.default);
+        }
+      }
+    } catch (error) {
       setIsMailInvalid(true);
-    } else {
-      // 메일 전송 결과에 따라 다음 UI 활성화
-      setSentMail(true);
-      setVerifyingCode("");
-      setButtonEnabled(false);
-      setTimer(300);
+      setFailMessage(failMessages.default);
+      alert("메일 전송 요청 과정에서 에러가 발생했습니다 : " + error);
     }
+    setIsLoading(false);
   }, [userEmail]);
 
   /** 사용자가 입력한 코드를 검증한 다음 결과에 따라 다음 단계로 넘어갑니다. */
-  const verifyWithCode = useCallback(() => {
-    // 임시 코드
-    const tmpKey = "111111";
-    // TBD : 코드 검증 API 호출
-    const succeeded = verifyingCode == tmpKey;
+  const verifyWithCode = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // 코드 인증 요청
+      const reqResult = await authClient.sendVerificationCode(
+        userEmail,
+        verifyingCode
+      );
 
-    if (succeeded) {
-      setIsCodeMatching(true);
-      // 다음 화면 이동
-      signUpNavigator!.navigate("SetPassword");
-    } else {
-      // 에러 표시
+      const succeeded = reqResult === QueAuthResponse.OK;
+
+      if (succeeded) {
+        setIsCodeMatching(true);
+        // 다음 화면 이동
+        signUpNavigator!.navigate("SetPassword", { userEmail: userEmail });
+      } else {
+        // 에러 표시
+        setIsCodeMatching(false);
+
+        const strStatusCode = reqResult;
+        if (strStatusCode in codeMatchingMessages) {
+          setCodeMatchingMessage(codeMatchingMessages[strStatusCode]);
+        } else {
+          setCodeMatchingMessage(codeMatchingMessages.default);
+        }
+      }
+    } catch (error) {
       setIsCodeMatching(false);
+      setCodeMatchingMessage(codeMatchingMessages.default);
+      alert(`인증 과정에서 에러가 발생했습니다 : ${error}`);
     }
-  }, [verifyingCode]);
+    setIsLoading(false);
+  }, [userEmail, verifyingCode]);
+
+  /** 첫 렌더링 시 입력 데이터 초기화 */
+  useEffect(() => {
+    setVerifyingCode("");
+    setHideButton(true);
+  }, []);
 
   /** 진행 여부에 따라 navbar 버튼 활성화 로직 지정 */
   useEffect(() => {
@@ -157,7 +238,7 @@ export default function VerifyMailScreen() {
                 signUpScreenStyle.errorMessageText,
               ]}
             >
-              {`인증 메일을 전송하는 과정에서 오류가 발생했습니다.\n메일 주소를 다시 확인해주세요.`}
+              {failMessage}
             </Text>
           </View>
         ) : null}
@@ -190,7 +271,7 @@ export default function VerifyMailScreen() {
                   signUpScreenStyle.errorMessageText,
                 ]}
               >
-                {`잘못된 인증번호입니다. 다시 입력해주세요.`}
+                {codeMatchingMessage}
               </Text>
             )}
             <Text style={signUpScreenStyle.messageText}>

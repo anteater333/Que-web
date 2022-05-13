@@ -1,18 +1,34 @@
 import { getApps, initializeApp } from "firebase/app";
-import { QueResourceAPI } from "../interfaces";
 import firebaseConfig from "./config";
 import { getMediaFromStorage } from "./storage/storage";
-import { getVideoCardDataFromFirestore } from "./firestore/firestore";
+import {
+  getUserProfile,
+  getVideoCardDataFromFirestore,
+  updateCurrentUserProfile,
+} from "./firestore/firestore";
+import {
+  refreshUser,
+  signInWithEmail,
+  signInWithGoogle,
+  signOutFirebase,
+} from "./auth/auth";
 
 // initializing firebase client
 if (!getApps().length) {
   initializeApp(firebaseConfig);
 }
 
-class QueResourceClient implements QueResourceAPI {
-  public getVideoDownloadURL = getMediaFromStorage;
-  public getImageDownloadURL = getMediaFromStorage;
-  public getVideoCardData = getVideoCardDataFromFirestore;
-}
+export const FirebaseResourceClient = {
+  getVideoDownloadURL: getMediaFromStorage,
+  getImageDownloadURL: getMediaFromStorage,
+  getVideoCardData: getVideoCardDataFromFirestore,
+  getUserProfileData: getUserProfile,
+  updateUserProfile: updateCurrentUserProfile,
+};
 
-export default QueResourceClient;
+export const FirebaseAuthClient = {
+  signInWithGoogle: signInWithGoogle,
+  signInWithQueSelfManaged: signInWithEmail,
+  signOut: signOutFirebase,
+  refreshUser: refreshUser,
+};

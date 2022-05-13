@@ -1,15 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
+import { updateUserProfile } from "../../../api/QueResourceUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
-import {
-  RootStackNavigationProp,
-  RootStackParamList,
-} from "../../../navigators/RootNavigator";
+import { getUserProfileData } from "../../../api/QueResourceUtils";
 import screens from "../../../styles/screens";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
+import { useAppDispatch } from "../../../hooks/store";
+import { setCredential } from "../../../reducers/authReducer";
+import { useAuth } from "../../../hooks/useAuth";
 
 const styles = signUpScreenStyle;
 
@@ -25,11 +26,20 @@ export default function SetUserDescriptionScreen() {
   /** 길이 초과 여부 */
   const [isLengthOver, setIsLengthOver] = useState<boolean>(false);
 
+  /** 업데이트 된 프로필을 store에 적용하기 위한 dispatcher */
+  const dispatch = useAppDispatch();
+  const { user: currentUser, isSigned } = useAuth(); // API 호출 대신 이걸 사용
+
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** SignUp 컨텍스트 */
-  const { setButtonAction, setButtonEnabled, userInfo } =
-    useContext(SignUpContext);
+  const {
+    setButtonAction,
+    setButtonEnabled,
+    setHideButton,
+    newUserProfile,
+    setIsLoading,
+  } = useContext(SignUpContext);
 
   /** Description 길이 제한 */
   const updateDescriptionInput = useCallback(
@@ -43,15 +53,38 @@ export default function SetUserDescriptionScreen() {
   );
 
   /** 버튼 액션, 자기소개를 서버에 등록하기 */
-  const postUserDescription = useCallback(() => {
-    // TBD 자기소개 등록하기 API 호출
+  const postUserDescription = useCallback(async () => {
+    setIsLoading(true);
+    const result = await updateUserProfile({
+      nickname: newUserProfile.nickname,
+      profilePictureUrl: newUserProfile.profilePictureUrl,
+      description: description,
+    });
 
-    console.log(userInfo);
-    console.log(description);
+    if (result.success) {
+      setIsLoading(false);
+      // 업데이트한 프로필을 클라이언트에도 적용
+      dispatch(
+        setCredential({
+          ...currentUser,
+          ...newUserProfile,
+          description: description,
+        })
+      );
+      // 온보딩 화면 처음으로 이동 -> 해당 화면에서 로그인 여부 판단 -> 메인화면으로 이동
+      onBoardingNavigator.navigate("CatchPhrase");
+    } else {
+      setIsLoading(false);
+      // TBD 업데이트 과정 에러 처리
+      alert(`프로필 등록 과정에서 에러가 발생했습니다. : ` + result.errorType);
+    }
+  }, [newUserProfile.nickname, newUserProfile.profilePictureUrl, description]);
 
-    // 온보딩 화면 처음으로 이동 -> 해당 화면에서 로그인 여부 판단 -> 메인화면으로 이동
-    onBoardingNavigator.navigate("CatchPhrase");
-  }, [description]);
+  /** 화면 초기화 */
+  useEffect(() => {
+    setHideButton(false);
+    setDescription("");
+  }, []);
 
   /** 버튼 액션 설정 */
   useEffect(() => {

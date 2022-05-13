@@ -12,7 +12,10 @@ const profilePictureStyles = (size: number = 24) => {
     },
     profilePic: {
       alignSelf: "center",
+      width: size,
+      height: size,
       flex: 1,
+      resizeMode: "contain",
     },
   });
 };

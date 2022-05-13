@@ -16,6 +16,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { validateNickname } from "../../../utils/validator";
 
 import * as ImagePicker from "expo-image-picker";
+import { Toast } from "native-base";
+import { useAuth } from "../../../hooks/useAuth";
 
 const styles = signUpScreenStyle;
 
@@ -29,6 +31,9 @@ export default function SetUserProfileScreen() {
   // TBD 뒤로가기 버튼 캐치해서 메인 화면으로 보내기
   // 이전 단게에서 사용자 로그인은 됐다는 것을 상정하고.
 
+  // TBD 이 화면부터 어플리케이션이 로그인 토큰을 가지고 있어야 함
+  // Redux 사용
+
   /** 사용자가 업로드한 프로필 사진 정보 */
   const [profileURL, setProfileURL] = useState<string>("");
   /** 사용자가 입력한 이름 */
@@ -36,13 +41,18 @@ export default function SetUserProfileScreen() {
   /** 이름 유효성 검사 */
   const [isValidName, setIsValidName] = useState<boolean>(false);
 
+  /** OAuth Provider 통한 계정 생성 시 미리 설정된 닉네임 불러오기 용도 */
+  const { user } = useAuth();
+
+  /** SignUp context */
   const {
     buttonAction,
     setButtonAction,
     buttonEnabled,
     setButtonEnabled,
     signUpNavigator,
-    userInfo,
+    setHideButton,
+    setNewUserProfile,
   } = useContext(SignUpContext);
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
@@ -67,8 +77,9 @@ export default function SetUserProfileScreen() {
 
     if (!pickerResult.cancelled) {
       if (pickerResult.height > SIZE_LIMIT || pickerResult.width > SIZE_LIMIT) {
-        // TBD 경고 메세지 출력하기
-        alert("사진이 너무 큽니다.");
+        Toast.show({
+          description: `사진이 너무 큽니다! (크기 제한 : ${SIZE_LIMIT}*${SIZE_LIMIT})`,
+        });
         return;
       }
 
@@ -76,19 +87,38 @@ export default function SetUserProfileScreen() {
     }
   }, []);
 
-  /** 사용자가 입력한 프로필 정보를 서버에 등록하는 함수 */
-  const postUserProfile = useCallback(() => {
-    // TBD 로직
-
+  /** 사용자가 입력한 프로필 정보를 컨텍스트에 저장하는 함수 */
+  const saveUserProfile = useCallback(() => {
     if (!profileURL) {
-      // TBD 프로필 없이 할건지 물어보기 (Yes or No)
-      alert("프로필 사진 없이 진행");
+      // TBD 프로필 없이 할건지 물어보기 (Yes or No 입력 받아서 진행 or 진행안함)
+      alert("TBD 프로필 사진 없이 진행 하시겠습니까?");
     }
 
-    console.log(`${userNickname}\n${profileURL}`);
+    // 회원가입 컨텍스트에 임시로 등록
+    setNewUserProfile((prevState) => {
+      return {
+        profilePictureUrl: profileURL,
+        nickname: userNickname,
+        description: prevState.description,
+      };
+    });
 
     signUpNavigator!.navigate("SetUserDescription");
   }, [profileURL, userNickname]);
+
+  /** 화면 초기화 */
+  useEffect(() => {
+    setHideButton(false);
+    setUserNickname("");
+    setProfileURL("");
+  }, []);
+
+  /** Provider를 통한 신규 계정 생성 시 미리 닉네임 설정 */
+  useEffect(() => {
+    if (user.nickname) {
+      setUserNickname(user.nickname);
+    }
+  }, [user.nickname]);
 
   /** 닉네임 유효성 검증 */
   useEffect(() => {
@@ -101,9 +131,9 @@ export default function SetUserProfileScreen() {
     setButtonEnabled(isValidName);
 
     if (isValidName) {
-      setButtonAction({ action: postUserProfile });
+      setButtonAction({ action: saveUserProfile });
     }
-  }, [isValidName, userNickname]);
+  }, [isValidName, profileURL, userNickname]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -140,6 +170,8 @@ export default function SetUserProfileScreen() {
       <View style={styles.bottomContainer}>
         <CommonTextInput
           style={[styles.textInputNickname]}
+          autoFocus
+          selectTextOnFocus
           placeholder="당신의 이름은?"
           textContentType="name"
           accessibilityRole="text"

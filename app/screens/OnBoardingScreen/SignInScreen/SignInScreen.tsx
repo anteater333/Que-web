@@ -1,24 +1,21 @@
-import { useNavigation } from "@react-navigation/native";
 import { useAssets } from "expo-asset";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  Image,
-  ImageSourcePropType,
-  SafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Image, ImageSourcePropType, SafeAreaView, View } from "react-native";
 import SocialLoginButton from "../../../components/buttons/SocialLoginButton";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
-import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
 
+import * as WebBrowser from "expo-web-browser";
+import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
+import { useSignInWithQue, useSignWithGoogle } from "../../../hooks/useSign";
+
 const styles = signInScreenStyle;
+
+WebBrowser.maybeCompleteAuthSession();
 
 /**
  * 사용자 로그인 화면
@@ -30,25 +27,23 @@ function SignInScreen() {
   /** 로그인 버튼 활성화 여부 */
   const [isTriable, setIsTriable] = useState<boolean>(false);
 
+  /** 로딩 컴포넌트 표시 여부 */
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   /** 로고 표시용 에셋 */
   const [assets, error] = useAssets([
     require("../../../assets/custom/logo-big.png"),
   ]);
 
-  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
+  /** 이메일과 비밀번호를 통해 로그인 진행 */
+  const loginWithQue = useSignInWithQue(userEmail, password, setIsLoading);
 
-  /** 로그인 진행 */
-  const loginWithQue = useCallback(() => {
-    alert("로그인 구현해");
-
-    // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-    onBoardingNavigator.navigate("CatchPhrase");
-  }, []);
-
-  /** 구글 로그인 버튼 */
-  const loginWithGoogle = useCallback(() => {
-    alert("구현예정입니다.");
-  }, []);
+  /**
+   * Google Auth를 통한 계정 인증
+   * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
+   * 등록된 Google 계정이 없으면 회원 가입 화면으로
+   */
+  const signWithGoogle = useSignWithGoogle(setIsLoading);
 
   /** 이메일과 비밀번호가 입력되었으면 버튼 활성화 */
   useEffect(() => {
@@ -99,11 +94,12 @@ function SignInScreen() {
         <View>
           <SocialLoginButton
             buttonType="google"
-            onPress={loginWithGoogle}
+            onPress={signWithGoogle}
           ></SocialLoginButton>
         </View>
       </View>
 
+      {isLoading ? <ScreenCoverLoadingSpinner /> : null}
       <WizardNavBar
         enableNextButton={isTriable}
         hideSkipButton={true}
