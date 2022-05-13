@@ -64,7 +64,6 @@ export async function signInWithGoogle(
 
       return {
         status: QueAuthResponse.Created,
-        token: token,
         user: signedUser,
       };
     } else if (signInMethods.includes("google.com")) {
@@ -79,7 +78,6 @@ export async function signInWithGoogle(
 
       return {
         status: QueAuthResponse.OK,
-        token: token,
         user: signedUser,
       };
     } else {
@@ -138,7 +136,7 @@ export async function signInWithEmail(
     // 토큰 정보 저장
     const token = await signInResult.user.getIdToken(true);
 
-    return { status: QueAuthResponse.OK, user: signedUser, token: token };
+    return { status: QueAuthResponse.OK, user: signedUser };
   } catch (error) {
     if ((error as AuthError).code) {
       const errorCode = (error as AuthError).code;

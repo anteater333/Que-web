@@ -38,10 +38,10 @@ if (process.env.NODE_ENV !== "test") {
     sendVerificationCode: async () => QueAuthResponse.OK,
     signUpWithQueSelfManaged: async () => QueAuthResponse.Created,
     signInWithQueSelfManaged: async () => {
-      return { status: QueAuthResponse.OK, token: "", user: {} };
+      return { status: QueAuthResponse.OK, user: {} };
     },
     signInWithGoogle: async () => {
-      return { status: QueAuthResponse.OK, token: "", user: {} };
+      return { status: QueAuthResponse.OK, user: {} };
     },
     signOut: async () => {},
     refreshUser: async () => {},

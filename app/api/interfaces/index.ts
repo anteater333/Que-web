@@ -81,7 +81,6 @@ export enum QueAuthResponse {
 export interface QueSignInSucceeded {
   status: QueAuthResponse.OK | QueAuthResponse.Created;
   user: UserType;
-  token: string;
 }
 /** 로그인 실패시 반환 */
 export interface QueSignInFailed {

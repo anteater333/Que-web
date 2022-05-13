@@ -3,28 +3,35 @@ import { RootState } from "../store";
 
 import UserType from "../types/User";
 
+/** 현재 로그인 한 사용자 상태 */
 export type AuthState = {
+  /** 사용자 프로필 정보 */
   user: UserType;
-  token: string | null;
+  /** 사용자 로그인 여부 */
+  isSigned: boolean;
 };
 
+/** 최초 상태 */
 const initialState: AuthState = {
   user: {},
-  token: null,
+  isSigned: false,
 };
 
-/** Ducks 패턴 */
+// Ducks 패턴
+/** Auth 관련 상태 저장소 생성 */
 const { actions, reducer: authReducer } = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    setCredential: (state, action: PayloadAction<AuthState>) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+    /** 로그인한 사용자의 정보를 저장합니다. */
+    setCredential: (state, action: PayloadAction<UserType>) => {
+      state.user = action.payload;
+      state.isSigned = true;
     },
+    /** 사용자 정보를 상태에서 제거합니다. */
     clearCredential: (state) => {
       state.user = {};
-      state.token = null;
+      state.isSigned = false;
     },
   },
   extraReducers: {},
@@ -33,6 +40,6 @@ const { actions, reducer: authReducer } = createSlice({
 export const { setCredential, clearCredential } = actions;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;
-export const selectCurrentToken = (state: RootState) => state.auth.token;
+export const selectIsSigned = (state: RootState) => state.auth.isSigned;
 
 export default authReducer;

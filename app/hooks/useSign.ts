@@ -56,12 +56,7 @@ export const useSignWithGoogle = (
         switch (loginResult.status) {
           case QueAuthResponse.OK: {
             // 로그인 정보 설정
-            dispatch(
-              setCredential({
-                user: loginResult.user,
-                token: loginResult.token,
-              })
-            );
+            dispatch(setCredential(loginResult.user));
 
             setIsLoading(false);
 
@@ -79,12 +74,7 @@ export const useSignWithGoogle = (
             });
 
             // 로그인 정보 설정
-            dispatch(
-              setCredential({
-                user: loginResult.user,
-                token: loginResult.token,
-              })
-            );
+            dispatch(setCredential(loginResult.user));
 
             setIsLoading(false);
 
@@ -147,12 +137,7 @@ export const useSignInWithQue = (
           //    onBoardingNavigator.navigate("CatchPhrase");
 
           // 로그인 정보 설정
-          dispatch(
-            setCredential({
-              user: loginResult.user,
-              token: loginResult.token,
-            })
-          );
+          dispatch(setCredential(loginResult.user));
 
           onBoardingNavigator.navigate("CatchPhrase");
           break;

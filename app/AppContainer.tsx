@@ -20,7 +20,7 @@ LogBox.ignoreLogs(["Setting a timer"]);
 export default function AppContainer() {
   const [appIsReady, setAppIsReady] = useState(false);
   /** 저장된 계정 정보가 있는지 확인 용도 */
-  const { user, token } = useAuth();
+  const { user, isSigned } = useAuth();
 
   /**
    * 빈 배열을 전달한 useEffect는 최초 렌더링에서만 실행된다.
@@ -39,7 +39,7 @@ export default function AppContainer() {
         await Font.loadAsync(Entypo.font);
 
         /** 자동 로그인 */
-        if (token) {
+        if (isSigned) {
           await QueAuthClient.refreshUser();
         }
       } catch (e) {

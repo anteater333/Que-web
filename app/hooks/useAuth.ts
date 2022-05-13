@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentToken, selectCurrentUser } from "../reducers/authReducer";
+import { selectIsSigned, selectCurrentUser } from "../reducers/authReducer";
 
 /**
  * 현재 로그인 한 사용자의 정보를 가져옵니다.
@@ -8,7 +8,7 @@ import { selectCurrentToken, selectCurrentUser } from "../reducers/authReducer";
  */
 export const useAuth = () => {
   const user = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrentToken);
+  const isSigned = useSelector(selectIsSigned);
 
-  return useMemo(() => ({ user, token }), [user, token]);
+  return useMemo(() => ({ user, isSigned }), [user, isSigned]);
 };
