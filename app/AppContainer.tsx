@@ -10,9 +10,6 @@ import RootScreen from "./screens/RootScreen";
 import { useAuth } from "./hooks/useAuth";
 import QueAuthClient from "./api/QueAuthUtils";
 
-// 타이머 경고 무효
-LogBox.ignoreLogs(["Setting a timer"]);
-
 /**
  * 어플리케이션 프로그램 최상단 컴포넌트, 엔트리 포인트
  * TBD: 최소한의 로직만 남겨두기
@@ -20,7 +17,7 @@ LogBox.ignoreLogs(["Setting a timer"]);
 export default function AppContainer() {
   const [appIsReady, setAppIsReady] = useState(false);
   /** 저장된 계정 정보가 있는지 확인 용도 */
-  const { user, isSigned } = useAuth();
+  const { isSigned } = useAuth();
 
   /**
    * 빈 배열을 전달한 useEffect는 최초 렌더링에서만 실행된다.

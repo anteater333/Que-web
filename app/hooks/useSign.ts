@@ -114,7 +114,8 @@ export const useSignWithGoogle = (
 export const useSignInWithQue = (
   userEmail: string,
   password: string,
-  setIsLoading: React.Dispatch<SetStateAction<boolean>>
+  setIsLoading: React.Dispatch<SetStateAction<boolean>>,
+  navigateAfter?: boolean
 ) => {
   const dispatch = useAppDispatch();
 
@@ -133,13 +134,11 @@ export const useSignInWithQue = (
 
       switch (loginResult.status) {
         case QueAuthResponse.OK: {
-          // TBD 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
-          //    onBoardingNavigator.navigate("CatchPhrase");
-
           // 로그인 정보 설정
           dispatch(setCredential(loginResult.user));
 
-          onBoardingNavigator.navigate("CatchPhrase");
+          // 이 플래그가 설정되어 있어야지 첫 화면으로 이동
+          if (navigateAfter) onBoardingNavigator.navigate("CatchPhrase");
           break;
         }
         default: {
