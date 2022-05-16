@@ -8,6 +8,7 @@ import {
   QueryDocumentSnapshot,
   doc,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 
 import { getAuth } from "firebase/auth";
@@ -131,7 +132,6 @@ export async function updateCurrentUserProfile(
   const uid = currentUser.uid;
   try {
     await updateDoc<UserType>(doc(UserCollection, uid), {
-      // 프로필만 수정될 수 있도록 제한할 것
       description: updateData.description,
       nickname: updateData.nickname,
       profilePictureUrl: updateData.profilePictureUrl,
@@ -145,4 +145,27 @@ export async function updateCurrentUserProfile(
   }
 
   return { success: true };
+}
+
+/**
+ * 새 사용자 가입 시 Document를 직접 생성합니다.
+ * 본디 firebase blaze 요금제 사용 시 function으로 구현한 기능이었는데,
+ * spark 요금제 사용함으로써 여기서 구현해 사용합니다.
+ */
+export async function setUserDocument(
+  uid: string,
+  email: string,
+  registeredAt: string,
+  nickname: string | null
+) {
+  try {
+    await setDoc<UserType>(doc(UserCollection, uid), {
+      email: email,
+      registeredAt: new Date(registeredAt),
+      nickname: nickname ? nickname : "",
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
