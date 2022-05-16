@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
@@ -6,7 +6,9 @@ import { SafeAreaView, Alert } from "react-native";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
+import { useConfirm } from "../../../hooks/useConfirm";
 import {
+  OnBoardingStackNavigationProp,
   OnBoardingStackScreenProp,
   SignUpStackNavigationProp,
   SignUpStackParamList,
@@ -37,10 +39,13 @@ function SignUpScreen({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newUserProfile, setNewUserProfile] = useState<UserType>({});
 
+  /** 건너뛰기 질문용도 */
+  const asyncAlert = useConfirm();
+
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
-
-  const isFocused = useIsFocused();
+  /** 건너뛰기를 위한 네비게이터 */
+  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   useEffect(() => {
     if (!route.params.hasProvider) {
@@ -114,13 +119,15 @@ function SignUpScreen({
             <WizardNavBar
               hideSkipButton={hideButton}
               enableNextButton={buttonEnabled}
-              onSkip={() => {
-                // TBD 건너뛰기 구현
-                Alert.alert(
-                  "다음에 하시겠습니까?",
-                  "입력한 정보는 사라집니다.",
-                  [{ text: "네" }, { text: "아니요" }]
-                );
+              onSkip={async () => {
+                if (
+                  await asyncAlert(
+                    "다음에 하시겠습니까?",
+                    "하지만 아직 프로필 변경 기능은 구현 중입니다."
+                  )
+                ) {
+                  onBoardingNavigator.navigate("CatchPhrase");
+                }
               }}
               onNext={buttonAction.action}
             />
