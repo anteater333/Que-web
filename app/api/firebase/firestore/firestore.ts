@@ -131,10 +131,30 @@ export async function updateCurrentUserProfile(
 
   const uid = currentUser.uid;
   try {
+    let savedDoc: UserType = {};
+    if (
+      !updateData.description ||
+      !updateData.nickname ||
+      !updateData.profilePictureUrl
+    )
+      savedDoc = (await getUserProfile(uid)).user;
+
     await updateDoc<UserType>(doc(UserCollection, uid), {
-      description: updateData.description,
-      nickname: updateData.nickname,
-      profilePictureUrl: updateData.profilePictureUrl,
+      description: updateData.description
+        ? updateData.description
+        : savedDoc.description
+        ? savedDoc.description
+        : "",
+      nickname: updateData.nickname
+        ? updateData.nickname
+        : savedDoc.nickname
+        ? savedDoc.nickname
+        : "",
+      profilePictureUrl: updateData.profilePictureUrl
+        ? updateData.profilePictureUrl
+        : savedDoc.profilePictureUrl
+        ? savedDoc.profilePictureUrl
+        : "",
     });
   } catch (error) {
     console.error(error);

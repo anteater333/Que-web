@@ -1,14 +1,12 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
-import { SafeAreaView } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { SafeAreaView, Alert } from "react-native";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
-import { useAuth } from "../../../hooks/useAuth";
 import {
-  OnBoardingStackParamList,
   OnBoardingStackScreenProp,
   SignUpStackNavigationProp,
   SignUpStackParamList,
@@ -41,6 +39,16 @@ function SignUpScreen({
 
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (!route.params.hasProvider) {
+      signUpNavigator.navigate("VerifyMail");
+    } else {
+      signUpNavigator.navigate("SetUserProfile");
+    }
+  }, [route.params.hasProvider]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -108,7 +116,11 @@ function SignUpScreen({
               enableNextButton={buttonEnabled}
               onSkip={() => {
                 // TBD 건너뛰기 구현
-                alert("다음에 하시겠습니까?");
+                Alert.alert(
+                  "다음에 하시겠습니까?",
+                  "입력한 정보는 사라집니다.",
+                  [{ text: "네" }, { text: "아니요" }]
+                );
               }}
               onNext={buttonAction.action}
             />
