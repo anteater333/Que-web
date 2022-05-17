@@ -123,7 +123,7 @@ function SignUpScreen({
                 if (
                   await asyncAlert(
                     "다음에 하시겠습니까?",
-                    "하지만 아직 프로필 변경 기능은 구현 중입니다."
+                    "하지만 프로필 변경 기능은 아직 구현 중입니다."
                   )
                 ) {
                   onBoardingNavigator.navigate("CatchPhrase");

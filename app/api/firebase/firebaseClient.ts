@@ -1,6 +1,9 @@
 import { getApps, initializeApp } from "firebase/app";
 import firebaseConfig from "./config";
-import { getMediaFromStorage } from "./storage/storage";
+import {
+  getMediaFromStorage,
+  uploadCurrentUserProfileImage,
+} from "./storage/storage";
 import {
   getUserProfile,
   getVideoCardDataFromFirestore,
@@ -24,6 +27,7 @@ export const FirebaseResourceClient = {
   getVideoCardData: getVideoCardDataFromFirestore,
   getUserProfileData: getUserProfile,
   updateUserProfile: updateCurrentUserProfile,
+  uploadUserProfileImage: uploadCurrentUserProfileImage,
 };
 
 export const FirebaseAuthClient = {
