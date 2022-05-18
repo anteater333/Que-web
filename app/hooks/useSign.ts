@@ -8,6 +8,7 @@ import { clearCredential, setCredential } from "../reducers/authReducer";
 import { useNavigation } from "@react-navigation/native";
 import { OnBoardingStackNavigationProp } from "../navigators/OnBoardingNavigator";
 import { RootStackNavigationProp } from "../navigators/RootNavigator";
+import { useConfirm } from "./useConfirm";
 
 /** 로그인 과정에서의 에러 메세지 */
 const signInErrorMessages: {
@@ -165,18 +166,26 @@ export const useSignInWithQue = (
 export const useSignOut = () => {
   const dispatch = useAppDispatch();
 
+  /** 로그아웃 질문 용도 */
+  const asyncAlert = useConfirm();
+
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   return useCallback(async () => {
     // TBD 정말 로그아웃 하시겠습니까? 물어보기 Modal 등을 통해
-    try {
-      await QueAuthClient.signOut();
 
-      dispatch(clearCredential());
+    if (await asyncAlert("정말 로그아웃 하시겠습니까?")) {
+      try {
+        await QueAuthClient.signOut();
 
-      rootNavigator.navigate("OnBoarding");
-    } catch (error) {
-      alert(`로그아웃 중 에러가 발생했습니다. ${error}`);
+        Toast.show({ description: "안녕히 가세요." });
+
+        dispatch(clearCredential());
+
+        rootNavigator.navigate("OnBoarding");
+      } catch (error) {
+        alert(`로그아웃 중 에러가 발생했습니다. ${error}`);
+      }
     }
   }, []);
 };
