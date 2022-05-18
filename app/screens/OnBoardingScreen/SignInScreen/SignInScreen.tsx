@@ -36,7 +36,12 @@ function SignInScreen() {
   ]);
 
   /** 이메일과 비밀번호를 통해 로그인 진행 */
-  const loginWithQue = useSignInWithQue(userEmail, password, setIsLoading);
+  const loginWithQue = useSignInWithQue(
+    userEmail,
+    password,
+    setIsLoading,
+    true
+  );
 
   /**
    * Google Auth를 통한 계정 인증

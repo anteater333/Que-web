@@ -1,14 +1,14 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
-import { SafeAreaView } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { SafeAreaView, Alert } from "react-native";
 import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../../components/headers/CommonHeader";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
-import { useAuth } from "../../../hooks/useAuth";
+import { useConfirm } from "../../../hooks/useConfirm";
 import {
-  OnBoardingStackParamList,
+  OnBoardingStackNavigationProp,
   OnBoardingStackScreenProp,
   SignUpStackNavigationProp,
   SignUpStackParamList,
@@ -39,8 +39,25 @@ function SignUpScreen({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newUserProfile, setNewUserProfile] = useState<UserType>({});
 
+  /** 건너뛰기 질문용도 */
+  const asyncAlert = useConfirm();
+
   /** 다음 화면으로 이동하기 위한 네비게이터 */
   const signUpNavigator = useNavigation<SignUpStackNavigationProp>();
+  /** 건너뛰기를 위한 네비게이터 */
+  const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (!isFocused) {
+      if (!route.params.hasProvider) {
+        signUpNavigator.navigate("VerifyMail");
+      } else {
+        signUpNavigator.navigate("SetUserProfile");
+      }
+    }
+  }, [route.params.hasProvider, isFocused]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -106,9 +123,15 @@ function SignUpScreen({
             <WizardNavBar
               hideSkipButton={hideButton}
               enableNextButton={buttonEnabled}
-              onSkip={() => {
-                // TBD 건너뛰기 구현
-                alert("다음에 하시겠습니까?");
+              onSkip={async () => {
+                if (
+                  await asyncAlert(
+                    "다음에 하시겠습니까?",
+                    "하지만 프로필 변경 기능은 아직 구현 중입니다."
+                  )
+                ) {
+                  onBoardingNavigator.navigate("CatchPhrase");
+                }
               }}
               onNext={buttonAction.action}
             />

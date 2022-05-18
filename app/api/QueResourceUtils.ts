@@ -29,6 +29,7 @@ if (process.env.NODE_ENV !== "test") {
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
     getUserProfileData: resourceClient.getUserProfileData,
     updateUserProfile: resourceClient.updateUserProfile,
+    uploadUserProfileImage: resourceClient.uploadUserProfileImage,
   };
 } else {
   // 테스트용 Mock API
@@ -41,6 +42,9 @@ if (process.env.NODE_ENV !== "test") {
     },
     getUserProfileData: async (userId) => {
       return { user: {} };
+    },
+    uploadUserProfileImage: async (filePath) => {
+      return { success: true };
     },
   };
 }

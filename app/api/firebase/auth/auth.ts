@@ -13,7 +13,7 @@ import {
   QueSignInFailed,
   QueSignInSucceeded,
 } from "../../interfaces";
-import { getUserProfile } from "../firestore/firestore";
+import { getUserProfile, setUserDocument } from "../firestore/firestore";
 
 /** Access token을 통해 사용자 email 확인 */
 async function fetchUserEmail(token: string): Promise<string> {
@@ -59,8 +59,14 @@ export async function signInWithGoogle(
         nickname: userResult.displayName!,
       };
 
-      // 토큰 정보 저장
-      const token = await signInResult.user.getIdToken(true);
+      // spark 사용 중입니다.
+      // 직접 firestore에 데이터 생성
+      await setUserDocument(
+        userResult.uid,
+        userEmail,
+        userResult.metadata.creationTime!,
+        userResult.displayName
+      );
 
       return {
         status: QueAuthResponse.Created,
@@ -72,9 +78,6 @@ export async function signInWithGoogle(
 
       // 유저 정보 생성
       const signedUser = (await getUserProfile(signInResult.user.uid)).user;
-
-      // 토큰 정보 저장
-      const token = await signInResult.user.getIdToken(true);
 
       return {
         status: QueAuthResponse.OK,
@@ -133,9 +136,6 @@ export async function signInWithEmail(
     // 유저 정보 생성
     const signedUser = (await getUserProfile(signInResult.user.uid)).user;
 
-    // 토큰 정보 저장
-    const token = await signInResult.user.getIdToken(true);
-
     return { status: QueAuthResponse.OK, user: signedUser };
   } catch (error) {
     if ((error as AuthError).code) {
@@ -173,6 +173,7 @@ export async function signOutFirebase(): Promise<void> {
  * 최초 실행 시 호출해 로그인을 유지하도록 한다.
  */
 export async function refreshUser(): Promise<void> {
-  // 직접 자동 로그인 구현해줄 필요가 없는 것 같습니다.
-  // Do nothing
+  // 버그 수정, 개발 중 hot reloading 발생 시 currentUser를 한 번 참조하지 않으면 문제 발생함.
+  // 따라서 리프레쉬 아래와 같이 한 번 수행.
+  getAuth().currentUser;
 }

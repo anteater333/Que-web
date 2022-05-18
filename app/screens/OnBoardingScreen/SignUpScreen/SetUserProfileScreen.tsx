@@ -18,10 +18,15 @@ import { validateNickname } from "../../../utils/validator";
 import * as ImagePicker from "expo-image-picker";
 import { Toast } from "native-base";
 import { useAuth } from "../../../hooks/useAuth";
+import { useIsFocused } from "@react-navigation/native";
+import QueResourceClient from "../../../api/QueResourceUtils";
+import { useConfirm } from "../../../hooks/useConfirm";
+import { setCredential } from "../../../reducers/authReducer";
+import { useAppDispatch } from "../../../hooks/store";
 
 const styles = signUpScreenStyle;
 
-const SIZE_LIMIT = 1024;
+const SIZE_LIMIT = 180;
 
 /**
  * 3. 사용자 프로필 설정 화면
@@ -31,18 +36,23 @@ export default function SetUserProfileScreen() {
   // TBD 뒤로가기 버튼 캐치해서 메인 화면으로 보내기
   // 이전 단게에서 사용자 로그인은 됐다는 것을 상정하고.
 
-  // TBD 이 화면부터 어플리케이션이 로그인 토큰을 가지고 있어야 함
-  // Redux 사용
-
   /** 사용자가 업로드한 프로필 사진 정보 */
-  const [profileURL, setProfileURL] = useState<string>("");
+  const [profileLocalURL, setProfileLocalURL] = useState<string>("");
   /** 사용자가 입력한 이름 */
   const [userNickname, setUserNickname] = useState<string>("");
   /** 이름 유효성 검사 */
   const [isValidName, setIsValidName] = useState<boolean>(false);
 
+  /** 업데이트 된 프로필을 store에 적용하기 위한 dispatcher */
+  const dispatch = useAppDispatch();
   /** OAuth Provider 통한 계정 생성 시 미리 설정된 닉네임 불러오기 용도 */
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
+
+  /** 화면 포커스 여부 */
+  const isFocused = useIsFocused();
+
+  /** 대기 가능 alert창 사용 */
+  const asyncAlert = useConfirm();
 
   /** SignUp context */
   const {
@@ -52,7 +62,9 @@ export default function SetUserProfileScreen() {
     setButtonEnabled,
     signUpNavigator,
     setHideButton,
+    newUserProfile,
     setNewUserProfile,
+    setIsLoading,
   } = useContext(SignUpContext);
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
@@ -83,42 +95,84 @@ export default function SetUserProfileScreen() {
         return;
       }
 
-      setProfileURL(pickerResult.uri);
+      setProfileLocalURL(pickerResult.uri);
     }
   }, []);
 
   /** 사용자가 입력한 프로필 정보를 컨텍스트에 저장하는 함수 */
-  const saveUserProfile = useCallback(() => {
-    if (!profileURL) {
-      // TBD 프로필 없이 할건지 물어보기 (Yes or No 입력 받아서 진행 or 진행안함)
-      alert("TBD 프로필 사진 없이 진행 하시겠습니까?");
+  const saveUserProfile = useCallback(async () => {
+    setIsLoading(true);
+    if (
+      !profileLocalURL &&
+      !(await asyncAlert(
+        "프로필 사진 없이 진행하시겠습니까?",
+        "프로필 변경 기능은 개발 중입니다."
+      ))
+    ) {
+      setIsLoading(false);
+      return;
     }
 
-    // 회원가입 컨텍스트에 임시로 등록
-    setNewUserProfile((prevState) => {
-      return {
-        profilePictureUrl: profileURL,
-        nickname: userNickname,
-        description: prevState.description,
-      };
-    });
+    /** TBD profileURL 기반 storage에 업로드 후 storage URL 가져오기 */
 
-    signUpNavigator!.navigate("SetUserDescription");
-  }, [profileURL, userNickname]);
+    const updateData = {
+      // 프로필 사진 경로는 고정
+      profilePictureUrl: `users/${currentUser.userId}/images/profilePic`,
+      nickname: userNickname,
+    };
+
+    // 프로필 사진과 닉네임 등록하기
+    const imageUploadResult = await QueResourceClient.uploadUserProfileImage(
+      profileLocalURL
+    );
+    if (!imageUploadResult.success) {
+      alert(
+        `프로필 사진 업로드 중 문제가 발생했습니다.\n${imageUploadResult.errorType}`
+      );
+    }
+    const updateResult = await QueResourceClient.updateUserProfile(updateData);
+
+    /** 회원가입 과정 중 context 변화 */
+    setNewUserProfile(updateData);
+
+    setIsLoading(false);
+
+    if (updateResult.success) {
+      dispatch(
+        setCredential({
+          ...currentUser,
+          ...updateData,
+        })
+      );
+      signUpNavigator!.navigate("SetUserDescription");
+    } else {
+      alert(
+        `프로필 정보 업데이트 중 문제가 발생했습니다.\n${updateResult.errorType}`
+      );
+    }
+  }, [profileLocalURL, userNickname]);
 
   /** 화면 초기화 */
   useEffect(() => {
     setHideButton(false);
     setUserNickname("");
-    setProfileURL("");
+    setProfileLocalURL("");
   }, []);
 
-  /** Provider를 통한 신규 계정 생성 시 미리 닉네임 설정 */
+  /** 화면 포커스 될 때 유저 정보 불러와서 입력 폼 미리 설정 */
   useEffect(() => {
-    if (user.nickname) {
-      setUserNickname(user.nickname);
+    const getUser = async () => {
+      const saved = await QueResourceClient.getUserProfileData(
+        currentUser.userId!
+      );
+      if (!saved.errorType) {
+        setUserNickname(saved.user.nickname ? saved.user.nickname : "");
+      }
+    };
+    if (isFocused) {
+      getUser();
     }
-  }, [user.nickname]);
+  }, [isFocused]);
 
   /** 닉네임 유효성 검증 */
   useEffect(() => {
@@ -133,7 +187,7 @@ export default function SetUserProfileScreen() {
     if (isValidName) {
       setButtonAction({ action: saveUserProfile });
     }
-  }, [isValidName, profileURL, userNickname]);
+  }, [isValidName, profileLocalURL, userNickname]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -141,14 +195,14 @@ export default function SetUserProfileScreen() {
         <Pressable
           style={[
             styles.uploadButtonContainer,
-            profileURL ? styles.withImage : {},
+            profileLocalURL ? styles.withImage : {},
           ]}
           onPress={openImagePickerAsync}
         >
-          {profileURL ? (
+          {profileLocalURL ? (
             <Image
               style={styles.uploadedImage}
-              source={{ uri: profileURL }}
+              source={{ uri: profileLocalURL }}
             ></Image>
           ) : (
             <View style={styles.profileUploadButtonInside}>

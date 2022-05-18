@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { Alert, SafeAreaView, Text, View } from "react-native";
 import { updateUserProfile } from "../../../api/QueResourceUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
@@ -11,6 +11,7 @@ import { signUpScreenStyle } from "./SignUpScreen.style";
 import { useAppDispatch } from "../../../hooks/store";
 import { setCredential } from "../../../reducers/authReducer";
 import { useAuth } from "../../../hooks/useAuth";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 const styles = signUpScreenStyle;
 
@@ -29,6 +30,9 @@ export default function SetUserDescriptionScreen() {
   /** 업데이트 된 프로필을 store에 적용하기 위한 dispatcher */
   const dispatch = useAppDispatch();
   const { user: currentUser, isSigned } = useAuth(); // API 호출 대신 이걸 사용
+
+  /** 대기 가능 alert창 사용 */
+  const asyncAlert = useConfirm();
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
@@ -55,9 +59,19 @@ export default function SetUserDescriptionScreen() {
   /** 버튼 액션, 자기소개를 서버에 등록하기 */
   const postUserDescription = useCallback(async () => {
     setIsLoading(true);
+
+    if (
+      !description.length &&
+      !(await asyncAlert(
+        "자기소개 없이 진행하시겠습니까?",
+        "프로필 변경 기능은 개발 중입니다."
+      ))
+    ) {
+      setIsLoading(false);
+      return;
+    }
+
     const result = await updateUserProfile({
-      nickname: newUserProfile.nickname,
-      profilePictureUrl: newUserProfile.profilePictureUrl,
       description: description,
     });
 
@@ -83,17 +97,12 @@ export default function SetUserDescriptionScreen() {
   /** 화면 초기화 */
   useEffect(() => {
     setHideButton(false);
+    setButtonEnabled(true);
     setDescription("");
   }, []);
 
   /** 버튼 액션 설정 */
   useEffect(() => {
-    if (description.length) {
-      setButtonEnabled(true);
-    } else {
-      setButtonEnabled(false);
-    }
-
     setButtonAction({ action: postUserDescription });
   }, [description]);
 
