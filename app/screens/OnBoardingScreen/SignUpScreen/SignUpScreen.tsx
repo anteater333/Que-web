@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
@@ -47,13 +47,17 @@ function SignUpScreen({
   /** 건너뛰기를 위한 네비게이터 */
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    if (!route.params.hasProvider) {
-      signUpNavigator.navigate("VerifyMail");
-    } else {
-      signUpNavigator.navigate("SetUserProfile");
+    if (!isFocused) {
+      if (!route.params.hasProvider) {
+        signUpNavigator.navigate("VerifyMail");
+      } else {
+        signUpNavigator.navigate("SetUserProfile");
+      }
     }
-  }, [route.params.hasProvider]);
+  }, [route.params.hasProvider, isFocused]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
