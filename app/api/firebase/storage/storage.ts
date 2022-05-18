@@ -1,5 +1,5 @@
 import { getAuth } from "firebase/auth";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import {
   QueResourceResponse,
   QueResourceResponseErrorType,
@@ -25,4 +25,49 @@ export async function getMediaFromStorage(url: string): Promise<string> {
 export async function uploadCurrentUserProfileImage(
   filePath: string
 ): Promise<QueResourceResponse> {
+  const currentUser = getAuth().currentUser;
+  if (!currentUser) {
+    // 로그인 해주세요
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  const uid = currentUser.uid;
+  /** storage 내의 프로필 사진 경로 */
+  const storagePath = `users/${uid}/images/profilePic`;
+
+  try {
+    /** ImagePicker의 결과를 Blob으로 변환 */
+    const blob: Blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response as Blob);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", filePath, true);
+      xhr.send(null);
+    });
+
+    const storageRef = ref(getStorage(), storagePath);
+    const result = await uploadBytes(storageRef, blob);
+
+    // TBD Blob에 close가 없음
+    // blob.close();
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
+  }
 }

@@ -1,6 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
-  Alert,
   Image,
   Platform,
   Pressable,
@@ -20,9 +19,10 @@ import * as ImagePicker from "expo-image-picker";
 import { Toast } from "native-base";
 import { useAuth } from "../../../hooks/useAuth";
 import { useIsFocused } from "@react-navigation/native";
-import UserType from "../../../types/User";
 import QueResourceClient from "../../../api/QueResourceUtils";
 import { useConfirm } from "../../../hooks/useConfirm";
+import { setCredential } from "../../../reducers/authReducer";
+import { useAppDispatch } from "../../../hooks/store";
 
 const styles = signUpScreenStyle;
 
@@ -43,8 +43,10 @@ export default function SetUserProfileScreen() {
   /** 이름 유효성 검사 */
   const [isValidName, setIsValidName] = useState<boolean>(false);
 
+  /** 업데이트 된 프로필을 store에 적용하기 위한 dispatcher */
+  const dispatch = useAppDispatch();
   /** OAuth Provider 통한 계정 생성 시 미리 설정된 닉네임 불러오기 용도 */
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
 
   /** 화면 포커스 여부 */
   const isFocused = useIsFocused();
@@ -60,6 +62,7 @@ export default function SetUserProfileScreen() {
     setButtonEnabled,
     signUpNavigator,
     setHideButton,
+    newUserProfile,
     setNewUserProfile,
     setIsLoading,
   } = useContext(SignUpContext);
@@ -113,20 +116,39 @@ export default function SetUserProfileScreen() {
     /** TBD profileURL 기반 storage에 업로드 후 storage URL 가져오기 */
 
     const updateData = {
-      profilePictureUrl: profileLocalURL,
+      // 프로필 사진 경로는 고정
+      profilePictureUrl: `users/${currentUser.userId}/images/profilePic`,
       nickname: userNickname,
     };
 
     // 프로필 사진과 닉네임 등록하기
-    const result = await QueResourceClient.updateUserProfile(updateData);
+    const imageUploadResult = await QueResourceClient.uploadUserProfileImage(
+      profileLocalURL
+    );
+    if (!imageUploadResult.success) {
+      alert(
+        `프로필 사진 업로드 중 문제가 발생했습니다.\n${imageUploadResult.errorType}`
+      );
+    }
+    const updateResult = await QueResourceClient.updateUserProfile(updateData);
 
+    /** 회원가입 과정 중 context 변화 */
     setNewUserProfile(updateData);
 
     setIsLoading(false);
 
-    if (result.success) signUpNavigator!.navigate("SetUserDescription");
-    else {
-      alert(`프로필 정보 업데이트 중 문제가 생겼습니다.\n${result.errorType}`);
+    if (updateResult.success) {
+      dispatch(
+        setCredential({
+          ...currentUser,
+          ...updateData,
+        })
+      );
+      signUpNavigator!.navigate("SetUserDescription");
+    } else {
+      alert(
+        `프로필 정보 업데이트 중 문제가 발생했습니다.\n${updateResult.errorType}`
+      );
     }
   }, [profileLocalURL, userNickname]);
 
@@ -140,7 +162,9 @@ export default function SetUserProfileScreen() {
   /** 화면 포커스 될 때 유저 정보 불러와서 입력 폼 미리 설정 */
   useEffect(() => {
     const getUser = async () => {
-      const saved = await QueResourceClient.getUserProfileData(user.userId!);
+      const saved = await QueResourceClient.getUserProfileData(
+        currentUser.userId!
+      );
       if (!saved.errorType) {
         setUserNickname(saved.user.nickname ? saved.user.nickname : "");
       }
