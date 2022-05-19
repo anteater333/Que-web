@@ -80,9 +80,11 @@ export default function SetUserDescriptionScreen() {
       // 업데이트한 프로필을 클라이언트에도 적용
       dispatch(
         setCredential({
-          ...currentUser,
-          ...newUserProfile,
-          description: description,
+          user: {
+            ...currentUser,
+            ...newUserProfile,
+            description: description,
+          },
         })
       );
       // 온보딩 화면 처음으로 이동 -> 해당 화면에서 로그인 여부 판단 -> 메인화면으로 이동

@@ -57,7 +57,7 @@ export const useSignWithGoogle = (
         switch (loginResult.status) {
           case QueAuthResponse.OK: {
             // 로그인 정보 설정
-            dispatch(setCredential(loginResult.user));
+            dispatch(setCredential({ user: loginResult.user }));
 
             setIsLoading(false);
 
@@ -75,7 +75,7 @@ export const useSignWithGoogle = (
             });
 
             // 로그인 정보 설정
-            dispatch(setCredential(loginResult.user));
+            dispatch(setCredential({ user: loginResult.user }));
 
             setIsLoading(false);
 
@@ -136,7 +136,7 @@ export const useSignInWithQue = (
       switch (loginResult.status) {
         case QueAuthResponse.OK: {
           // 로그인 정보 설정
-          dispatch(setCredential(loginResult.user));
+          dispatch(setCredential({ user: loginResult.user }));
 
           // 이 플래그가 설정되어 있어야지 첫 화면으로 이동
           if (navigateAfter) onBoardingNavigator.navigate("CatchPhrase");
