@@ -140,8 +140,10 @@ export default function SetUserProfileScreen() {
     if (updateResult.success) {
       dispatch(
         setCredential({
-          ...currentUser,
-          ...updateData,
+          user: {
+            ...currentUser,
+            ...updateData,
+          },
         })
       );
       signUpNavigator!.navigate("SetUserDescription");

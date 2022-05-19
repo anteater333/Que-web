@@ -23,9 +23,20 @@ const { actions, reducer: authReducer } = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    /** 로그인한 사용자의 정보를 저장합니다. */
-    setCredential: (state, action: PayloadAction<UserType>) => {
-      state.user = action.payload;
+    /**
+     * 로그인한 사용자의 정보를 저장합니다.
+     * 필요한 정보만 담도록 내부적으로 제한 합니다.
+     */
+    setCredential: (state, action: PayloadAction<{ user: UserType }>) => {
+      const newUserState: UserType = {
+        profilePictureUrl: action.payload.user.profilePictureUrl,
+        nickname: action.payload.user.nickname,
+        level: action.payload.user.level,
+        userId: action.payload.user.userId,
+        email: action.payload.user.email,
+        description: action.payload.user.description,
+      };
+      state.user = newUserState;
       state.isSigned = true;
     },
     /** 사용자 정보를 상태에서 제거합니다. */
