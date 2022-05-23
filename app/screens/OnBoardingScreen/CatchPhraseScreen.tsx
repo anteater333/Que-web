@@ -40,7 +40,6 @@ export function CatchPhraseScreen() {
   /** TBD: 영상 교체하기 */
   const mockingVideoSrc = "https://i.postimg.cc/mgdFtJd5/welcome.gif";
 
-  // 임시 네비게이터입니다.
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 

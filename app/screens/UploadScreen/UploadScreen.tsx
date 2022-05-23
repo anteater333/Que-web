@@ -5,6 +5,7 @@ import DummyComponent from "../../components/common/DummyComponent";
 import CommonHeader from "../../components/headers/CommonHeader";
 import { UploadStackParamList } from "../../navigators/UploadNavigator";
 import screens from "../../styles/screens";
+import InputDataScreen from "./InputDataScreen";
 import SelectTypeScreen from "./SelectTypeScreen";
 import { UploadContext } from "./UploadContext";
 
@@ -56,7 +57,7 @@ function UploadScreen() {
           <UploadStack.Screen
             options={{ headerShown: true }}
             name="InputData"
-            component={DummyComponent}
+            component={InputDataScreen}
           />
           {/* TBD 음악 검색 시스템 개발하기 (장기계획) */}
           {/* <UploadStack.Screen
