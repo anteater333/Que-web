@@ -1,10 +1,20 @@
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
 import DummyComponent from "../../components/common/DummyComponent";
 import CommonHeader from "../../components/headers/CommonHeader";
-import { UploadStackParamList } from "../../navigators/UploadNavigator";
+import {
+  MainStackNavigationProp,
+  MainStackParamList,
+} from "../../navigators/MainNavigator";
+import {
+  UploadStackNavigationProp,
+  UploadStackParamList,
+} from "../../navigators/UploadNavigator";
 import screens from "../../styles/screens";
+import PlaceType from "../../types/Place";
+import SongType from "../../types/Song";
 import InputDataScreen from "./InputDataScreen";
 import SelectTypeScreen from "./SelectTypeScreen";
 import { UploadContext } from "./UploadContext";
@@ -20,15 +30,54 @@ function UploadScreen() {
   const [buttonHidden, setButtonHidden] = useState<boolean>(true);
   /** 확인 버튼 활성화하기 */
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
+  const [videoPath, setVideoPath] = useState<string>("");
+  const [videoTitle, setVideoTitle] = useState<string>("");
+  const [videoDescription, setVideoDescription] = useState<string>("");
+  const [songInfo, setSongInfo] = useState<SongType>({ title: "" });
+  const [placeInfo, setPlaceInfo] = useState<PlaceType>({ name: "" });
+
+  const isFocused = useIsFocused();
+
+  const mainNavigator = useNavigation<MainStackNavigationProp>();
+  const uploadNavigator = useNavigation<UploadStackNavigationProp>();
+
+  /**
+   * 업로드 확인 버튼 눌렀을 때 실행되는 콜백함수
+   * !! 업로드 화면 핵심 기능 입니다. !!
+   */
+  const uploadAndPostVideo = useCallback(() => {
+    console.log(videoPath, videoTitle, videoDescription, songInfo, placeInfo);
+    // TBD 업로드 API 함수 호출 및 업로드 진행률 표시 방법론 구상
+    mainNavigator.navigate("Home");
+  }, [videoPath, videoTitle, videoDescription, songInfo, placeInfo]);
+
+  /**
+   * 업로드 화면 재진입시 네비게이션 순서가 초기화 될 수 있도록 설정
+   */
+  useEffect(() => {
+    if (!isFocused) {
+      uploadNavigator.navigate("SelectType");
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <UploadContext.Provider
         value={{
           buttonEnabled,
-          buttonHidden,
           setButtonEnabled,
+          buttonHidden,
           setButtonHidden,
+          placeInfo,
+          setPlaceInfo,
+          songInfo,
+          setSongInfo,
+          videoDescription,
+          setVideoDescription,
+          videoTitle,
+          setVideoTitle,
+          videoPath,
+          setVideoPath,
         }}
       >
         <UploadStack.Navigator
@@ -42,6 +91,7 @@ function UploadScreen() {
                   <CommonHeader
                     hideButton={buttonHidden}
                     buttonType={buttonEnabled ? "primary" : "disabled"}
+                    onPress={uploadAndPostVideo}
                     {...props}
                   />
                 )}

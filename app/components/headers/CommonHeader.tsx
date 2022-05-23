@@ -1,18 +1,12 @@
-import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { useAssets } from "expo-asset";
 import {
   Image,
   ImageSourcePropType,
-  Pressable,
   SafeAreaView,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { commonHeaderStyle } from "./header.style";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { HeaderBackButton } from "@react-navigation/elements";
 import RoundedButton, { RoundedButtonProps } from "../buttons/RoundedButton";
@@ -57,6 +51,7 @@ function CommonHeader(props: CommonHeaderProps) {
           <RoundedButton
             style={styles.roundedButton}
             buttonType={props.buttonType}
+            onPress={props.onPress}
           >
             확인
           </RoundedButton>
