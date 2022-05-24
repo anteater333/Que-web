@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { SafeAreaView, Text, View } from "react-native";
 import screens from "../../styles/screens";
-import { uploadScreenStyle } from "./UploadScreen.style";
+import { uploadScreenStyle as styles } from "./UploadScreen.style";
 import { UploadContext } from "./UploadContext";
 import { ScrollView } from "native-base";
 import CommonTextInput from "../../components/inputs/CommonTextInput";
@@ -33,44 +33,56 @@ function InputDataScreen() {
   /** 필요 데이터가 입력된 경우를 확인해 버튼 활성화하기 */
   useEffect(() => {
     // TBD 장소, 설명은 optional 제목, 노래는 required
-    if (videoTitle.length >= 2) {
+    if (videoTitle.length >= 2 && !!songInfo.title) {
       setButtonEnabled(true);
     }
-  }, [videoTitle]);
+  }, [videoTitle, songInfo.title]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
-      <View style={uploadScreenStyle.videoContainer}></View>
-      <ScrollView style={uploadScreenStyle.dataInputContainer}>
+      <View style={styles.videoContainer}></View>
+      <ScrollView style={styles.dataInputContainer}>
+        {videoTitle ? (
+          <Text style={styles.dataInputLabel}>무대 제목</Text>
+        ) : null}
         <CommonTextInput
           accessibilityRole="text"
           textContentType="none"
-          style={uploadScreenStyle.dataInputField}
+          style={styles.dataInputField}
           placeholder="무대 제목"
           onChangeText={(newStr) => setVideoTitle(newStr)}
           value={videoTitle}
         />
+        {videoDescription ? (
+          <Text style={styles.dataInputLabel}>무대 설명</Text>
+        ) : null}
         <CommonTextInput
           accessibilityRole="text"
           textContentType="none"
           multiline
-          style={uploadScreenStyle.dataInputField}
+          style={styles.dataInputField}
           placeholder="무대 설명"
           onChangeText={(newStr) => setVideoDescription(newStr)}
           value={videoDescription}
         />
+        {songInfo.title ? (
+          <Text style={styles.dataInputLabel}>노래</Text>
+        ) : null}
         <CommonTextInput
           accessibilityRole="text"
           textContentType="none"
-          style={uploadScreenStyle.dataInputField}
+          style={styles.dataInputField}
           placeholder="노래"
           onChangeText={(newStr) => setSongInfo({ title: newStr })}
           value={songInfo.title}
         />
+        {placeInfo.name ? (
+          <Text style={styles.dataInputLabel}>장소</Text>
+        ) : null}
         <CommonTextInput
           accessibilityRole="text"
           textContentType="none"
-          style={uploadScreenStyle.dataInputField}
+          style={styles.dataInputField}
           placeholder="장소"
           onChangeText={(newStr) => setPlaceInfo({ name: newStr })}
           value={placeInfo.name}

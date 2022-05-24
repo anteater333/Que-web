@@ -42,6 +42,9 @@ export const uploadScreenStyle = StyleSheet.create({
     paddingTop: bSpace.xlarge,
     paddingHorizontal: bSpace.xlarge,
   },
+  dataInputLabel: {
+    marginBottom: bSpace.small,
+  },
   dataInputField: {
     marginBottom: bSpace.xlarge,
     fontSize: bFont.xlarge,
