@@ -5,6 +5,7 @@ import { uploadScreenStyle as styles } from "./UploadScreen.style";
 import { UploadContext } from "./UploadContext";
 import { ScrollView } from "native-base";
 import CommonTextInput from "../../components/inputs/CommonTextInput";
+import SimplifiedVideoPlayer from "../../components/videoPlayers/SimplifiedVideoPlayer";
 
 /**
  * 2. 업로드한 영상에 대한 편집(일단 TBD) 및 메타 정보 입력 화면
@@ -40,7 +41,15 @@ function InputDataScreen() {
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
-      <View style={styles.videoContainer}></View>
+      <View style={styles.videoContainer}>
+        <SimplifiedVideoPlayer
+          // 임시 데이터입니다.
+          videoData={{
+            videoId: "Dummy",
+          }}
+          videoSource={videoPath}
+        />
+      </View>
       <ScrollView style={styles.dataInputContainer}>
         {videoTitle ? (
           <Text style={styles.dataInputLabel}>무대 제목</Text>

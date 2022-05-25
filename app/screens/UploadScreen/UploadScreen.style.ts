@@ -36,6 +36,7 @@ export const uploadScreenStyle = StyleSheet.create({
   // InputDataScreen
   videoContainer: {
     backgroundColor: bColors.black,
+    marginBottom: bSpace.xlarge,
     height: bSpace.xlarge * 15,
   },
   dataInputContainer: {

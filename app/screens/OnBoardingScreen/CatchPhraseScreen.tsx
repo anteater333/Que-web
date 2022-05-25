@@ -168,7 +168,6 @@ export function CatchPhraseScreen() {
                 style={[styles.signInSuggestionText, styles.signInButtonText]}
                 onPress={() => {
                   onBoardingNavigator.navigate("SignIn");
-                  // onBoardingNavigator.navigate("SignIn");
                 }}
                 accessibilityRole="button"
               >

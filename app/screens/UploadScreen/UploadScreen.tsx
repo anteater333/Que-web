@@ -48,6 +48,7 @@ function UploadScreen() {
   const uploadAndPostVideo = useCallback(() => {
     console.log(videoPath, videoTitle, videoDescription, songInfo, placeInfo);
     // TBD 업로드 API 함수 호출 및 업로드 진행률 표시 방법론 구상
+    // TBD 업로드 하시겠습니까? 질문하기.
     mainNavigator.navigate("Home");
   }, [videoPath, videoTitle, videoDescription, songInfo, placeInfo]);
 

@@ -9,7 +9,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import screens from "../../styles/screens";
 import { uploadScreenStyle } from "./UploadScreen.style";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { UploadStackNavigationProp } from "../../navigators/UploadNavigator";
 import { useCallback, useContext, useEffect } from "react";
 import { UploadContext } from "./UploadContext";
@@ -26,6 +26,8 @@ const SIZE_LIMIT = 20; // MB
 function SelectTypeScreen() {
   const uploadNavigator = useNavigation<UploadStackNavigationProp>();
 
+  const isFocused = useIsFocused();
+
   const Toast = useToast();
 
   /** Upload Context */
@@ -34,6 +36,8 @@ function SelectTypeScreen() {
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
   const uploadExistingVideo = useCallback(async () => {
+    // TBD 영상 업로드 로딩 표시
+
     /** 갤러리 권한 요청 */
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -80,10 +84,10 @@ function SelectTypeScreen() {
     }
   }, []);
 
-  /** 최초 렌더링 시 버튼 숨기기 */
+  /** 버튼 숨기기 */
   useEffect(() => {
     setButtonHidden(true);
-  }, []);
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
