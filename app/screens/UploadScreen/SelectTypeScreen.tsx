@@ -18,6 +18,7 @@ import { checkFileSize, checkSizeLimitMB } from "../../utils/file";
 import { useToast } from "native-base";
 import { getThumbnails } from "video-metadata-thumbnails";
 import * as VideoThumbnails from "expo-video-thumbnails";
+import { blobToDataURL } from "../../utils/converter";
 
 const SIZE_LIMIT = 20; // MB
 
@@ -95,17 +96,6 @@ function SelectTypeScreen() {
             end: 1,
           })
         )[0].blob!;
-
-        // TBD 리펙토링, Blob에서 DataURL로 변환하는 함수
-        function blobToDataURL(blob: Blob): Promise<string> {
-          return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (_e) => resolve(reader.result as string);
-            reader.onerror = (_e) => reject(reader.error);
-            reader.onabort = (_e) => reject(new Error("Read aborted"));
-            reader.readAsDataURL(blob);
-          });
-        }
 
         thumbnailUri = await blobToDataURL(blobResult);
       } else {
