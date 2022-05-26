@@ -2,12 +2,9 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
-import DummyComponent from "../../components/common/DummyComponent";
+import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../components/headers/CommonHeader";
-import {
-  MainStackNavigationProp,
-  MainStackParamList,
-} from "../../navigators/MainNavigator";
+import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 import {
   UploadStackNavigationProp,
   UploadStackParamList,
@@ -31,10 +28,12 @@ function UploadScreen() {
   /** 확인 버튼 활성화하기 */
   const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
   const [videoPath, setVideoPath] = useState<string>("");
+  const [thumbnailPath, setThumbnailPath] = useState<string>("");
   const [videoTitle, setVideoTitle] = useState<string>("");
   const [videoDescription, setVideoDescription] = useState<string>("");
   const [songInfo, setSongInfo] = useState<SongType>({ title: "" });
   const [placeInfo, setPlaceInfo] = useState<PlaceType>({ name: "" });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
 
@@ -79,6 +78,10 @@ function UploadScreen() {
           setVideoTitle,
           videoPath,
           setVideoPath,
+          thumbnailPath,
+          setThumbnailPath,
+          isLoading,
+          setIsLoading,
         }}
       >
         <UploadStack.Navigator
@@ -87,16 +90,12 @@ function UploadScreen() {
             contentStyle: screens.defaultScreenLayout,
             title: "업로드",
             header: (props) => (
-              <UploadContext.Consumer>
-                {({ buttonEnabled, buttonHidden }) => (
-                  <CommonHeader
-                    hideButton={buttonHidden}
-                    buttonType={buttonEnabled ? "primary" : "disabled"}
-                    onPress={uploadAndPostVideo}
-                    {...props}
-                  />
-                )}
-              </UploadContext.Consumer>
+              <CommonHeader
+                hideButton={buttonHidden}
+                buttonType={buttonEnabled ? "primary" : "disabled"}
+                onPress={uploadAndPostVideo}
+                {...props}
+              />
             ),
           }}
         >
@@ -117,6 +116,7 @@ function UploadScreen() {
           component={DummyComponent}
         /> */}
         </UploadStack.Navigator>
+        {isLoading ? <ScreenCoverLoadingSpinner /> : false}
       </UploadContext.Provider>
     </SafeAreaView>
   );

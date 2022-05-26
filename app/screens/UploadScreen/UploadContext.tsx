@@ -12,6 +12,9 @@ type UploadContextType = {
   /** 사용자가 업로드 하려는 영상의 메모리 상 경로 */
   videoPath: string;
   setVideoPath: Dispatch<SetStateAction<string>>;
+  /** 영상애서 추출한 썸네일의 메모리 상 경로 */
+  thumbnailPath: string;
+  setThumbnailPath: Dispatch<SetStateAction<string>>;
   /** 영상 제목 */
   videoTitle: string;
   setVideoTitle: Dispatch<SetStateAction<string>>;
@@ -24,6 +27,9 @@ type UploadContextType = {
   /** 장소 정보 */
   placeInfo: PlaceType;
   setPlaceInfo: Dispatch<SetStateAction<PlaceType>>;
+  /** 로딩 표시 */
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 };
 
 const defaultUploadContext: UploadContextType = {
@@ -53,6 +59,14 @@ const defaultUploadContext: UploadContextType = {
   },
   videoPath: "",
   setVideoPath: function (value: SetStateAction<string>): void {
+    throw new Error("Function not implemented.");
+  },
+  thumbnailPath: "",
+  setThumbnailPath: function (value: SetStateAction<string>): void {
+    throw new Error("Function not implemented.");
+  },
+  isLoading: false,
+  setIsLoading: function (value: SetStateAction<boolean>): void {
     throw new Error("Function not implemented.");
   },
 };

@@ -16,6 +16,8 @@ import { UploadContext } from "./UploadContext";
 import * as ImagePicker from "expo-image-picker";
 import { checkFileSize, checkSizeLimitMB } from "../../utils/file";
 import { useToast } from "native-base";
+import { getThumbnails } from "video-metadata-thumbnails";
+import * as VideoThumbnails from "expo-video-thumbnails";
 
 const SIZE_LIMIT = 20; // MB
 
@@ -31,12 +33,12 @@ function SelectTypeScreen() {
   const Toast = useToast();
 
   /** Upload Context */
-  const { setButtonHidden, videoPath, setVideoPath } =
+  const { setButtonHidden, setThumbnailPath, setVideoPath, setIsLoading } =
     useContext(UploadContext);
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
   const uploadExistingVideo = useCallback(async () => {
-    // TBD 영상 업로드 로딩 표시
+    setIsLoading(true);
 
     /** 갤러리 권한 요청 */
     const permissionResult =
@@ -50,6 +52,8 @@ function SelectTypeScreen() {
       else {
         alert("권한이 필요합니다.");
       }
+
+      setIsLoading(false);
       return;
     }
 
@@ -59,13 +63,14 @@ function SelectTypeScreen() {
     // 심지어 핸들링도 안됨.
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Low,
     });
 
     if (!pickerResult.cancelled) {
       const fileSize = await checkFileSize(pickerResult.uri);
       if (!fileSize) {
         // TBD 이런 경우 파악해서 에러 처리
+
+        setIsLoading(false);
         return;
       }
       if (!checkSizeLimitMB(fileSize, SIZE_LIMIT)) {
@@ -73,11 +78,45 @@ function SelectTypeScreen() {
         Toast.show({
           description: `영상이 너무 큽니다! (크기 제한 : ${SIZE_LIMIT}MB)`,
         });
+
+        setIsLoading(false);
         return;
       }
 
       /** 컨텍스트에 영상 경로 등록 */
       setVideoPath(pickerResult.uri);
+
+      let thumbnailUri = "";
+      /** 영상으로부터 썸네일 추출 */
+      if (Platform.OS === "web") {
+        const blobResult = (
+          await getThumbnails(pickerResult.uri, {
+            start: 0,
+            end: 1,
+          })
+        )[0].blob!;
+
+        // TBD 리펙토링, Blob에서 DataURL로 변환하는 함수
+        function blobToDataURL(blob: Blob): Promise<string> {
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (_e) => resolve(reader.result as string);
+            reader.onerror = (_e) => reject(reader.error);
+            reader.onabort = (_e) => reject(new Error("Read aborted"));
+            reader.readAsDataURL(blob);
+          });
+        }
+
+        thumbnailUri = await blobToDataURL(blobResult);
+      } else {
+        thumbnailUri = (
+          await VideoThumbnails.getThumbnailAsync(pickerResult.uri)
+        ).uri;
+      }
+
+      setThumbnailPath(thumbnailUri);
+
+      setIsLoading(false);
 
       /** 메타 정보 입력 화면으로 이동 */
       uploadNavigator.navigate("InputData");
