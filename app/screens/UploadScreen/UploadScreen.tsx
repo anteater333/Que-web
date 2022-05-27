@@ -34,6 +34,7 @@ function UploadScreen() {
   const [songInfo, setSongInfo] = useState<SongType>({ title: "" });
   const [placeInfo, setPlaceInfo] = useState<PlaceType>({ name: "" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingMessage, setLoadingMessage] = useState<string>("");
 
   const isFocused = useIsFocused();
 
@@ -49,7 +50,14 @@ function UploadScreen() {
     // TBD 업로드 API 함수 호출 및 업로드 진행률 표시 방법론 구상
     // TBD 업로드 하시겠습니까? 질문하기.
     mainNavigator.navigate("Home");
-  }, [videoPath, videoTitle, videoDescription, songInfo, placeInfo]);
+  }, [
+    videoPath,
+    thumbnailPath,
+    videoTitle,
+    videoDescription,
+    songInfo,
+    placeInfo,
+  ]);
 
   /**
    * 업로드 화면 재진입시 네비게이션 순서가 초기화 될 수 있도록 설정
@@ -82,6 +90,8 @@ function UploadScreen() {
           setThumbnailPath,
           isLoading,
           setIsLoading,
+          loadingMessage,
+          setLoadingMessage,
         }}
       >
         <UploadStack.Navigator
@@ -116,7 +126,11 @@ function UploadScreen() {
           component={DummyComponent}
         /> */}
         </UploadStack.Navigator>
-        {isLoading ? <ScreenCoverLoadingSpinner /> : false}
+        {isLoading ? (
+          <ScreenCoverLoadingSpinner message={loadingMessage} />
+        ) : (
+          false
+        )}
       </UploadContext.Provider>
     </SafeAreaView>
   );

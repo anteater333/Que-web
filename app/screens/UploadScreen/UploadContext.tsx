@@ -30,6 +30,9 @@ type UploadContextType = {
   /** 로딩 표시 */
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
+  /** 로딩 중 메세지 */
+  loadingMessage: string;
+  setLoadingMessage: Dispatch<SetStateAction<string>>;
 };
 
 const defaultUploadContext: UploadContextType = {
@@ -67,6 +70,10 @@ const defaultUploadContext: UploadContextType = {
   },
   isLoading: false,
   setIsLoading: function (value: SetStateAction<boolean>): void {
+    throw new Error("Function not implemented.");
+  },
+  loadingMessage: "",
+  setLoadingMessage: function (value: SetStateAction<string>): void {
     throw new Error("Function not implemented.");
   },
 };

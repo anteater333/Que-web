@@ -6,11 +6,14 @@ import { UploadContext } from "./UploadContext";
 import { ScrollView } from "native-base";
 import CommonTextInput from "../../components/inputs/CommonTextInput";
 import SimplifiedVideoPlayer from "../../components/videoPlayers/SimplifiedVideoPlayer";
+import { useIsFocused } from "@react-navigation/native";
 
 /**
  * 2. 업로드한 영상에 대한 편집(일단 TBD) 및 메타 정보 입력 화면
  */
 function InputDataScreen() {
+  const isFocused = useIsFocused();
+
   const {
     setButtonHidden,
     setButtonEnabled,
@@ -23,13 +26,17 @@ function InputDataScreen() {
     videoTitle,
     setVideoTitle,
     videoPath,
+    setLoadingMessage,
   } = useContext(UploadContext);
 
   /** 첫 렌더링 시 버튼 숨김 해제 */
   useEffect(() => {
-    setButtonHidden(false);
-    setButtonEnabled(false);
-  }, []);
+    if (isFocused) {
+      setLoadingMessage(`영상을 업로드 중입니다.\n제발 종료하지 말아주세요...`);
+      setButtonHidden(false);
+      setButtonEnabled(false);
+    }
+  }, [isFocused]);
 
   /** 필요 데이터가 입력된 경우를 확인해 버튼 활성화하기 */
   useEffect(() => {

@@ -34,13 +34,16 @@ function SelectTypeScreen() {
   const Toast = useToast();
 
   /** Upload Context */
-  const { setButtonHidden, setThumbnailPath, setVideoPath, setIsLoading } =
-    useContext(UploadContext);
+  const {
+    setButtonHidden,
+    setThumbnailPath,
+    setVideoPath,
+    setIsLoading,
+    setLoadingMessage,
+  } = useContext(UploadContext);
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
   const uploadExistingVideo = useCallback(async () => {
-    setIsLoading(true);
-
     /** 갤러리 권한 요청 */
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -54,7 +57,6 @@ function SelectTypeScreen() {
         alert("권한이 필요합니다.");
       }
 
-      setIsLoading(false);
       return;
     }
 
@@ -67,6 +69,7 @@ function SelectTypeScreen() {
     });
 
     if (!pickerResult.cancelled) {
+      setIsLoading(true);
       const fileSize = await checkFileSize(pickerResult.uri);
       if (!fileSize) {
         // TBD 이런 경우 파악해서 에러 처리
@@ -115,7 +118,10 @@ function SelectTypeScreen() {
 
   /** 버튼 숨기기 */
   useEffect(() => {
-    setButtonHidden(true);
+    if (isFocused) {
+      setLoadingMessage(`영상을 가져오는 중입니다.`);
+      setButtonHidden(true);
+    }
   }, [isFocused]);
 
   return (
