@@ -14,3 +14,24 @@ export function blobToDataURL(blob: Blob): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+/**
+ * DataURL을 Blob Object로 변환하는 함수입니다.
+ * @param dataURL DataURL
+ * @returns 반환된 Blob, Promise입니다.
+ */
+export function dataURLToBlob(dataURL: string): Promise<Blob> {
+  return new Promise<Blob>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response as Blob);
+    };
+    xhr.onerror = function (e) {
+      console.log(e);
+      reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", dataURL, true);
+    xhr.send(null);
+  });
+}
