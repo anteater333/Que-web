@@ -40,6 +40,15 @@ export interface QueResourceAPI {
    * @param page 페이지 번호 (0이면 처음부터, 1이면 다음부터)
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
+  /**
+   * 영상과 영상의 메타 정보를 업로드합니다.
+   * @param videoSourcePath 원본 영상 경로
+   */
+  uploadVideo(
+    thumbnailSourcePath: string,
+    videoSourcePath: string,
+    videoData: VideoType
+  ): Promise<QueResourceResponse>;
 
   ////////////////////////////////////////////////// 유저 정보 관련 인터페이스
   /**

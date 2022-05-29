@@ -7,7 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { MainStackParamList } from "../navigators/MainNavigator";
 import screens from "../styles/screens";
 import HomeScreen from "./HomeScreen";
-import UploadScreen from "./UploadScreen";
+import UploadScreen from "./UploadScreen/UploadScreen";
 import UserPageScreen from "./UserPageScreen";
 import VideoScreen from "./VideoScreen";
 

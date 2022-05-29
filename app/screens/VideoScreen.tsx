@@ -1,5 +1,5 @@
 import { Video } from "expo-av";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import { getVideoDownloadURL } from "../api/QueResourceUtils";
 import { MainStackScreenProp } from "../navigators/MainNavigator";
@@ -11,6 +11,8 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
   const videoPlayer = useRef<Video>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
   useEffect(() => {
     async function fetchVideo() {
       const httpDownloadUrl = await getVideoDownloadURL(route.params.url);
@@ -19,6 +21,17 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
 
     fetchVideo();
   }, [videoUrl]);
+
+  /** 임시 버튼 액션 함수, 재생 / 정지 */
+  const togglePlay = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      videoPlayer.current?.pauseAsync();
+    } else {
+      setIsPlaying(true);
+      videoPlayer.current?.playAsync();
+    }
+  }, [isPlaying]);
 
   return (
     <View style={styles.container}>
@@ -31,10 +44,7 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
         usePoster={true}
       ></Video>
       <View style={styles.buttons}>
-        <Button
-          title={"test"}
-          onPress={() => videoPlayer.current?.playAsync()}
-        />
+        <Button title={"test"} onPress={togglePlay} />
       </View>
     </View>
   );
