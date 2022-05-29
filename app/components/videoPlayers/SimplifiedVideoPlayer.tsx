@@ -48,7 +48,8 @@ function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
         setDidJustFinish(playbackStatus.didJustFinish);
         setIsBuffering(playbackStatus.isBuffering);
         setVideoPosition(playbackStatus.positionMillis);
-        setVideoLength(playbackStatus.durationMillis!);
+        if (playbackStatus.durationMillis)
+          setVideoLength(playbackStatus.durationMillis);
       }
     },
     []

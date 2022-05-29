@@ -14,7 +14,11 @@ import { UploadStackNavigationProp } from "../../navigators/UploadNavigator";
 import { useCallback, useContext, useEffect } from "react";
 import { UploadContext } from "./UploadContext";
 import * as ImagePicker from "expo-image-picker";
-import { checkFileSize, checkSizeLimitMB } from "../../utils/file";
+import {
+  checkFileSize,
+  checkSizeLimitMB,
+  checkVideoLengthManually,
+} from "../../utils/file";
 import { useToast } from "native-base";
 import { getThumbnails } from "video-metadata-thumbnails";
 import * as VideoThumbnails from "expo-video-thumbnails";
@@ -40,6 +44,7 @@ function SelectTypeScreen() {
     setVideoPath,
     setIsLoading,
     setLoadingMessage,
+    setVideoLength,
   } = useContext(UploadContext);
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
@@ -89,6 +94,15 @@ function SelectTypeScreen() {
 
       /** 컨텍스트에 영상 경로 등록 */
       setVideoPath(pickerResult.uri);
+      /** 컨텍스트에 영상 길이 등록 */
+      if (pickerResult.duration) {
+        setVideoLength(pickerResult.duration!);
+      } else {
+        // Web 환경에서는 duration이나 width 등의 정보가 제대로 로드되지 않음
+        // 직접 Audio 객체 사용해 media 메타정보 불러올 수 있음.
+        const duration = await checkVideoLengthManually(pickerResult.uri);
+        setVideoLength(duration);
+      }
 
       let thumbnailUri = "";
       /** 영상으로부터 썸네일 추출 */
@@ -116,6 +130,12 @@ function SelectTypeScreen() {
     }
   }, []);
 
+  /** 새 영상을 촬영하고 그 영상을 업로드 하는 함수 */
+  const recordThenUploadVideo = useCallback(async () => {
+    // TBD 영상 촬영 기능 및 uploadExistingVideo 함수와 겹치는 부분 분리하기
+    alert("개발중입니다. 아임 쏘리");
+  }, []);
+
   /** 버튼 숨기기 */
   useEffect(() => {
     if (isFocused) {
@@ -140,9 +160,7 @@ function SelectTypeScreen() {
         <View style={uploadScreenStyle.seperation} />
         <TouchableOpacity
           style={[uploadScreenStyle.largeButton]}
-          onPress={() => {
-            alert("개발중입니다. 아임 쏘리");
-          }}
+          onPress={recordThenUploadVideo}
         >
           <MaterialIcons
             style={[

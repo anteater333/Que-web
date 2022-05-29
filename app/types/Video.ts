@@ -9,7 +9,7 @@ import UserType from "./User";
  */
 export default interface VideoType {
   /** 영상 고유 ID */
-  videoId: string;
+  videoId?: string;
   /** 영상 제목 */
   title?: string;
   /** 영상 설명 */
@@ -44,4 +44,6 @@ export default interface VideoType {
   likedData?: LikeType[];
   /** 사용자 평가 정보 */
   starredData?: StarType;
+  /** 업로드 완료 여부 */
+  uploadDone?: boolean;
 }

@@ -32,7 +32,6 @@ function InputDataScreen() {
   /** 첫 렌더링 시 버튼 숨김 해제 */
   useEffect(() => {
     if (isFocused) {
-      setLoadingMessage(`영상을 업로드 중입니다.\n제발 종료하지 말아주세요...`);
       setButtonHidden(false);
       setButtonEnabled(false);
     }

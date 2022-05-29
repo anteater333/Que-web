@@ -1,5 +1,6 @@
 import * as FileSystem from "expo-file-system";
 import { Platform } from "react-native";
+import { formatTimer } from "./formatter";
 
 // TBD 테스트 코드 작성
 
@@ -27,4 +28,21 @@ export async function checkFileSize(fileURI: string) {
  */
 export function checkSizeLimitMB(fileSize: number, limitMB: number) {
   return fileSize / 1024 / 1024 <= limitMB;
+}
+
+/**
+ * 영상의 전체 길이를 반환합니다.
+ * 외부 라이브러리 등으로 영상 메타테이터를 읽어올 수 없을 때 사용합니다.
+ * @param videoURI
+ * @returns
+ */
+export async function checkVideoLengthManually(
+  videoURI: string
+): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    const media = new Audio(videoURI);
+    media.onloadedmetadata = function () {
+      resolve(Math.ceil(media.duration * 1000));
+    };
+  });
 }

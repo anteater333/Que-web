@@ -177,3 +177,5 @@ export async function refreshUser(): Promise<void> {
   // 따라서 리프레쉬 아래와 같이 한 번 수행.
   getAuth().currentUser;
 }
+
+/** TBD 현재 사용자 UID 가져오는 함수 */

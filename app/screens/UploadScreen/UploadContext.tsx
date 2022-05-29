@@ -21,6 +21,9 @@ type UploadContextType = {
   /** 영상 설명 */
   videoDescription: string;
   setVideoDescription: Dispatch<SetStateAction<string>>;
+  /** 영상 길이 */
+  videoLength: number;
+  setVideoLength: Dispatch<SetStateAction<number>>;
   /** 노래 정보 */
   songInfo: SongType;
   setSongInfo: Dispatch<SetStateAction<SongType>>;
@@ -74,6 +77,10 @@ const defaultUploadContext: UploadContextType = {
   },
   loadingMessage: "",
   setLoadingMessage: function (value: SetStateAction<string>): void {
+    throw new Error("Function not implemented.");
+  },
+  videoLength: 0,
+  setVideoLength: function (value: SetStateAction<number>): void {
     throw new Error("Function not implemented.");
   },
 };

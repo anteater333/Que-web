@@ -189,3 +189,40 @@ export async function setUserDocument(
     throw error;
   }
 }
+
+/**
+ * 비디오 메타 정보를 입력합니다.
+ * TBD 필요하지 않은 데이터가 초기에 생성되는지 파악하기
+ * @param videoData 비디오 정보
+ */
+export async function setVideoDocument(videoData: VideoType): Promise<string> {
+  try {
+    const uid = getAuth().currentUser?.uid;
+    const newDocRef = doc(VideoCollection);
+    const videoId = newDocRef.id;
+    await setDoc<VideoType>(newDocRef, {
+      ...videoData,
+      sourceUrl: `users/${uid}/videos/${videoId}/video`,
+      thumbnailUrl: `users/${uid}/videos/${videoId}/thumbnail`,
+      uploadedAt: new Date(),
+      uploadDone: false,
+      uploader: doc(UserCollection, uid),
+    });
+
+    return newDocRef.id;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+/** 비디오 업로드 완료 여부를 업데이트합니다. */
+export async function updateVideoUploaded(videoId: string, isDone: boolean) {
+  try {
+    await updateDoc(doc(VideoCollection, videoId), {
+      uploadDone: isDone,
+    });
+  } catch (error) {
+    throw error;
+  }
+}
