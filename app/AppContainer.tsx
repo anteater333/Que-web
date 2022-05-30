@@ -73,7 +73,7 @@ export default function AppContainer() {
           prefixes: ["https://localhost", "que://"],
         }}
       >
-        <RootScreen />
+        <RootScreen isSigned={isSigned} />
       </NavigationContainer>
       <StatusBar
         translucent={false}

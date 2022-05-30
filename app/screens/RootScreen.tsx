@@ -1,13 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SafeAreaView, Text } from "react-native";
+import { SafeAreaView } from "react-native";
 import screens from "../styles/screens";
-import {
-  RootStackNavigationProp,
-  RootStackParamList,
-} from "../navigators/RootNavigator";
+import { RootStackParamList } from "../navigators/RootNavigator";
 import MainScreen from "./MainScreen";
-import { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import OnBoardingScreen from "./OnBoardingScreen/OnBoardingScreen";
 
 /** 최상단 네비게이터 */
@@ -18,16 +13,11 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
  * 메인 서비스 화면들과 가입&로그인 화면들 사이에서
  * 사용자의 로그인 여부에 따라 표현할 화면을 결정한다.
  */
-function RootScreen() {
-  const rootNavigator = useNavigation<RootStackNavigationProp>();
-
-  /** 최초 랜더링 시 로그인 여부 파악해서 navigate */
-  useEffect(() => {}, []);
-
+function RootScreen(props: { isSigned: boolean }) {
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <RootStack.Navigator
-        initialRouteName={"OnBoarding"}
+        initialRouteName={props.isSigned ? "Main" : "OnBoarding"}
         screenOptions={{ headerShown: false }}
       >
         <RootStack.Screen name="OnBoarding" component={OnBoardingScreen} />
