@@ -115,7 +115,7 @@ export default function VideoCardList(props: VideoCardListProps) {
       onEndReachedThreshold={0.2}
       keyExtractor={(listItem) => {
         if ((listItem as VideoType).videoId)
-          return (listItem as VideoType).videoId;
+          return (listItem as VideoType).videoId!;
         else return (listItem as Indicator).indicatorType;
       }}
     />

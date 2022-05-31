@@ -1,11 +1,15 @@
 import { AVPlaybackStatus, Video } from "expo-av";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, View } from "react-native";
-import { getVideoDownloadURL } from "../../api/QueResourceUtils";
+import { useCallback, useRef, useState } from "react";
+import { Pressable, View } from "react-native";
 import VideoType from "../../types/Video";
-import styles from "./SimplifiedVideoPlayer.style";
-import { MaterialIcons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
+import styles from "./VideoPlayer.style";
+import { CONTROL_HIDE_TIMER } from "./VideoPlayer.global";
+import {
+  VideoBottomController,
+  VideoMiddleController,
+  VideoPlayerProps,
+} from "./VideoPlayer.subset";
+import { useToggleTimer } from "../../hooks/useTimer";
 
 /** 간소화된 비디오 플레이어 컴포넌트 프로퍼티 타입 */
 interface SimplifiedVideoPlayer {
@@ -15,15 +19,12 @@ interface SimplifiedVideoPlayer {
   videoSource: string;
 }
 
-/** 조작하지 않을 시 컨트롤러 사라지는 시간 */
-const CONTROL_HIDE_TIMER = 2000;
-
 /**
  * 간소화된 비디오 플레이어 컴포넌트 입니다.
  * 화면의 전체를 덮지 않고 다른 UI 컴포넌트와 함께 사용될 필요가 있을 때 사용합니다.
  * TBD 전반적인 터치 액션 강화 (ex 10초 앞 뒤 건너뛰기)
  */
-function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
+function SimplifiedVideoPlayer(props: VideoPlayerProps) {
   const videoPlayer = useRef<Video>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -32,7 +33,6 @@ function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
   const [videoPosition, setVideoPosition] = useState<number>(0);
   const [videoLength, setVideoLength] = useState<number>(1);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
-  const [timerId, setTimerId] = useState<NodeJS.Timer>();
 
   /** 영상 재생 상태 변화에 따른 처리 */
   const handleOnPlaybackStatusUpdate = useCallback(
@@ -66,23 +66,16 @@ function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
   );
 
   /** 오버레이 숨김 처리 타이머 활성화 / 비활성화 */
-  const updateHideTimer = useCallback(
-    (newTimer?: boolean) => {
-      if (timerId) clearTimeout(timerId);
-      if (newTimer)
-        setTimerId(
-          setTimeout(() => {
-            setIsControlHidden(true);
-          }, CONTROL_HIDE_TIMER)
-        );
-    },
-    [timerId]
+  const refreshHidingControlTimer = useToggleTimer(
+    setIsControlHidden,
+    true,
+    CONTROL_HIDE_TIMER
   );
 
   /** 오버레이 표시 상태에서 오버레이 영역 터치 시 오버레이 지우기 */
   const clearOverlay = useCallback(() => {
     if (!isControlHidden) {
-      updateHideTimer();
+      refreshHidingControlTimer();
       setIsControlHidden(true);
     }
   }, [isControlHidden]);
@@ -90,7 +83,7 @@ function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
   /** 오버레이 비표시 상태에서 비디오 영역 터치 시 오버레이 표시하기 */
   const displayOverlay = useCallback(() => {
     if (isControlHidden) {
-      updateHideTimer(isPlaying);
+      refreshHidingControlTimer({ updateNewTimer: isPlaying });
       setIsControlHidden(false);
     }
   }, [isControlHidden, isPlaying]);
@@ -108,63 +101,53 @@ function SimplifiedVideoPlayer(props: SimplifiedVideoPlayer) {
         }
         videoPlayer.current?.playAsync();
       }
-      updateHideTimer(!isPlaying);
+      refreshHidingControlTimer({ updateNewTimer: !isPlaying });
     }
-  }, [isPlaying, isLoaded]);
+  }, [isPlaying, didJustFinish, isLoaded, videoPlayer]);
 
   return (
     <View style={styles.container}>
-      <Video
-        style={styles.videoCore}
-        source={{ uri: props.videoSource }}
-        ref={videoPlayer}
-        resizeMode="contain"
-        onPlaybackStatusUpdate={handleOnPlaybackStatusUpdate}
-      />
+      <View style={styles.videoCoreContainer}>
+        <Video
+          style={styles.videoCore}
+          source={{ uri: props.videoSource }}
+          ref={videoPlayer}
+          resizeMode="contain"
+          onPlaybackStatusUpdate={handleOnPlaybackStatusUpdate}
+        />
+      </View>
+      {/* 비디오 영역 터치 대응 */}
       <Pressable
         onPress={displayOverlay}
         style={styles.videoTransparentPressableArea}
       />
+      {/* 어둡게 오버레이 */}
       {!isControlHidden ? (
-        <Pressable onPress={clearOverlay} style={styles.videDarkOverlay} />
+        <Pressable onPress={clearOverlay} style={styles.videoDarkOverlay} />
       ) : null}
       <View style={styles.videoControllerView}>
-        <View style={styles.videoUpperControllerContainer}>
-          {isBuffering ? (
-            <ActivityIndicator
-              size={styles.videoBufferIndicator.fontSize}
-              color={styles.videoBufferIndicator.color}
-              style={styles.videoBigButton}
-            />
-          ) : !isControlHidden ? (
-            <Pressable onPress={togglePlay}>
-              <MaterialIcons
-                style={styles.videoBigButton}
-                selectable={false}
-                name={isPlaying ? "pause" : "play-arrow"}
-              />
-            </Pressable>
-          ) : null}
+        {/* 상단 영역 */}
+        <></>
+        {/* 중단 영역 */}
+        <View style={styles.videoMiddleControllerContainer}>
+          <VideoMiddleController
+            isBuffering={isBuffering}
+            isControlHidden={isControlHidden}
+            togglePlay={togglePlay}
+            isPlaying={isPlaying}
+            didJustFinish={didJustFinish}
+          />
         </View>
+        {/* 하단 영역 */}
         <View style={styles.videoBottomControllerContainer}>
-          <Pressable onPress={togglePlay}>
-            <MaterialIcons
-              style={styles.videoSmallButton}
-              selectable={false}
-              name={isPlaying ? "pause" : "play-arrow"}
-            />
-          </Pressable>
-          <View style={styles.videoSliderContainer}>
-            <Slider
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor={styles.videoSlider.color}
-              maximumTrackTintColor={styles.videoSlider.color}
-              thumbTintColor={styles.videoSlider.color}
-              value={videoPosition / videoLength}
-              onSlidingComplete={seekVideo}
-            />
-          </View>
+          <VideoBottomController
+            togglePlay={togglePlay}
+            isPlaying={isPlaying}
+            didJustFinish={didJustFinish}
+            videoPosition={videoPosition}
+            videoLength={videoLength}
+            seekVideo={seekVideo}
+          />
         </View>
       </View>
     </View>

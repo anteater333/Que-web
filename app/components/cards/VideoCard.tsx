@@ -72,6 +72,7 @@ export default function VideoCard(props: VideoCardProps) {
    */
   const onPressCard = useCallback(async () => {
     navigation.navigate("Video", {
+      videoInfo: props.videoInfo,
       url: props.videoInfo.sourceUrl!,
     });
   }, [props.videoInfo.sourceUrl]);
@@ -80,7 +81,7 @@ export default function VideoCard(props: VideoCardProps) {
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
-    navigation.navigate("Criticism", { videoId: props.videoInfo.videoId });
+    navigation.navigate("Criticism", { videoId: props.videoInfo.videoId! });
   }, []);
 
   /**

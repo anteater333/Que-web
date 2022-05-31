@@ -37,6 +37,7 @@ export const uploadScreenStyle = StyleSheet.create({
   videoContainer: {
     backgroundColor: bColors.black,
     marginBottom: bSpace.xlarge,
+    // TBD 현재 기기 화면 너비 구해서 9:16 비율 맞추기, 화면 너비는 base에 저장하기
     height: bSpace.xlarge * 15,
   },
   dataInputContainer: {

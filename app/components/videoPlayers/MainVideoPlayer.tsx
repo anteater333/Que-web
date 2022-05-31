@@ -1,0 +1,295 @@
+import { AVPlaybackStatus, Video } from "expo-av";
+import { useCallback, useRef, useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import styles, { iconStyles } from "./VideoPlayer.style";
+import {
+  VideoBottomController,
+  VideoMiddleController,
+  VideoPlayerProps,
+} from "./VideoPlayer.subset";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useToggleTimer } from "../../hooks/useTimer";
+import { INFO_HIDE_TIMER } from "./VideoPlayer.global";
+import { formatCount } from "../../utils/formatter";
+
+/** 조작하지 않을 시 컨트롤러 사라지는 시간 */
+const CONTROL_HIDE_TIMER = 2000;
+
+/**
+ * 간소화된 비디오 플레이어 컴포넌트 입니다.
+ * 화면의 전체를 덮지 않고 다른 UI 컴포넌트와 함께 사용될 필요가 있을 때 사용합니다.
+ * TBD 전반적인 터치 액션 강화 (ex 10초 앞 뒤 건너뛰기)
+ */
+function MainVideoPlayer(props: VideoPlayerProps) {
+  // TBD SimplifiedVideoPlayer와 공통 코드 분리
+  const videoPlayer = useRef<Video>(null);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [didJustFinish, setDidJustFinish] = useState<boolean>(false);
+  const [isBuffering, setIsBuffering] = useState<boolean>(false);
+  const [videoPosition, setVideoPosition] = useState<number>(0);
+  const [videoLength, setVideoLength] = useState<number>(1);
+  // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
+  const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
+  const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
+
+  /** 영상 재생 상태 변화에 따른 처리 */
+  const handleOnPlaybackStatusUpdate = useCallback(
+    (playbackStatus: AVPlaybackStatus) => {
+      if (!playbackStatus.isLoaded) {
+        if (playbackStatus.error) {
+          // TBD error 처리
+          console.error(playbackStatus.error);
+        }
+      } else {
+        setIsLoaded(playbackStatus.isLoaded);
+        setIsPlaying(playbackStatus.isPlaying);
+        setDidJustFinish(playbackStatus.didJustFinish);
+        setIsBuffering(playbackStatus.isBuffering);
+        setVideoPosition(playbackStatus.positionMillis);
+        if (playbackStatus.durationMillis)
+          setVideoLength(playbackStatus.durationMillis);
+        // if (playbackStatus.playableDurationMillis) {
+        //   // TBD 버퍼링 정도도 보여줄 수 있는 slider 구현
+        //   setVideoPlayableBuffer(playbackStatus.playableDurationMillis);
+        // }
+      }
+    },
+    []
+  );
+
+  /** 영상 Seekbar 사용 함수 */
+  const seekVideo = useCallback(
+    (position) => {
+      if (isLoaded) {
+        videoPlayer.current?.setPositionAsync(videoLength * position);
+      }
+    },
+    [videoLength, isLoaded]
+  );
+
+  /** 오버레이 숨김 처리 타이머 활성화 / 비활성화 함수 */
+  const refreshHidingControlTimer = useToggleTimer(
+    setIsControlHidden,
+    true,
+    CONTROL_HIDE_TIMER
+  );
+
+  /** 영상 설명 숨김 처리 타이머 할성화 / 비활성화 함수 */
+  const refreshHidingInfoTimer = useToggleTimer(
+    setIsInfoHidden,
+    true,
+    INFO_HIDE_TIMER
+  );
+
+  /** 오버레이 표시 상태에서 오버레이 영역 터치 시 오버레이 지우기 */
+  const clearOverlay = useCallback(() => {
+    if (!isControlHidden) {
+      refreshHidingControlTimer();
+      refreshHidingInfoTimer();
+      setIsControlHidden(true);
+      setIsInfoHidden(true);
+    }
+  }, [isControlHidden]);
+
+  /** 오버레이 비표시 상태에서 비디오 영역 터치 시 오버레이 표시하기 */
+  const displayOverlay = useCallback(() => {
+    if (isControlHidden) {
+      refreshHidingControlTimer({ updateNewTimer: isPlaying });
+      refreshHidingInfoTimer({ updateNewTimer: isPlaying });
+      setIsControlHidden(false);
+      setIsInfoHidden(false);
+    }
+  }, [isControlHidden, isPlaying]);
+
+  /** 재생 / 정지 토글 함수 */
+  const togglePlay = useCallback(() => {
+    // TBD Web에서 좀 더 우아하게 컨트롤 표시 처리하기
+    // 차라리 웹 전용 컴포넌트를 만드는게 더 유리할수도(장기계획)
+    if (isLoaded) {
+      refreshHidingControlTimer({ updateNewTimer: !isPlaying });
+      refreshHidingInfoTimer({ updateNewTimer: !isPlaying });
+      if (isPlaying) {
+        videoPlayer.current?.pauseAsync();
+      } else {
+        if (didJustFinish) {
+          videoPlayer.current?.setPositionAsync(0);
+        }
+        videoPlayer.current?.playAsync();
+      }
+    }
+  }, [isPlaying, isLoaded, didJustFinish, videoPlayer]);
+
+  /** 영상 정보 표시 영역의 표시를 계속 유지한다. */
+  const sustainInfoView = useCallback(() => {
+    if (isPlaying) {
+      refreshHidingInfoTimer({ updateNewTimer: true });
+    }
+  }, [isPlaying]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.videoCoreContainer}>
+        <Video
+          style={styles.videoCore}
+          source={{ uri: props.videoSource }}
+          ref={videoPlayer}
+          resizeMode="contain"
+          onPlaybackStatusUpdate={handleOnPlaybackStatusUpdate}
+        />
+      </View>
+      {/* 비디오 영역 터치 대응 */}
+      <Pressable
+        onPress={displayOverlay}
+        style={styles.videoTransparentPressableArea}
+      />
+      {/* 어둡게 오버레이 */}
+      {!isControlHidden ? (
+        <Pressable onPress={clearOverlay} style={styles.videoDarkOverlay} />
+      ) : null}
+      <View onTouchStart={sustainInfoView} style={styles.videoControllerView}>
+        {/* 상단 영역 (영상 정보) */}
+        {!isInfoHidden ? (
+          <View style={styles.videoUpperControllerContainer}>
+            <View style={styles.videoInfoContainer}>
+              <View style={styles.videoInfoRow}>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.videoTitleText, styles.videoInfoColor]}
+                >
+                  {props.videoData.title
+                    ? props.videoData.title
+                    : "Untitled"}
+                </Text>
+                <View style={styles.videoReactionContainer}>
+                  <View style={styles.videoReactionRow}>
+                    <MaterialIcons
+                      name="favorite-border"
+                      color={iconStyles.color}
+                      size={iconStyles.size}
+                      style={styles.videoReactionItem}
+                    />
+                    <Text
+                      style={[
+                        styles.videoReactionText,
+                        styles.videoInfoColor,
+                        styles.videoReactionItem,
+                      ]}
+                    >
+                      {props.videoData.likeCount
+                        ? formatCount(props.videoData.likeCount)
+                        : 0}
+                    </Text>
+                    <MaterialIcons
+                      name="star-border"
+                      color={iconStyles.color}
+                      size={iconStyles.size}
+                      style={styles.videoReactionItem}
+                    />
+                    <Text
+                      style={[
+                        styles.videoReactionText,
+                        styles.videoInfoColor,
+                        styles.videoReactionItem,
+                      ]}
+                    >
+                      {props.videoData.starCount
+                        ? formatCount(props.videoData.starCount)
+                        : 0}
+                    </Text>
+                  </View>
+                  <View style={styles.videoReactionRow}>
+                    <Text
+                      style={[
+                        styles.videoReactionText,
+                        styles.videoInfoColor,
+                        styles.videoReactionItem,
+                      ]}
+                    >
+                      Views
+                    </Text>
+                    <Text
+                      style={[
+                        styles.videoReactionText,
+                        styles.videoInfoColor,
+                        styles.videoReactionItem,
+                      ]}
+                    >
+                      {props.videoData.viewCount
+                        ? formatCount(props.videoData.viewCount)
+                        : 0}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.videoInfoRow}>
+                <Text style={[styles.videoInfoText, styles.videoInfoColor]}>
+                  {props.videoData.song
+                    ? props.videoData.song.title
+                    : "곡 정보 없음"}
+                </Text>
+                <Text style={[styles.videoInfoText, styles.videoInfoColor]}>
+                  {
+                    props.videoData.uploadedAt?.toDateString() /** TBD 날짜 변환 Util 함수 */
+                  }
+                </Text>
+              </View>
+              <View style={styles.videoInfoRow}>
+                <Text style={[styles.videoUploaderText, styles.videoInfoColor]}>
+                  {"placeholderUser"}
+                </Text>
+                <Pressable>
+                  <MaterialIcons
+                    selectable={false}
+                    name="person-add"
+                    color={iconStyles.color}
+                    size={iconStyles.size}
+                  />
+                </Pressable>
+              </View>
+              <View style={styles.videoInfoRow}>
+                {/* {TBD 더보기 누르면 description 표시} */}
+                <ScrollView
+                  style={styles.videoDescriptionContainer}
+                  onScroll={sustainInfoView}
+                >
+                  <Text
+                    style={[styles.videoDescriptionText, styles.videoInfoColor]}
+                  >
+                    {
+                      props.videoData.description
+                      // "돋고, 반짝이는 용기가 대중을 기쁘며, 찾아 밝은 아니더면, 있을 것이다. 못하다 이상의 안고, 끓는 피가 아니다. 얼마나 가지에 불어 남는 이 못할 이상, 때문이다. 물방아 않는 뼈 원질이 이상 같으며, 방황하였으며, 목숨이 심장의 피다. 목숨이 꽃이 우리의 그들은 피부가 있는가? 이성은 많이 남는 이것을 사랑의 구하지 있는 말이다. 만천하의 따뜻한 긴지라 사는가 고행을 하였으며, 무엇을 못하다 풍부하게 칼이다. 품고 물방아 공자는 얼마나 듣기만 있을 이상이 그들의 얼마나 운다. 그와 피고 품에 방황하였으며, 피고, 우리의 얼음과 구하기 끓는다. 인생에 피어나기 그들은 무엇을 그림자는 청춘의 붙잡아 그들의 밝은 있으랴?"
+                    }
+                  </Text>
+                </ScrollView>
+              </View>
+            </View>
+          </View>
+        ) : null}
+        {/* 중단 영역 */}
+        <View style={styles.videoMiddleControllerContainer}>
+          <VideoMiddleController
+            isBuffering={isBuffering}
+            isControlHidden={isControlHidden}
+            togglePlay={togglePlay}
+            isPlaying={isPlaying}
+            didJustFinish={didJustFinish}
+          />
+        </View>
+        {/* 하단 영역 */}
+        <View style={styles.videoBottomControllerContainer}>
+          <VideoBottomController
+            togglePlay={togglePlay}
+            isPlaying={isPlaying}
+            didJustFinish={didJustFinish}
+            videoPosition={videoPosition}
+            videoLength={videoLength}
+            seekVideo={seekVideo}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+export default MainVideoPlayer;

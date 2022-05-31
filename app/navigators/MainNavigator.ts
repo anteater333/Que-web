@@ -2,6 +2,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
+import VideoType from "../types/Video";
 
 /**
  * 주요 기능들을 제공할 스크린이 담길 네비게이터
@@ -10,7 +11,7 @@ export type MainStackParamList = {
   Home: undefined;
   UserPage: { userId: string };
   Upload: undefined;
-  Video: { url: string };
+  Video: { videoInfo: VideoType; url: string };
   Criticism: { videoId: string };
   Search: undefined;
   Notification: undefined;

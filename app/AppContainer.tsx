@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   rootContainer: {
     width: "100%",
     flex: 1,
-    maxWidth: 480,
+    maxWidth: 720,
     shadowColor: bColors.black,
     shadowOffset: {
       width: 0,

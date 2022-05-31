@@ -20,6 +20,7 @@ const videoCardStyles = StyleSheet.create({
   videoThumbnailImage: {
     width: "100%",
     height: "100%",
+    maxWidth: 480,
   },
   videoTime: {
     position: "absolute",
@@ -62,7 +63,7 @@ const videoCardStyles = StyleSheet.create({
     marginTop: bSpace.large,
   },
   infoTitleText: {
-    height: bFont.middle + 4,
+    height: bFont.middle + bFont.small / 2,
     fontSize: bFont.middle,
     marginBottom: bSpace.small,
   },

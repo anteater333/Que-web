@@ -1,12 +1,16 @@
-import { StyleSheet } from "react-native";
-import { bColors, bFont, bSpace } from "../../styles/base";
+import { Platform, StyleSheet } from "react-native";
+import { bColors, bDimensions, bFont, bSpace } from "../../styles/base";
 
-const simplifiedVideoPlayerStyles = StyleSheet.create({
+const videoPlayerStyles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  videoCoreContainer: {
     flex: 1,
   },
   videoCore: {
     flex: 1,
+    justifyContent: "center",
   },
   videoControllerView: {
     position: "absolute",
@@ -20,13 +24,64 @@ const simplifiedVideoPlayerStyles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-  videDarkOverlay: {
+  videoDarkOverlay: {
     position: "absolute",
     height: "100%",
     width: "100%",
     backgroundColor: bColors.black + bColors.tpTetiary,
   },
   videoUpperControllerContainer: {
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    // TBD 그라데이션 오버레이
+  },
+  videoInfoContainer: {
+    padding: bSpace.xlarge,
+  },
+  videoInfoRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: bSpace.middle,
+  },
+  videoInfoColor: {
+    color: bColors.white + bColors.tpPrimary,
+  },
+  videoInfoText: {
+    fontSize: bFont.middle,
+  },
+  videoTitleText: {
+    fontSize: bFont.xlarge + bFont.middle,
+    maxWidth: bFont.xlarge * 8,
+  },
+  videoUploaderText: {
+    fontSize: bFont.large,
+  },
+  videoDescriptionContainer: {
+    height: bFont.middle * 8,
+  },
+  videoDescriptionText: {
+    fontSize: bFont.middle,
+  },
+  videoReactionContainer: {
+    flex: 1,
+    paddingTop: bSpace.middle,
+  },
+  videoReactionRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  videoReactionText: {
+    fontSize: bFont.middle,
+    minWidth: bFont.middle * 2,
+    textAlign: "right",
+  },
+  videoReactionItem: {
+    marginLeft: bSpace.middle,
+  },
+  videoMiddleControllerContainer: {
     flex: 1,
     justifyContent: "center",
   },
@@ -66,4 +121,9 @@ const simplifiedVideoPlayerStyles = StyleSheet.create({
   },
 });
 
-export default simplifiedVideoPlayerStyles;
+export default videoPlayerStyles;
+
+export const iconStyles = {
+  color: bColors.white + bColors.tpPrimary,
+  size: bFont.xlarge,
+};
