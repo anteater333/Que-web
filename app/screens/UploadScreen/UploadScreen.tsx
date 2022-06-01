@@ -1,11 +1,11 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native";
 import QueResourceClient from "../../api/QueResourceUtils";
-import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
 import CommonHeader from "../../components/headers/CommonHeader";
 import { useConfirm } from "../../hooks/useConfirm";
+import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
 import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 import {
   UploadStackNavigationProp,
@@ -37,8 +37,6 @@ function UploadScreen() {
   const [videoLength, setVideoLength] = useState<number>(0);
   const [songInfo, setSongInfo] = useState<SongType>({ title: "" });
   const [placeInfo, setPlaceInfo] = useState<PlaceType>({ name: "" });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [loadingMessage, setLoadingMessage] = useState<string>("");
 
   const isFocused = useIsFocused();
 
@@ -46,6 +44,8 @@ function UploadScreen() {
 
   const mainNavigator = useNavigation<MainStackNavigationProp>();
   const uploadNavigator = useNavigation<UploadStackNavigationProp>();
+
+  const { hideLoading, setLoadingMessage, showLoading } = useLoadingIndicator();
 
   /**
    * 업로드 확인 버튼 눌렀을 때 실행되는 콜백함수
@@ -58,7 +58,7 @@ function UploadScreen() {
       setLoadingMessage(
         `영상을 업로드 중입니다.\n제발 종료하지 말아주세요...\n로딩은 개선 예정입니다.`
       );
-      setIsLoading(true);
+      showLoading();
 
       const newVideoData: VideoType = {
         title: videoTitle,
@@ -82,14 +82,14 @@ function UploadScreen() {
 
       if (uploadResult.success) {
         alert("영상이 성공적으로 업로드됐습니다.");
-        setIsLoading(false);
+        hideLoading();
         mainNavigator.navigate("Home");
       } else {
         // TBD 좀 더 정교한 에러 처리
         alert(
           `영상을 업로드 하는 중 문제가 발생했습니다.\n${uploadResult.errorType}`
         );
-        setIsLoading(false);
+        hideLoading();
       }
     }
   }, [
@@ -133,10 +133,6 @@ function UploadScreen() {
           setVideoPath,
           thumbnailPath,
           setThumbnailPath,
-          isLoading,
-          setIsLoading,
-          loadingMessage,
-          setLoadingMessage,
         }}
       >
         <UploadStack.Navigator
@@ -171,11 +167,6 @@ function UploadScreen() {
           component={DummyComponent}
         /> */}
         </UploadStack.Navigator>
-        {isLoading ? (
-          <ScreenCoverLoadingSpinner message={loadingMessage} />
-        ) : (
-          false
-        )}
       </UploadContext.Provider>
     </SafeAreaView>
   );

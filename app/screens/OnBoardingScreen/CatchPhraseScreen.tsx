@@ -17,7 +17,6 @@ import { RootStackNavigationProp } from "../../navigators/RootNavigator";
 import { bColors, bFont, bSpace } from "../../styles/base";
 import screens from "../../styles/screens";
 import * as WebBrowser from "expo-web-browser";
-import ScreenCoverLoadingSpinner from "../../components/common/ScreenCoverLoadingIndicator";
 import { styles } from "./OnBoardingScreen.style";
 import { useSignWithGoogle } from "../../hooks/useSign";
 import { useAuth } from "../../hooks/useAuth";
@@ -31,9 +30,6 @@ WebBrowser.maybeCompleteAuthSession();
  * @returns
  */
 export function CatchPhraseScreen() {
-  /** 회원가입 / 로그인 시 로딩 표시 */
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
   /** 로그인 여부 */
   const [signed, setSigned] = useState<boolean>(false);
 
@@ -76,7 +72,7 @@ export function CatchPhraseScreen() {
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
-  const signWithGoogle = useSignWithGoogle(setIsLoading);
+  const signWithGoogle = useSignWithGoogle();
 
   const signUpNewQueUser = useCallback(() => {
     onBoardingNavigator.navigate("SignUp", {});
@@ -177,7 +173,6 @@ export function CatchPhraseScreen() {
           </View>
         </View>
       </ImageBackground>
-      {isLoading ? <ScreenCoverLoadingSpinner /> : null}
     </SafeAreaView>
   );
 }

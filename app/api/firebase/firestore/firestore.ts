@@ -21,6 +21,7 @@ import {
   QueResourceResponse,
   QueResourceResponseErrorType,
 } from "../../interfaces";
+import firebaseConfig from "../config";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
@@ -200,10 +201,13 @@ export async function setVideoDocument(videoData: VideoType): Promise<string> {
     const uid = getAuth().currentUser?.uid;
     const newDocRef = doc(VideoCollection);
     const videoId = newDocRef.id;
+
+    const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
     await setDoc<VideoType>(newDocRef, {
       ...videoData,
-      sourceUrl: `users/${uid}/videos/${videoId}/video`,
-      thumbnailUrl: `users/${uid}/videos/${videoId}/thumbnail`,
+      sourceUrl: storagePathPrefix + `users/${uid}/videos/${videoId}/video`,
+      thumbnailUrl:
+        storagePathPrefix + `users/${uid}/videos/${videoId}/thumbnail`,
       uploadedAt: new Date(),
       uploadDone: false,
       uploader: doc(UserCollection, uid),

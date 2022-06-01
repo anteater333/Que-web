@@ -30,12 +30,6 @@ type UploadContextType = {
   /** 장소 정보 */
   placeInfo: PlaceType;
   setPlaceInfo: Dispatch<SetStateAction<PlaceType>>;
-  /** 로딩 표시 */
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
-  /** 로딩 중 메세지 */
-  loadingMessage: string;
-  setLoadingMessage: Dispatch<SetStateAction<string>>;
 };
 
 const defaultUploadContext: UploadContextType = {
@@ -69,14 +63,6 @@ const defaultUploadContext: UploadContextType = {
   },
   thumbnailPath: "",
   setThumbnailPath: function (value: SetStateAction<string>): void {
-    throw new Error("Function not implemented.");
-  },
-  isLoading: false,
-  setIsLoading: function (value: SetStateAction<boolean>): void {
-    throw new Error("Function not implemented.");
-  },
-  loadingMessage: "",
-  setLoadingMessage: function (value: SetStateAction<string>): void {
     throw new Error("Function not implemented.");
   },
   videoLength: 0,

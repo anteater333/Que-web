@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { QueAuthResponse } from "../../../api/interfaces";
 import authClient from "../../../api/QueAuthUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
 import { useSignInWithQue } from "../../../hooks/useSign";
 import { SignUpStackScreenProp } from "../../../navigators/OnBoardingNavigator";
 import screens from "../../../styles/screens";
@@ -52,18 +53,16 @@ export default function SetPasswordScreen({
     buttonAction,
     setButtonAction,
     signUpNavigator,
-    setIsLoading,
   } = useContext(SignUpContext);
 
-  const signIn = useSignInWithQue(
-    route.params.userEmail,
-    password,
-    setIsLoading
-  );
+  const { hideLoading, setLoadingMessage, showLoading } =
+    useLoadingIndicator("");
+
+  const signIn = useSignInWithQue(route.params.userEmail, password);
 
   /** 사용자의 비밀번호를 서버에 등록, 회원가입 요청 수행됨 */
   const postUserPassword = useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
     try {
       // 회원가입 요청
       const reqResult = await authClient.signUpWithQueSelfManaged(
@@ -87,7 +86,7 @@ export default function SetPasswordScreen({
     } catch (error) {
       alert(`비밀번호 설정 과정에서 에러가 발생했습니다. : ` + error);
     }
-    setIsLoading(false);
+    hideLoading();
   }, [password]);
 
   /** 첫 렌더링 시 입력 데이터 초기화 */

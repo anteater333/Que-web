@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store, { persistor } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
 import AppContainer from "./app/AppContainer";
+import { LoadingIndicatorProvider } from "./app/hooks/useLoadingIndicator";
 
 // 타이머 경고 무효
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -21,7 +22,9 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <NativeBaseProvider>
           <SafeAreaProvider style={styles.rootBackground}>
-            <AppContainer />
+            <LoadingIndicatorProvider>
+              <AppContainer />
+            </LoadingIndicatorProvider>
           </SafeAreaProvider>
         </NativeBaseProvider>
       </PersistGate>

@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { OnBoardingStackNavigationProp } from "../navigators/OnBoardingNavigator";
 import { RootStackNavigationProp } from "../navigators/RootNavigator";
 import { useConfirm } from "./useConfirm";
+import { useLoadingIndicator } from "./useLoadingIndicator";
 
 /** 로그인 과정에서의 에러 메세지 */
 const signInErrorMessages: {
@@ -30,19 +31,20 @@ const googleClientId =
  * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
  * 등록된 Google 계정이 없으면 회원 가입 화면으로
  */
-export const useSignWithGoogle = (
-  setIsLoading: React.Dispatch<SetStateAction<boolean>>
-) => {
+export const useSignWithGoogle = () => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId: googleClientId,
+    selectAccount: true,
   });
+
+  const { hideLoading, showLoading } = useLoadingIndicator("");
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   const dispatch = useAppDispatch();
 
   return useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
     const result = await promptAsync();
 
     if (result.type === "success") {
@@ -59,7 +61,7 @@ export const useSignWithGoogle = (
             // 로그인 정보 설정
             dispatch(setCredential({ user: loginResult.user }));
 
-            setIsLoading(false);
+            hideLoading();
 
             // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
             const curNavState = onBoardingNavigator.getState();
@@ -77,7 +79,7 @@ export const useSignWithGoogle = (
             // 로그인 정보 설정
             dispatch(setCredential({ user: loginResult.user }));
 
-            setIsLoading(false);
+            hideLoading();
 
             // 네비게이션
             onBoardingNavigator.navigate("SignUp", { hasProvider: true });
@@ -87,7 +89,7 @@ export const useSignWithGoogle = (
           default: {
             errMsg = signInErrorMessages[loginResult.status];
 
-            setIsLoading(false);
+            hideLoading();
             break;
           }
         }
@@ -99,12 +101,12 @@ export const useSignWithGoogle = (
         const errorMessage = signInErrorMessages.default + `\n${error}`;
         Toast.show({ description: errorMessage });
 
-        setIsLoading(false);
+        hideLoading();
       }
     } else {
       // 구글 로그인 팝업 오류 처리
 
-      setIsLoading(false);
+      hideLoading();
     }
   }, [response, request]);
 };
@@ -115,15 +117,16 @@ export const useSignWithGoogle = (
 export const useSignInWithQue = (
   userEmail: string,
   password: string,
-  setIsLoading: React.Dispatch<SetStateAction<boolean>>,
   navigateAfter?: boolean
 ) => {
   const dispatch = useAppDispatch();
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
+  const { hideLoading, showLoading } = useLoadingIndicator("");
+
   return useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
     try {
       const loginResult = await QueAuthClient.signInWithQueSelfManaged(
         userEmail,
@@ -156,7 +159,7 @@ export const useSignInWithQue = (
       Toast.show({ description: errorMessage });
     }
 
-    setIsLoading(false);
+    hideLoading();
   }, [userEmail, password]);
 };
 

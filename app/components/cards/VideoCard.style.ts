@@ -16,6 +16,8 @@ const videoCardStyles = StyleSheet.create({
   thumbnailView: {
     height: thumbnailHeight,
     backgroundColor: bColors.black,
+    justifyContent: "center",
+    alignItems: "center",
   },
   videoThumbnailImage: {
     width: "100%",

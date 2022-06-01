@@ -27,28 +27,20 @@ function SignInScreen() {
   /** 로그인 버튼 활성화 여부 */
   const [isTriable, setIsTriable] = useState<boolean>(false);
 
-  /** 로딩 컴포넌트 표시 여부 */
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
   /** 로고 표시용 에셋 */
   const [assets, error] = useAssets([
     require("../../../assets/custom/logo-big.png"),
   ]);
 
   /** 이메일과 비밀번호를 통해 로그인 진행 */
-  const loginWithQue = useSignInWithQue(
-    userEmail,
-    password,
-    setIsLoading,
-    true
-  );
+  const loginWithQue = useSignInWithQue(userEmail, password, true);
 
   /**
    * Google Auth를 통한 계정 인증
    * 이미 등록된 Google 계정이 있으면 로그인 진행 후 main 화면으로
    * 등록된 Google 계정이 없으면 회원 가입 화면으로
    */
-  const signWithGoogle = useSignWithGoogle(setIsLoading);
+  const signWithGoogle = useSignWithGoogle();
 
   /** 이메일과 비밀번호가 입력되었으면 버튼 활성화 */
   useEffect(() => {
@@ -103,8 +95,6 @@ function SignInScreen() {
           ></SocialLoginButton>
         </View>
       </View>
-
-      {isLoading ? <ScreenCoverLoadingSpinner /> : null}
       <WizardNavBar
         enableNextButton={isTriable}
         hideSkipButton={true}
