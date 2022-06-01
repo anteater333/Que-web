@@ -19,10 +19,16 @@ const videoCardStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  videoThumbnailBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
   videoThumbnailImage: {
     width: "100%",
     height: "100%",
     maxWidth: 480,
+    backgroundColor: bColors.black + bColors.tpPrimary,
   },
   videoTime: {
     position: "absolute",

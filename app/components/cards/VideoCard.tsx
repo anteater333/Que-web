@@ -182,11 +182,17 @@ function CardThumbnailView(props: CardThumbnailProps) {
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
       <Image
+        testID="cardThumbnailBackground"
+        style={styles.videoThumbnailBackground}
+        resizeMode={"stretch"}
+        source={thumbnail}
+      />
+      <Image
         testID="cardThumbnailImage"
         style={styles.videoThumbnailImage}
         resizeMode={resizeMode}
         source={thumbnail}
-      ></Image>
+      />
       <Text testID="cardThumbnailTime" style={styles.videoTime}>
         {modifiedVideoLength}
       </Text>
