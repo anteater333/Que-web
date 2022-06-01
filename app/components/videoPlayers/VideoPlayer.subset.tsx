@@ -34,19 +34,21 @@ export function VideoMiddleController(props: {
           style={styles.videoBigButton}
         />
       ) : !props.isControlHidden ? (
-        <Pressable onPress={props.togglePlay}>
-          <MaterialIcons
-            style={styles.videoBigButton}
-            selectable={false}
-            name={
-              props.isPlaying
-                ? "pause"
-                : props.didJustFinish
-                ? "replay"
-                : "play-arrow"
-            }
-          />
-        </Pressable>
+        <View>
+          <Pressable onPress={props.togglePlay}>
+            <MaterialIcons
+              style={styles.videoBigButton}
+              selectable={false}
+              name={
+                props.isPlaying
+                  ? "pause"
+                  : props.didJustFinish
+                  ? "replay"
+                  : "play-arrow"
+              }
+            />
+          </Pressable>
+        </View>
       ) : null}
     </>
   );

@@ -80,10 +80,14 @@ const videoPlayerStyles = StyleSheet.create({
   },
   videoReactionItem: {
     marginLeft: bSpace.middle,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   videoMiddleControllerContainer: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
   },
   videoBufferIndicator: {
     fontSize: bFont.xlarge * 5,
@@ -92,9 +96,28 @@ const videoPlayerStyles = StyleSheet.create({
   videoBigButton: {
     color: bColors.white + bColors.tpPrimary,
     paddingTop: bFont.large,
-    fontSize: bFont.xlarge * 5,
-    height: bFont.xlarge * 5,
-    lineHeight: bFont.xlarge * 5, // 이모티콘이 중간에 오도록 만듭니다.
+    fontSize: bFont.xlarge * 6,
+    height: bFont.xlarge * 6,
+    lineHeight: bFont.xlarge * 6, // 이모티콘이 중간에 오도록 만듭니다.
+  },
+  videoMiddleButtonContainer: {
+    flexDirection: "row",
+    paddingTop: bSpace.large * 5,
+  },
+  videoMiddleDummyArea: {
+    height: bSpace.xlarge * 8,
+  },
+  videoMiddleButtonSpace: {
+    width: bSpace.xlarge * 6,
+  },
+  videoMiddleButton: {
+    color: bColors.white + bColors.tpPrimary,
+    fontSize: bFont.large * 4,
+  },
+  videoMiddleButtonText: {
+    color: bColors.white + bColors.tpPrimary,
+    textAlign: "center",
+    fontSize: bFont.large,
   },
   videoBottomControllerContainer: {
     flexDirection: "row",
@@ -125,5 +148,6 @@ export default videoPlayerStyles;
 
 export const iconStyles = {
   color: bColors.white + bColors.tpPrimary,
-  size: bFont.xlarge,
+  sizeLarge: bFont.large,
+  sizeXlarge: bFont.xlarge,
 };

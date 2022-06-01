@@ -1,5 +1,5 @@
 import { AVPlaybackStatus, Video } from "expo-av";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import styles, { iconStyles } from "./VideoPlayer.style";
 import {
@@ -32,6 +32,14 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
   const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
+
+  /** 영상이 끝나면 재생 버튼 표시하기 */
+  useEffect(() => {
+    if (didJustFinish) {
+      setIsControlHidden(false);
+      setIsInfoHidden(false);
+    }
+  }, [didJustFinish]);
 
   /** 영상 재생 상태 변화에 따른 처리 */
   const handleOnPlaybackStatusUpdate = useCallback(
@@ -157,46 +165,51 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                   numberOfLines={1}
                   style={[styles.videoTitleText, styles.videoInfoColor]}
                 >
-                  {props.videoData.title
-                    ? props.videoData.title
-                    : "Untitled"}
+                  {props.videoData.title ? props.videoData.title : "Untitled"}
                 </Text>
                 <View style={styles.videoReactionContainer}>
                   <View style={styles.videoReactionRow}>
-                    <MaterialIcons
-                      name="favorite-border"
-                      color={iconStyles.color}
-                      size={iconStyles.size}
-                      style={styles.videoReactionItem}
-                    />
-                    <Text
-                      style={[
-                        styles.videoReactionText,
-                        styles.videoInfoColor,
-                        styles.videoReactionItem,
-                      ]}
-                    >
-                      {props.videoData.likeCount
-                        ? formatCount(props.videoData.likeCount)
-                        : 0}
-                    </Text>
-                    <MaterialIcons
-                      name="star-border"
-                      color={iconStyles.color}
-                      size={iconStyles.size}
-                      style={styles.videoReactionItem}
-                    />
-                    <Text
-                      style={[
-                        styles.videoReactionText,
-                        styles.videoInfoColor,
-                        styles.videoReactionItem,
-                      ]}
-                    >
-                      {props.videoData.starCount
-                        ? formatCount(props.videoData.starCount)
-                        : 0}
-                    </Text>
+                    <View style={styles.videoReactionItem}>
+                      <MaterialIcons
+                        name="favorite-border"
+                        color={iconStyles.color}
+                        size={iconStyles.sizeLarge}
+                        style={styles.videoReactionItem}
+                      />
+                      <Text
+                        style={[
+                          styles.videoReactionText,
+                          styles.videoInfoColor,
+                          styles.videoReactionItem,
+                        ]}
+                      >
+                        {props.videoData.likeCount
+                          ? formatCount(props.videoData.likeCount)
+                          : 0}
+                      </Text>
+                    </View>
+                    <View style={styles.videoReactionItem}>
+                      <MaterialIcons
+                        name="star-border"
+                        color={iconStyles.color}
+                        size={
+                          iconStyles.sizeLarge +
+                          2 /** 이 아이콘만 묘하게 크기가 작아요 */
+                        }
+                        style={styles.videoReactionItem}
+                      />
+                      <Text
+                        style={[
+                          styles.videoReactionText,
+                          styles.videoInfoColor,
+                          styles.videoReactionItem,
+                        ]}
+                      >
+                        {props.videoData.starCount
+                          ? formatCount(props.videoData.starCount)
+                          : 0}
+                      </Text>
+                    </View>
                   </View>
                   <View style={styles.videoReactionRow}>
                     <Text
@@ -243,7 +256,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     selectable={false}
                     name="person-add"
                     color={iconStyles.color}
-                    size={iconStyles.size}
+                    size={iconStyles.sizeXlarge}
                   />
                 </Pressable>
               </View>
@@ -256,10 +269,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                   <Text
                     style={[styles.videoDescriptionText, styles.videoInfoColor]}
                   >
-                    {
-                      props.videoData.description
-                      // "돋고, 반짝이는 용기가 대중을 기쁘며, 찾아 밝은 아니더면, 있을 것이다. 못하다 이상의 안고, 끓는 피가 아니다. 얼마나 가지에 불어 남는 이 못할 이상, 때문이다. 물방아 않는 뼈 원질이 이상 같으며, 방황하였으며, 목숨이 심장의 피다. 목숨이 꽃이 우리의 그들은 피부가 있는가? 이성은 많이 남는 이것을 사랑의 구하지 있는 말이다. 만천하의 따뜻한 긴지라 사는가 고행을 하였으며, 무엇을 못하다 풍부하게 칼이다. 품고 물방아 공자는 얼마나 듣기만 있을 이상이 그들의 얼마나 운다. 그와 피고 품에 방황하였으며, 피고, 우리의 얼음과 구하기 끓는다. 인생에 피어나기 그들은 무엇을 그림자는 청춘의 붙잡아 그들의 밝은 있으랴?"
-                    }
+                    {props.videoData.description}
                   </Text>
                 </ScrollView>
               </View>
@@ -268,6 +278,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
         ) : null}
         {/* 중단 영역 */}
         <View style={styles.videoMiddleControllerContainer}>
+          <View style={styles.videoMiddleDummyArea} />
           <VideoMiddleController
             isBuffering={isBuffering}
             isControlHidden={isControlHidden}
@@ -275,6 +286,35 @@ function MainVideoPlayer(props: VideoPlayerProps) {
             isPlaying={isPlaying}
             didJustFinish={didJustFinish}
           />
+          {!isControlHidden ? (
+            <View style={styles.videoMiddleButtonContainer}>
+              <Pressable
+                onPress={() => {
+                  /** TBD 좋아하기 */
+                }}
+              >
+                <MaterialIcons
+                  selectable={false}
+                  style={styles.videoMiddleButton}
+                  name={"favorite"}
+                />
+                <Text style={styles.videoMiddleButtonText}>좋아요</Text>
+              </Pressable>
+              <View style={styles.videoMiddleButtonSpace} />
+              <Pressable
+                onPress={() => {
+                  /** TBD 평가하기 */
+                }}
+              >
+                <MaterialIcons
+                  selectable={false}
+                  style={styles.videoMiddleButton}
+                  name={"star"}
+                />
+                <Text style={styles.videoMiddleButtonText}>평가하기</Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
         {/* 하단 영역 */}
         <View style={styles.videoBottomControllerContainer}>

@@ -1,5 +1,5 @@
 import { AVPlaybackStatus, Video } from "expo-av";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import VideoType from "../../types/Video";
 import styles from "./VideoPlayer.style";
@@ -54,6 +54,13 @@ function SimplifiedVideoPlayer(props: VideoPlayerProps) {
     },
     []
   );
+
+  /** 영상이 끝나면 재생 버튼 표시하기 */
+  useEffect(() => {
+    if (didJustFinish) {
+      setIsControlHidden(false);
+    }
+  }, [didJustFinish]);
 
   /** 영상 Seekbar 사용 함수 */
   const seekVideo = useCallback(
