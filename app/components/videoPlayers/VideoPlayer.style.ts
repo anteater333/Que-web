@@ -94,9 +94,7 @@ const videoPlayerStyles = StyleSheet.create({
     color: bColors.white + bColors.tpPrimary,
   },
   videoBigButton: {
-    color: bColors.white + bColors.tpPrimary,
     paddingTop: bFont.large,
-    fontSize: bFont.xlarge * 6,
     height: bFont.xlarge * 6,
     lineHeight: bFont.xlarge * 6, // 이모티콘이 중간에 오도록 만듭니다.
   },
@@ -121,23 +119,20 @@ const videoPlayerStyles = StyleSheet.create({
   },
   videoBottomControllerContainer: {
     flexDirection: "row",
-    height: bFont.xlarge,
     width: "100%",
-    marginBottom: bSpace.middle,
+    paddingBottom: bSpace.middle,
     paddingHorizontal: bSpace.xlarge,
   },
   videoSmallButton: {
-    color: bColors.white + bColors.tpPrimary,
-    fontSize: bFont.xlarge,
     height: bFont.xlarge,
     lineHeight: bFont.xlarge, // 이모티콘이 중간에 오도록 만듭니다.
-    marginRight: bSpace.middle,
   },
   videoSliderContainer: {
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
     height: bFont.xlarge,
+    marginHorizontal: bSpace.middle,
   },
   videoSlider: {
     color: bColors.secondary,
@@ -148,6 +143,8 @@ export default videoPlayerStyles;
 
 export const iconStyles = {
   color: bColors.white + bColors.tpPrimary,
+  heartColor: bColors.red + bColors.tpPrimary,
   sizeLarge: bFont.large,
   sizeXlarge: bFont.xlarge,
+  sizeXXlarge: bFont.xlarge * 6,
 };

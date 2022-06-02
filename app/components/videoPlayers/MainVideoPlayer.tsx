@@ -317,16 +317,18 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           ) : null}
         </View>
         {/* 하단 영역 */}
-        <View style={styles.videoBottomControllerContainer}>
-          <VideoBottomController
-            togglePlay={togglePlay}
-            isPlaying={isPlaying}
-            didJustFinish={didJustFinish}
-            videoPosition={videoPosition}
-            videoLength={videoLength}
-            seekVideo={seekVideo}
-          />
-        </View>
+        <VideoBottomController
+          togglePlay={togglePlay}
+          isPlaying={isPlaying}
+          didJustFinish={didJustFinish}
+          videoPosition={videoPosition}
+          videoLength={videoLength}
+          seekVideo={seekVideo}
+          useLikes
+          onLike={() => {
+            /** 좋아요 API 호출 */
+          }}
+        />
       </View>
     </View>
   );

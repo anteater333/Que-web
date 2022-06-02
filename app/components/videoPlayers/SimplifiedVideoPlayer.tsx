@@ -146,16 +146,14 @@ function SimplifiedVideoPlayer(props: VideoPlayerProps) {
           />
         </View>
         {/* 하단 영역 */}
-        <View style={styles.videoBottomControllerContainer}>
-          <VideoBottomController
-            togglePlay={togglePlay}
-            isPlaying={isPlaying}
-            didJustFinish={didJustFinish}
-            videoPosition={videoPosition}
-            videoLength={videoLength}
-            seekVideo={seekVideo}
-          />
-        </View>
+        <VideoBottomController
+          togglePlay={togglePlay}
+          isPlaying={isPlaying}
+          didJustFinish={didJustFinish}
+          videoPosition={videoPosition}
+          videoLength={videoLength}
+          seekVideo={seekVideo}
+        />
       </View>
     </View>
   );
