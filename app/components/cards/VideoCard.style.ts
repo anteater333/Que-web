@@ -27,7 +27,6 @@ const videoCardStyles = StyleSheet.create({
   videoThumbnailImage: {
     width: "100%",
     height: "100%",
-    maxWidth: 480,
     backgroundColor: bColors.black + bColors.tpPrimary,
   },
   videoTime: {
