@@ -1,5 +1,7 @@
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, ViewStyle } from "react-native";
 import { bColors, bDimensions, bFont, bSpace } from "../../styles/base";
+
+const videoHeartIconSIze = bSpace.xlarge;
 
 const videoPlayerStyles = StyleSheet.create({
   container: {
@@ -134,12 +136,65 @@ const videoPlayerStyles = StyleSheet.create({
     height: bFont.xlarge,
     marginHorizontal: bSpace.middle,
   },
-  videoSlider: {
-    color: bColors.secondary,
+  videoSlider: {},
+  videoHeartArea: {
+    height: 0,
+    overflow: "visible",
+  },
+  videoHeartIndicatorContainer: {
+    position: "absolute",
+    bottom: Platform.OS === "web" ? 0 : bSpace.small,
+    width: videoHeartIconSIze,
+    height: videoHeartIconSIze * 2,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "visible",
+  },
+  videoHeartIndicatorText: {
+    color: bColors.white + bColors.tpPrimary,
+    fontSize: bFont.small,
+    textAlign: "center",
+    width: bFont.small * 10,
+    height: bFont.small * 2,
+  },
+  videoHeartIndicatorIcon: {
+    color: bColors.red + bColors.tpPrimary,
+    fontSize: Platform.OS === "web" ? bFont.large : bFont.middle,
   },
 });
 
 export default videoPlayerStyles;
+
+/**
+ * 좋아요 위치, 영상 길이, 슬라이더 컴포넌트의 길이를 통해
+ * 하트 모양 아이콘의 위치를 결정하는 함수
+ */
+export const heartPositionBuilder = (
+  likedPosition: number,
+  videoLength: number,
+  sliderWidth: number
+) => {
+  // 웹과 모바일 슬라이더 크기가 약간 다릅니다.
+  /** 하트 컴포넌트의 위치 계산 */
+  const heartPosition =
+    Platform.OS === "web"
+      ? (likedPosition * (sliderWidth - videoHeartIconSIze)) / videoLength
+      : videoHeartIconSIze / 2.5 +
+        (likedPosition * (sliderWidth - videoHeartIconSIze * 2)) / videoLength;
+
+  return StyleSheet.create({
+    style: {
+      left: heartPosition,
+    },
+  }).style;
+};
+
+export const sliderStyle = StyleSheet.create({
+  default: {
+    color: bColors.secondary,
+    tintColor: bColors.primary,
+  },
+});
 
 export const iconStyles = {
   color: bColors.white + bColors.tpPrimary,

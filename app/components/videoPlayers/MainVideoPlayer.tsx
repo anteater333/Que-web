@@ -328,6 +328,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           onLike={() => {
             /** 좋아요 API 호출 */
           }}
+          likesData={/** 임시데이터 */ [{ likePosition: 300 }]}
         />
       </View>
     </View>

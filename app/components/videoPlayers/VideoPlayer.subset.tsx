@@ -6,16 +6,24 @@
 import {
   ActivityIndicator,
   Animated,
+  LayoutChangeEvent,
   Pressable,
+  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import styles, { iconStyles } from "./VideoPlayer.style";
+import styles, {
+  heartPositionBuilder,
+  iconStyles,
+  sliderStyle,
+} from "./VideoPlayer.style";
 import { MaterialIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import VideoType from "../../types/Video";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { HEART_COLOR_TIMER } from "./VideoPlayer.global";
+import LikeType from "../../types/Like";
+import RoundedButton from "../buttons/RoundedButton";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -67,30 +75,33 @@ export function VideoMiddleController(props: {
 /** 애니메이션 적용 가능한 MaterialIcons 컴포넌트, 추후 코드 분리 필요 */
 const AnimatedMaterialIcon = Animated.createAnimatedComponent(MaterialIcons);
 
+type VideoLikeType =
+  | { useLikes?: false }
+  | { useLikes: true; onLike: () => void; likesData: LikeType[] };
+
+type VideoBottomControllerPropType = {
+  togglePlay: () => void;
+  isPlaying: boolean;
+  didJustFinish: boolean;
+  videoPosition: number;
+  videoLength: number;
+  seekVideo: (position: number) => void;
+} & VideoLikeType;
+
 /** 하단 재생바 */
-export function VideoBottomController(
-  props:
-    | {
-        togglePlay: () => void;
-        isPlaying: boolean;
-        didJustFinish: boolean;
-        videoPosition: number;
-        videoLength: number;
-        seekVideo: (position: any) => void;
-        useLikes?: false;
-      }
-    | {
-        togglePlay: () => void;
-        isPlaying: boolean;
-        didJustFinish: boolean;
-        videoPosition: number;
-        videoLength: number;
-        seekVideo: (position: any) => void;
-        useLikes: true;
-        onLike: () => void;
-      }
-) {
+export function VideoBottomController(props: VideoBottomControllerPropType) {
   // TBD Web 대응 마우스 호버시에만 컨트롤러 표시되도록 만들기
+
+  // TBD 하트 모양 버튼을 위한 스타일 만들기
+  const [sliderWidth, setSliderWidth] = useState<number>(0);
+
+  const getSliderWidth = useCallback((event: LayoutChangeEvent) => {
+    setSliderWidth(event.nativeEvent.layout.width);
+  }, []);
+
+  useEffect(() => {
+    console.log(sliderWidth);
+  }, [sliderWidth]);
 
   /** 버튼 색상 변경 애니메이션 재료들 */
   const animation = useRef(new Animated.Value(0)).current;
@@ -138,13 +149,35 @@ export function VideoBottomController(
             }
           />
         </Pressable>
-        <View style={styles.videoSliderContainer}>
+        <View onLayout={getSliderWidth} style={styles.videoSliderContainer}>
+          <View style={styles.videoHeartArea}>
+            {/* TBD 컴포넌트 분리 */}
+            <View
+              style={[
+                styles.videoHeartIndicatorContainer,
+                heartPositionBuilder(
+                  props.videoLength,
+                  props.videoLength,
+                  sliderWidth
+                ),
+              ]}
+            >
+              <Text numberOfLines={1} style={styles.videoHeartIndicatorText}>
+                3:04
+              </Text>
+              <MaterialIcons
+                style={styles.videoHeartIndicatorIcon}
+                name="favorite"
+              ></MaterialIcons>
+            </View>
+          </View>
           <Slider
+            style={styles.videoSlider}
             minimumValue={0}
             maximumValue={1}
-            minimumTrackTintColor={styles.videoSlider.color}
-            maximumTrackTintColor={styles.videoSlider.color}
-            thumbTintColor={styles.videoSlider.color}
+            minimumTrackTintColor={sliderStyle.default.color}
+            maximumTrackTintColor={sliderStyle.default.color}
+            thumbTintColor={sliderStyle.default.tintColor}
             value={props.videoPosition / props.videoLength}
             onSlidingComplete={props.seekVideo}
           />

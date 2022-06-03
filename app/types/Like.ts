@@ -9,5 +9,5 @@ export default interface LikeType {
   /** 좋아요 시점 */
   likedAt?: Date;
   /** 영상 내 좋아요 시간대 */
-  likeTime?: number;
+  likePosition?: number;
 }
