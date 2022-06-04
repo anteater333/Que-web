@@ -161,6 +161,9 @@ const videoPlayerStyles = StyleSheet.create({
     color: bColors.red + bColors.tpPrimary,
     fontSize: Platform.OS === "web" ? bFont.large : bFont.middle,
   },
+  videoHeartIndicatorEmpty: {
+    height: bSpace.large * 2,
+  },
 });
 
 export default videoPlayerStyles;

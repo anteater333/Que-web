@@ -298,7 +298,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                   style={styles.videoMiddleButton}
                   name={"favorite"}
                 />
-                <Text style={styles.videoMiddleButtonText}>좋아요</Text>
+                <Text selectable={false} style={styles.videoMiddleButtonText}>
+                  좋아요
+                </Text>
               </Pressable>
               <View style={styles.videoMiddleButtonSpace} />
               <Pressable
@@ -311,7 +313,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                   style={styles.videoMiddleButton}
                   name={"star"}
                 />
-                <Text style={styles.videoMiddleButtonText}>평가하기</Text>
+                <Text selectable={false} style={styles.videoMiddleButtonText}>
+                  평가하기
+                </Text>
               </Pressable>
             </View>
           ) : null}
@@ -328,7 +332,13 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           onLike={() => {
             /** 좋아요 API 호출 */
           }}
-          likesData={/** 임시데이터 */ [{ likePosition: 300 }]}
+          likesData={
+            /** 임시데이터 */ [
+              { likePosition: 3000 },
+              { likePosition: 169600 },
+              { likePosition: 123405 },
+            ]
+          }
         />
       </View>
     </View>

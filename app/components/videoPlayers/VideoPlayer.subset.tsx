@@ -24,6 +24,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { HEART_COLOR_TIMER } from "./VideoPlayer.global";
 import LikeType from "../../types/Like";
 import RoundedButton from "../buttons/RoundedButton";
+import { formatTimer } from "../../utils/formatter";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -131,6 +132,24 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
     });
   }, [animation]);
 
+  /** 좋아요 위치 목록 */
+  let heartIndicators = null;
+  if (props.useLikes) {
+    heartIndicators = props.likesData.map((like, index) => {
+      // TBD index를 key로 사용하지 않도록 만들기 (likeId 등을 사용하던가 해서)
+      // https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
+      return (
+        <SliderHeartIndicator
+          key={index}
+          isPlaying={props.isPlaying}
+          likeData={like}
+          sliderWidth={sliderWidth}
+          videoLength={props.videoLength}
+        />
+      );
+    });
+  }
+
   return (
     <TouchableWithoutFeedback>
       <View style={styles.videoBottomControllerContainer}>
@@ -151,25 +170,8 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
         </Pressable>
         <View onLayout={getSliderWidth} style={styles.videoSliderContainer}>
           <View style={styles.videoHeartArea}>
-            {/* TBD 컴포넌트 분리 */}
-            <View
-              style={[
-                styles.videoHeartIndicatorContainer,
-                heartPositionBuilder(
-                  props.videoLength,
-                  props.videoLength,
-                  sliderWidth
-                ),
-              ]}
-            >
-              <Text numberOfLines={1} style={styles.videoHeartIndicatorText}>
-                3:04
-              </Text>
-              <MaterialIcons
-                style={styles.videoHeartIndicatorIcon}
-                name="favorite"
-              ></MaterialIcons>
-            </View>
+            {/* 좋아요 표시 컴포넌트들 */}
+            {heartIndicators}
           </View>
           <Slider
             style={styles.videoSlider}
@@ -202,5 +204,43 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
         ) : null}
       </View>
     </TouchableWithoutFeedback>
+  );
+}
+
+/** 영상 내부에서 좋아요 한 위치를 표시하는 컴포넌트 */
+function SliderHeartIndicator(props: {
+  likeData: LikeType;
+  videoLength: number;
+  sliderWidth: number;
+  isPlaying: boolean;
+}) {
+  return (
+    <Pressable
+      style={[
+        styles.videoHeartIndicatorContainer,
+        heartPositionBuilder(
+          props.likeData.likePosition!,
+          props.videoLength,
+          props.sliderWidth
+        ),
+      ]}
+    >
+      {props.isPlaying ? (
+        <View style={styles.videoHeartIndicatorEmpty}></View>
+      ) : (
+        <Text
+          selectable={false}
+          numberOfLines={1}
+          style={styles.videoHeartIndicatorText}
+        >
+          {formatTimer(props.likeData.likePosition!)}
+        </Text>
+      )}
+      <MaterialIcons
+        selectable={false}
+        style={styles.videoHeartIndicatorIcon}
+        name="favorite"
+      />
+    </Pressable>
   );
 }
