@@ -25,12 +25,16 @@ const videoPlayerStyles = StyleSheet.create({
     position: "absolute",
     height: "100%",
     width: "100%",
+    zIndex: 0,
+    elevation: 0,
   },
   videoDarkOverlay: {
     position: "absolute",
     height: "100%",
     width: "100%",
     backgroundColor: bColors.black + bColors.tpTetiary,
+    zIndex: 0,
+    elevation: 0,
   },
   videoUpperControllerContainer: {
     position: "absolute",
@@ -124,6 +128,8 @@ const videoPlayerStyles = StyleSheet.create({
     width: "100%",
     paddingBottom: bSpace.middle,
     paddingHorizontal: bSpace.xlarge,
+    alignItems: "flex-end",
+    overflow: "visible",
   },
   videoSmallButton: {
     height: bFont.xlarge,
@@ -132,34 +138,39 @@ const videoPlayerStyles = StyleSheet.create({
   videoSliderContainer: {
     flex: 1,
     alignContent: "center",
-    justifyContent: "center",
-    height: bFont.xlarge,
+    justifyContent: "flex-end",
     marginHorizontal: bSpace.middle,
-  },
-  videoSlider: {},
-  videoHeartArea: {
-    height: 0,
     overflow: "visible",
+  },
+  videoSlider: {
+    overflow: "visible",
+  },
+  videoHeartArea: {
+    height: bFont.xlarge * 1.5,
+    overflow: "visible",
+    width: "100%",
   },
   videoHeartIndicatorContainer: {
     position: "absolute",
     bottom: Platform.OS === "web" ? 0 : bSpace.small,
-    width: videoHeartIconSIze,
+    width: videoHeartIconSIze * 2,
     height: videoHeartIconSIze * 2,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     overflow: "visible",
+    zIndex: 100,
+    elevation: Platform.OS === "android" ? 50 : 0,
   },
   videoHeartIndicatorText: {
     color: bColors.white + bColors.tpPrimary,
     fontSize: bFont.small,
     textAlign: "center",
-    width: bFont.small * 10,
+    width: bFont.small * 4,
     height: bFont.small * 2,
   },
   videoHeartIndicatorIcon: {
     color: bColors.red + bColors.tpPrimary,
-    fontSize: Platform.OS === "web" ? bFont.large : bFont.middle,
+    fontSize: bFont.large,
   },
   videoHeartIndicatorEmpty: {
     height: bSpace.large * 2,
@@ -180,10 +191,12 @@ export const heartPositionBuilder = (
   // 웹과 모바일 슬라이더 크기가 약간 다릅니다.
   /** 하트 컴포넌트의 위치 계산 */
   const heartPosition =
-    Platform.OS === "web"
+    (Platform.OS === "web"
       ? (likedPosition * (sliderWidth - videoHeartIconSIze)) / videoLength
       : videoHeartIconSIze / 2.5 +
-        (likedPosition * (sliderWidth - videoHeartIconSIze * 2)) / videoLength;
+        (likedPosition * (sliderWidth - videoHeartIconSIze * 2)) /
+          videoLength) -
+    videoHeartIconSIze / 2;
 
   return StyleSheet.create({
     style: {

@@ -25,6 +25,7 @@ import { HEART_COLOR_TIMER } from "./VideoPlayer.global";
 import LikeType from "../../types/Like";
 import RoundedButton from "../buttons/RoundedButton";
 import { formatTimer } from "../../utils/formatter";
+import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -100,10 +101,6 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
     setSliderWidth(event.nativeEvent.layout.width);
   }, []);
 
-  useEffect(() => {
-    console.log(sliderWidth);
-  }, [sliderWidth]);
-
   /** 버튼 색상 변경 애니메이션 재료들 */
   const animation = useRef(new Animated.Value(0)).current;
   const colorFadeInterpolation = animation.interpolate({
@@ -169,10 +166,12 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
           />
         </Pressable>
         <View onLayout={getSliderWidth} style={styles.videoSliderContainer}>
-          <View style={styles.videoHeartArea}>
-            {/* 좋아요 표시 컴포넌트들 */}
-            {heartIndicators}
-          </View>
+          {props.useLikes ? (
+            <View style={styles.videoHeartArea}>
+              {/* 좋아요 표시 컴포넌트들 */}
+              {heartIndicators}
+            </View>
+          ) : null}
           <Slider
             style={styles.videoSlider}
             minimumValue={0}
@@ -214,6 +213,9 @@ function SliderHeartIndicator(props: {
   sliderWidth: number;
   isPlaying: boolean;
 }) {
+  /** 터치 문제 해결하기 전 까지 modal 사용 */
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   return (
     <Pressable
       style={[
@@ -224,7 +226,20 @@ function SliderHeartIndicator(props: {
           props.sliderWidth
         ),
       ]}
+      onPress={() => {
+        setModalVisible(true);
+      }}
     >
+      <MenuModal visible={modalVisible} setModalVisible={setModalVisible}>
+        <MenuModalItem
+          iconName="heart-dislike"
+          menuText="좋아요 취소"
+          onMenuPress={() => {
+            alert("취소");
+            setModalVisible(false);
+          }}
+        />
+      </MenuModal>
       {props.isPlaying ? (
         <View style={styles.videoHeartIndicatorEmpty}></View>
       ) : (
