@@ -339,6 +339,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
               { likePosition: 123405 },
             ]
           }
+          noMoreLike={true}
         />
       </View>
     </View>

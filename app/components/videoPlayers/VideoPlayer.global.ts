@@ -5,4 +5,4 @@ export const CONTROL_HIDE_TIMER = 2000;
 export const INFO_HIDE_TIMER = 3500;
 
 /** 하트 색깔 사라지는 시간 */
-export const HEART_COLOR_TIMER = 100;
+export const HEART_COLOR_TIMER = 250;

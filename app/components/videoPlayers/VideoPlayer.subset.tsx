@@ -26,6 +26,7 @@ import LikeType from "../../types/Like";
 import RoundedButton from "../buttons/RoundedButton";
 import { formatTimer } from "../../utils/formatter";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
+import { useToast } from "native-base";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -79,7 +80,16 @@ const AnimatedMaterialIcon = Animated.createAnimatedComponent(MaterialIcons);
 
 type VideoLikeType =
   | { useLikes?: false }
-  | { useLikes: true; onLike: () => void; likesData: LikeType[] };
+  | {
+      /** 좋아요 기능 사용 여부 */
+      useLikes: true;
+      /** 좋아요 API 호출 */
+      onLike: () => void;
+      /** 좋아요 데이터들 */
+      likesData: LikeType[];
+      /** 좋아요 개수 제한 도달 여부 */
+      noMoreLike?: boolean;
+    };
 
 type VideoBottomControllerPropType = {
   togglePlay: () => void;
@@ -90,13 +100,17 @@ type VideoBottomControllerPropType = {
   seekVideo: (position: number) => void;
 } & VideoLikeType;
 
-/** 하단 재생바 */
+/** 하단 재생바, 좋아요 기능 포함! */
 export function VideoBottomController(props: VideoBottomControllerPropType) {
   // TBD Web 대응 마우스 호버시에만 컨트롤러 표시되도록 만들기
 
-  // TBD 하트 모양 버튼을 위한 스타일 만들기
+  /** 디바운싱을 위한 버튼 사용 가능 상태 */
+  const [likable, setLikable] = useState<boolean>(true);
+
+  /** 재생바의 너비 */
   const [sliderWidth, setSliderWidth] = useState<number>(0);
 
+  /** 재생바의 너비 구하는 함수 (반응형) */
   const getSliderWidth = useCallback((event: LayoutChangeEvent) => {
     setSliderWidth(event.nativeEvent.layout.width);
   }, []);
@@ -108,8 +122,32 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
     outputRange: [iconStyles.color, iconStyles.heartColor],
   });
 
-  /** 버튼 터치 시 색상 변경 fade 애니메이션 사용 */
+  /** 좋아요 개수 제한에 도달했을 경우 더 좋아요 요청할 수 없도록 하기 */
+  if (props.useLikes) {
+    useEffect(() => {
+      if (props.useLikes) {
+        if (props.noMoreLike) {
+          setLikable(false);
+          Animated.timing(animation, {
+            toValue: 1,
+            duration: HEART_COLOR_TIMER / 2,
+            useNativeDriver: false,
+          }).start();
+        } else {
+          setLikable(true);
+          Animated.timing(animation, {
+            toValue: 0,
+            duration: HEART_COLOR_TIMER / 2,
+            useNativeDriver: false,
+          }).start();
+        }
+      }
+    }, [props.useLikes, props.noMoreLike]);
+  }
+
+  /** 버튼 터치 시 색상 변경 fade 애니메이션 사용, 색상이 다 사라져야지 좋아요 할 수 있음 */
   const handleButtonColorAnimation = useCallback(() => {
+    setLikable(false);
     Animated.timing(animation, {
       toValue: 1,
       duration: HEART_COLOR_TIMER / 2,
@@ -124,10 +162,20 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
           toValue: 0,
           duration: HEART_COLOR_TIMER,
           useNativeDriver: false,
-        }).start();
+        }).start(() => setLikable(true));
       });
     });
   }, [animation]);
+
+  /** 우측 좋아요 버튼 눌렀을 때의 액션 설정, 디바운싱 처리됨 */
+  const handleLikeBottonPressed = useCallback(() => {
+    if (likable && props.useLikes) {
+      handleButtonColorAnimation();
+      props.onLike();
+    } else if (props.useLikes && props.noMoreLike) {
+      // TBD 좋아요 개수 제한에 대해 설명하든 아니면 그냥 아무 리액션 하지 않든
+    }
+  }, [likable]);
 
   /** 좋아요 위치 목록 */
   let heartIndicators = null;
@@ -184,12 +232,7 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
           />
         </View>
         {props.useLikes ? (
-          <Pressable
-            onPress={() => {
-              handleButtonColorAnimation();
-              props.onLike();
-            }}
-          >
+          <Pressable onPress={handleLikeBottonPressed}>
             <AnimatedMaterialIcon
               style={[
                 styles.videoSmallButton,
