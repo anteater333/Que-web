@@ -9,6 +9,7 @@ import {
   getMyLikeReactions,
   getUserProfile,
   getVideoCardDataFromFirestore,
+  increaseVideoViewCount,
   setVideoDocument,
   updateCurrentUserProfile,
   updateVideoUploaded,
@@ -70,9 +71,7 @@ export const FirebaseResourceClient: QueResourceAPI = {
   dislikeVideo: () => {
     throw new Error("Not Implemented");
   },
-  increaseVideoViewCount: () => {
-    throw new Error("Not Implemented");
-  },
+  increaseVideoViewCount: increaseVideoViewCount,
   likeVideo: () => {
     throw new Error("Not Implemented");
   },

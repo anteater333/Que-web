@@ -2,6 +2,9 @@ import LikeType, { LikeTypeSelector } from "../../types/Like";
 import UserType from "../../types/User";
 import VideoType from "../../types/Video";
 
+/** 한 영상에 할 수 있는 최대 좋아요 수 */
+export const VIDEO_LIKE_LIMIT = 3;
+
 export enum QueResourceResponseErrorType {
   // Bad Requests
   BadBody = "400",

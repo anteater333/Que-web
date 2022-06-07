@@ -9,6 +9,7 @@ import {
   doc,
   updateDoc,
   setDoc,
+  increment,
 } from "firebase/firestore";
 
 import { getAuth } from "firebase/auth";
@@ -23,9 +24,12 @@ import {
 } from "../../interfaces";
 import firebaseConfig from "../config";
 import LikeType, { LikeTypeSelector } from "../../../types/Like";
+import { getApp } from "firebase/app";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
+
+// TBD ID로 비디오 정보 불러오는 API
 
 /**
  * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
@@ -280,4 +284,24 @@ export async function getMyLikeReactions(
     console.error(error);
     throw error;
   }
+}
+
+/** 영상 시청수를 증가시키는 함수 */
+export async function increaseVideoViewCount(
+  targetVideoId: string
+): Promise<QueResourceResponse> {
+  const videoDataSnap = await getDoc<VideoType>(
+    doc(VideoCollection, targetVideoId)
+  );
+
+  if (!videoDataSnap.exists()) {
+    // 그런 비디오 없습니다.
+    return { success: false, errorType: QueResourceResponseErrorType.NotFound };
+  }
+
+  await updateDoc(videoDataSnap.ref, {
+    viewCount: increment(1),
+  });
+
+  return { success: true };
 }

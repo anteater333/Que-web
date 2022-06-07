@@ -14,6 +14,7 @@ import { formatCount } from "../../utils/formatter";
 import QueResourceClient from "../../api/QueResourceUtils";
 import LikeType from "../../types/Like";
 import { refreshUser } from "../../api/firebase/auth/auth";
+import { increaseVideoViewCount } from "../../api/firebase/firestore/firestore";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;

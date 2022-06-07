@@ -35,9 +35,7 @@ if (process.env.NODE_ENV !== "test") {
     dislikeVideo: () => {
       throw new Error("Not Implemented");
     },
-    increaseVideoViewCount: () => {
-      throw new Error("Not Implemented");
-    },
+    increaseVideoViewCount: resourceClient.increaseVideoViewCount,
     likeVideo: () => {
       throw new Error("Not Implemented");
     },
