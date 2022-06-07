@@ -6,6 +6,7 @@ import {
   uploadVideoSource,
 } from "./storage/storage";
 import {
+  getMyLikeReactions,
   getUserProfile,
   getVideoCardDataFromFirestore,
   setVideoDocument,
@@ -30,6 +31,7 @@ if (!getApps().length) {
   initializeApp(firebaseConfig);
 }
 
+// TBD 너무 비대해지는 것 같으니까 좀 분리하기.
 export const FirebaseResourceClient: QueResourceAPI = {
   getVideoDownloadURL: getMediaFromStorage,
   getImageDownloadURL: getMediaFromStorage,
@@ -63,6 +65,16 @@ export const FirebaseResourceClient: QueResourceAPI = {
         errorType: QueResourceResponseErrorType.UndefinedError,
       };
     }
+  },
+  getMyLikeReactions: getMyLikeReactions,
+  dislikeVideo: () => {
+    throw new Error("Not Implemented");
+  },
+  increaseVideoViewCount: () => {
+    throw new Error("Not Implemented");
+  },
+  likeVideo: () => {
+    throw new Error("Not Implemented");
   },
 };
 

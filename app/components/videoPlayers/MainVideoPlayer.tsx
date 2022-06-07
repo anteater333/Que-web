@@ -11,6 +11,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useToggleTimer } from "../../hooks/useTimer";
 import { INFO_HIDE_TIMER } from "./VideoPlayer.global";
 import { formatCount } from "../../utils/formatter";
+import QueResourceClient from "../../api/QueResourceUtils";
+import LikeType from "../../types/Like";
+import { refreshUser } from "../../api/firebase/auth/auth";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -134,6 +137,41 @@ function MainVideoPlayer(props: VideoPlayerProps) {
       refreshHidingInfoTimer({ updateNewTimer: true });
     }
   }, [isPlaying]);
+
+  /** 좋아요 버튼 터치 시 API 호출 함수 */
+  const likeThisVideo = useCallback(() => {
+    // tmpcode 임시 데이터로 바꾸기
+    QueResourceClient.getMyLikeReactions("video", "pha8C9I05D3ifOYEpGdT").then(
+      (response) => {
+        console.log(response);
+        if (response.success) {
+          setTmpLikeData(response.payload!);
+        }
+      }
+    );
+  }, []);
+
+  // 임시데이터
+  const [tmpLikeData, setTmpLikeData] = useState<LikeType[]>([
+    { likePosition: 50000 },
+    { likePosition: 100000 },
+    { likePosition: 150000 },
+  ]);
+  // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 like 가져오기
+  useEffect(() => {
+    const getLikes = async () => {
+      const rt = await QueResourceClient.getMyLikeReactions(
+        "video",
+        "pha8C9I05D3ifOYEpGdT"
+      );
+      if (rt.success) setTmpLikeData(rt.payload!);
+      else {
+        console.log(rt.errorType);
+      }
+    };
+
+    getLikes();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -329,17 +367,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           videoLength={videoLength}
           seekVideo={seekVideo}
           useLikes
-          onLike={() => {
-            /** 좋아요 API 호출 */
-          }}
-          likesData={
-            /** 임시데이터 */ [
-              { likePosition: 3000 },
-              { likePosition: 169600 },
-              { likePosition: 123405 },
-            ]
-          }
-          noMoreLike={true}
+          onLike={likeThisVideo}
+          likesData={/** 임시데이터 */ tmpLikeData}
+          noMoreLike={false}
         />
       </View>
     </View>

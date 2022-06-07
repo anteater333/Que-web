@@ -1,3 +1,4 @@
+import LikeType, { LikeTypeSelector } from "../../types/Like";
 import UserType from "../../types/User";
 import VideoType from "../../types/Video";
 
@@ -15,8 +16,12 @@ export enum QueResourceResponseErrorType {
   UndefinedError = "500",
 }
 
-export interface QueResourceResponse {
+export interface QueResourceResponse<T = void> {
+  /** 요청 성공 여부 */
   success: boolean;
+  /** 요청한 데이터 */
+  payload?: T;
+  /** 에러 발생 시 에러 종류 */
   errorType?: QueResourceResponseErrorType;
 }
 
@@ -50,9 +55,47 @@ export interface QueResourceAPI {
     videoData: VideoType
   ): Promise<QueResourceResponse>;
 
+  ////////////////////////////////////////////////// 반응 관련 인터페이스
+  /**
+   * 로그인한 사용자가 해당 대상(영상, 공지, 재생목록 등등)에 반응한 좋아요를 가져옵니다.
+   */
+  getMyLikeReactions(
+    likeType: LikeTypeSelector,
+    targetId: string
+  ): Promise<QueResourceResponse<LikeType[]>>;
+
+  ////////////////////////////////////////////////// 영상에 대한 반응 관련 인터페이스
+  /**
+   * 영상의 시청 수를 증가시킵니다.
+   * TBD 중복 시청 수 증가 방지, 당분간은 중복 허용
+   * @param targetVideoId
+   */
+  increaseVideoViewCount(targetVideoId: string): Promise<QueResourceResponse>;
+  /**
+   * 로그인한 사용자가 영상에 좋아요를 추가합니다.
+   * @param targetVideoId
+   * @param likedAt
+   * @returns 좋아요 수행 이후 해당 영상에 대한 좋아요 상태
+   */
+  likeVideo(
+    targetVideoId: string,
+    likedAt: number
+  ): Promise<QueResourceResponse<LikeType[]>>;
+  /**
+   * 로그인한 사용자가 영상에 좋아요 추가를 취소합니다.
+   * @param targetVideoId
+   * @param likeId
+   * @returns 좋아요 취소 수행 이후 해당 영상에 대한 좋아요 상태
+   */
+  dislikeVideo(
+    targetVideoId: string,
+    likeId: string
+  ): Promise<QueResourceResponse<LikeType[]>>;
+
   ////////////////////////////////////////////////// 유저 정보 관련 인터페이스
   /**
    * userId를 통해 특정 사용자의 프로필 데이터를 가져옵니다.
+   * TBD return 타입 통일하기(payload 사용하도록)
    */
   getUserProfileData(
     userId: string

@@ -31,6 +31,16 @@ if (process.env.NODE_ENV !== "test") {
     updateUserProfile: resourceClient.updateUserProfile,
     uploadUserProfileImage: resourceClient.uploadUserProfileImage,
     uploadVideo: resourceClient.uploadVideo,
+    getMyLikeReactions: resourceClient.getMyLikeReactions,
+    dislikeVideo: () => {
+      throw new Error("Not Implemented");
+    },
+    increaseVideoViewCount: () => {
+      throw new Error("Not Implemented");
+    },
+    likeVideo: () => {
+      throw new Error("Not Implemented");
+    },
   };
 } else {
   // 테스트용 Mock API
@@ -49,6 +59,18 @@ if (process.env.NODE_ENV !== "test") {
     },
     uploadVideo: async () => {
       return { success: true };
+    },
+    getMyLikeReactions: () => {
+      throw new Error("Not Implemented");
+    },
+    dislikeVideo: () => {
+      throw new Error("Not Implemented");
+    },
+    increaseVideoViewCount: () => {
+      throw new Error("Not Implemented");
+    },
+    likeVideo: () => {
+      throw new Error("Not Implemented");
     },
   };
 }

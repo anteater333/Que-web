@@ -31,19 +31,19 @@ export default interface VideoType {
   /** 총 좋아요 수 */
   likeCount?: number;
   /** 좋아요 한 사람 목록 */
-  likedList?: { [userId: string]: boolean };
+  likedList?: { [userId: string]: LikeType[] };
   /** 총 평가 수 */
   starCount?: number;
   /** 평가 한 사람 목록 */
-  starredList?: { [userId: string]: boolean };
+  starredList?: { [userId: string]: StarType };
   /** 업로드한 날짜 */
   uploadedAt?: Date;
   /** 사용자 시청 정보 */
   viewed?: boolean;
-  /** 사용자 좋아요 정보 */
-  likedData?: LikeType[];
-  /** 사용자 평가 정보 */
-  starredData?: StarType;
   /** 업로드 완료 여부 */
   uploadDone?: boolean;
+  /** 이 영상에 대한 현재 로그인 한 사용자의 좋아요 정보 */
+  myLikedData?: LikeType[];
+  /** 이 영상에 대한 현재 로그인 한 사용자의 평가 정보 */
+  myStarredData?: StarType;
 }

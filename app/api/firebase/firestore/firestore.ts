@@ -22,6 +22,7 @@ import {
   QueResourceResponseErrorType,
 } from "../../interfaces";
 import firebaseConfig from "../config";
+import LikeType, { LikeTypeSelector } from "../../../types/Like";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
@@ -74,10 +75,10 @@ export async function getVideoCardDataFromFirestore(
         (filteredData.uploader as Partial<UserType>).userId = uploaderData.id;
       }
 
-      // 리액션 관련 데이터 생성 (TBD)
-      filteredData.viewed = false;
-      filteredData.likedData = [];
-      filteredData.starredData = {};
+      // // 리액션 관련 데이터 생성 (TBD)
+      // filteredData.viewed = false;
+      // filteredData.likedData = [];
+      // filteredData.starredData = {};
 
       // 정제한 데이터 추가
       rtDataset.push(filteredData);
@@ -103,7 +104,6 @@ export async function getUserProfile(
     const userDataSnap = await getDoc<UserType>(doc(UserCollection, userId));
 
     if (!userDataSnap.exists()) {
-      console.error(`getUserProfile: 404`);
       return { user: {}, errorType: QueResourceResponseErrorType.NotFound };
     } else {
       return { user: { userId: userId, ...userDataSnap.data() } };
@@ -227,6 +227,57 @@ export async function updateVideoUploaded(videoId: string, isDone: boolean) {
       uploadDone: isDone,
     });
   } catch (error) {
+    throw error;
+  }
+}
+
+/** 해당 대상에 대한 사용자의 좋아요 목록을 가져옵니다. */
+export async function getMyLikeReactions(
+  likeType: LikeTypeSelector,
+  targetId: string
+): Promise<QueResourceResponse<LikeType[]>> {
+  try {
+    if (!getAuth().currentUser) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.SignInRequired,
+      };
+    }
+
+    const uid = getAuth().currentUser?.uid!;
+    const userDoc = doc(UserCollection, uid);
+    const userDocSnapshot = await getDoc(userDoc);
+    const selectedData = userDocSnapshot.get(
+      `reactions.likes.${likeType}.${targetId}`
+    ) as {
+      [likeId: string]: LikeType;
+    };
+
+    if (!selectedData) {
+      // 전달 받은 likeType + targetId 조합에 대한 좋아요 정보가 없음
+      return {
+        success: true,
+        payload: [],
+      };
+    }
+
+    /** 정제된 좋아요 데이터 배열. 함수의 결과로 반환용도 */
+    const rtLikeData: LikeType[] = [];
+
+    // 데이터 배열로 정제
+    for (let likeId in selectedData) {
+      rtLikeData.push({
+        likeType: "video",
+        userId: uid,
+        targetId: targetId,
+        likeId: likeId,
+        ...selectedData[likeId],
+      });
+    }
+
+    return { success: true, payload: rtLikeData };
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }
