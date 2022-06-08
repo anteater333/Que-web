@@ -27,6 +27,7 @@ import RoundedButton from "../buttons/RoundedButton";
 import { formatTimer } from "../../utils/formatter";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import { useToast } from "native-base";
+import QueResourceClient from "../../api/QueResourceUtils";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -85,6 +86,8 @@ type VideoLikeType =
       useLikes: true;
       /** 좋아요 API 호출 */
       onLike: () => void;
+      /** 좋아요 취소 API 호출 */
+      onDislike: (likeData: LikeType) => Promise<void>;
       /** 좋아요 데이터들 */
       likesData: LikeType[];
       /** 좋아요 개수 제한 도달 여부 */
@@ -190,6 +193,7 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
           likeData={like}
           sliderWidth={sliderWidth}
           videoLength={props.videoLength}
+          onDislike={props.onDislike}
         />
       );
     });
@@ -255,9 +259,15 @@ function SliderHeartIndicator(props: {
   videoLength: number;
   sliderWidth: number;
   isPlaying: boolean;
+  onDislike: (likeData: LikeType) => Promise<void>;
 }) {
   /** 터치 문제 해결하기 전 까지 modal 사용 */
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const handleDislike = useCallback(async () => {
+    setModalVisible(false);
+    await props.onDislike(props.likeData);
+  }, []);
 
   return (
     <Pressable
@@ -277,10 +287,7 @@ function SliderHeartIndicator(props: {
         <MenuModalItem
           iconName="heart-dislike"
           menuText="좋아요 취소"
-          onMenuPress={() => {
-            alert("취소");
-            setModalVisible(false);
-          }}
+          onMenuPress={handleDislike}
         />
       </MenuModal>
       {props.isPlaying ? (

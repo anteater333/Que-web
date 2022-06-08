@@ -13,8 +13,13 @@ import { INFO_HIDE_TIMER } from "./VideoPlayer.global";
 import { formatCount } from "../../utils/formatter";
 import QueResourceClient from "../../api/QueResourceUtils";
 import LikeType from "../../types/Like";
-import { refreshUser } from "../../api/firebase/auth/auth";
 import { increaseVideoViewCount } from "../../api/firebase/firestore/firestore";
+import {
+  MAX_VIDEO_LIKE_LIMIT,
+  QueResourceResponseErrorType,
+} from "../../api/interfaces";
+import { useToast } from "native-base";
+import { getCurrentUID } from "../../api/firebase/auth/auth";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -36,6 +41,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
   const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
+
+  /** 에러 표시용 */
+  const toast = useToast();
 
   /** 영상이 끝나면 재생 버튼 표시하기 */
   useEffect(() => {
@@ -139,14 +147,16 @@ function MainVideoPlayer(props: VideoPlayerProps) {
     }
   }, [isPlaying]);
 
-  useEffect(() => {
-    console.log(videoPosition);
-  }, [videoPosition]);
+  // 좋아요 관련 기능 영역
+
+  /** 좋아요 데이터 묶음 */
+  const [likeDataArray, setLikeDataArray] = useState<LikeType[]>([]);
+  /** 좋아요 추가 가능 여부 */
+  const [noMoreLike, setNoMoreLike] = useState<boolean>(false);
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
   // TBD 영상 재생 위치가 바로 반영되지 않는 문제가 있음.
   const likeThisVideo = useCallback(() => {
-    console.log("liked", videoPosition);
     // tmpcode 임시 데이터로 바꾸기
     // TBD 이 코드 덩어리 다듬기
     QueResourceClient.getMyLikeReactions("video", "pha8C9I05D3ifOYEpGdT").then(
@@ -157,27 +167,39 @@ function MainVideoPlayer(props: VideoPlayerProps) {
             videoPosition
           ).then((result) => {
             if (result.success && result.payload)
-              setTmpLikeData(result.payload);
+              setLikeDataArray(result.payload);
           });
         }
       }
     );
   }, [videoPosition]);
 
-  // 임시데이터
-  const [tmpLikeData, setTmpLikeData] = useState<LikeType[]>([
-    { likePosition: 50000 },
-    { likePosition: 100000 },
-    { likePosition: 150000 },
-  ]);
+  /** 좋아요 버튼 취소 API 호출 함수 */
+  const dislikeThisVideo = useCallback(async (likeData: LikeType) => {
+    const result = await QueResourceClient.dislikeVideo(
+      likeData.targetId!,
+      likeData.likeId!
+    );
+
+    if (result.success) {
+      setLikeDataArray(result.payload!);
+    } else {
+      toast.show({
+        description: `좋아요 취소 중 문제가 발생했습니다. ${result.errorType}`,
+      });
+    }
+  }, []);
+
+  /** 화면 최초 로드 시 영상 데이터 불러오기 */
   // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 like 가져오기
   useEffect(() => {
     const getLikes = async () => {
       const rt = await QueResourceClient.getMyLikeReactions(
         "video",
-        "pha8C9I05D3ifOYEpGdT"
+        props.videoData.videoId!
       );
-      if (rt.success) setTmpLikeData(rt.payload!);
+      console.log(rt, props.videoData.videoId, getCurrentUID());
+      if (rt.success) setLikeDataArray(rt.payload!);
       else {
         console.log(rt.errorType);
       }
@@ -186,6 +208,16 @@ function MainVideoPlayer(props: VideoPlayerProps) {
     getLikes();
   }, []);
 
+  /** 좋아요 개수 제한 */
+  useEffect(() => {
+    if (likeDataArray.length >= MAX_VIDEO_LIKE_LIMIT) {
+      setNoMoreLike(true);
+    } else {
+      setNoMoreLike(false);
+    }
+  }, [likeDataArray]);
+
+  // 렌더링 영역
   return (
     <View style={styles.container}>
       <View style={styles.videoCoreContainer}>
@@ -381,8 +413,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           seekVideo={seekVideo}
           useLikes
           onLike={likeThisVideo}
-          likesData={/** 임시데이터 */ tmpLikeData}
-          noMoreLike={false}
+          onDislike={dislikeThisVideo}
+          likesData={/** 임시데이터 */ likeDataArray}
+          noMoreLike={noMoreLike}
         />
       </View>
     </View>

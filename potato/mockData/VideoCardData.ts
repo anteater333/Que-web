@@ -2,7 +2,7 @@ import VideoType from "../../app/types/Video";
 
 const mockVideoCardData: VideoType[] = [
   {
-    videoId: "0",
+    videoId: "pha8C9I05D3ifOYEpGdT",
     uploadDone: true,
     length: 207749,
     starCount: 0,
@@ -42,8 +42,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 320,
   },
   {
@@ -57,8 +55,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 552642,
   },
   {
@@ -72,8 +68,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 32134,
   },
   {
@@ -87,8 +81,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 77,
   },
   {
@@ -102,8 +94,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
   },
   {
     videoId: "6",
@@ -116,8 +106,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 1,
   },
   {
@@ -131,8 +119,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 32,
   },
   {
@@ -146,8 +132,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
     length: 523,
   },
   {
@@ -161,8 +145,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
   },
   {
     videoId: "10",
@@ -175,8 +157,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
   },
   {
     videoId: "11",
@@ -189,8 +169,6 @@ const mockVideoCardData: VideoType[] = [
     sourceUrl: "gs://que-backend-dev.appspot.com/testvideo.mp4",
     uploadedAt: new Date(),
     viewed: false,
-    likedData: [],
-    starredData: {},
   },
 ];
 

@@ -6,6 +6,7 @@ import {
   uploadVideoSource,
 } from "./storage/storage";
 import {
+  dislikeVideo,
   getMyLikeReactions,
   getUserProfile,
   getVideoCardDataFromFirestore,
@@ -69,9 +70,7 @@ export const FirebaseResourceClient: QueResourceAPI = {
     }
   },
   getMyLikeReactions: getMyLikeReactions,
-  dislikeVideo: () => {
-    throw new Error("Not Implemented");
-  },
+  dislikeVideo: dislikeVideo,
   increaseVideoViewCount: increaseVideoViewCount,
   likeVideo: likeVideo,
 };

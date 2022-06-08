@@ -10,6 +10,7 @@ import {
   updateDoc,
   setDoc,
   increment,
+  deleteField,
 } from "firebase/firestore";
 
 import { VideoCollection, UserCollection } from "./collections";
@@ -290,16 +291,16 @@ export async function getMyLikeReactions(
 export async function increaseVideoViewCount(
   targetVideoId: string
 ): Promise<QueResourceResponse> {
-  const videoDataSnap = await getDoc<VideoType>(
+  const videoDocSnap = await getDoc<VideoType>(
     doc(VideoCollection, targetVideoId)
   );
 
-  if (!videoDataSnap.exists()) {
+  if (!videoDocSnap.exists()) {
     // 그런 비디오 없습니다.
     return { success: false, errorType: QueResourceResponseErrorType.NotFound };
   }
 
-  await updateDoc(videoDataSnap.ref, {
+  await updateDoc(videoDocSnap.ref, {
     viewCount: increment(1),
   });
 
@@ -401,5 +402,128 @@ export async function likeVideo(
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+/** 영상에 대해 좋아요를 취소하는 함수, users, videos 컬렉션 모두 수정함 */
+export async function dislikeVideo(
+  targetVideoId: string,
+  likeId: string
+): Promise<QueResourceResponse<LikeType[]>> {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  // 내 좋아요 맞는지 확인하기
+  /** 비디오 도큐먼트 레퍼런스 */
+  const videoDocRef = doc(VideoCollection, targetVideoId);
+  /** 비디오 도큐먼트 스냅샷 */
+  const videoDocSnap = await getDoc<VideoType>(videoDocRef);
+  if (!videoDocSnap.exists()) {
+    // 해당 영상(이 없으니까 당연히 좋아요 정보도 없음) 정보 없음
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.NotFound,
+    };
+  }
+
+  const videoDocData = videoDocSnap.data();
+  if (
+    !videoDocData.likedList || // 좋아요 목록 자체가 없음
+    !videoDocData.likedList[currentUid] || // 이 사용자가 좋아요 한 적 자체가 없음
+    !videoDocData.likedList[currentUid][likeId] // 해당 좋아요 정보가 없음
+  ) {
+    return {
+      // 해당 좋아요 정보가 없음
+      success: false,
+      errorType: QueResourceResponseErrorType.NotFound,
+    };
+  } else {
+    try {
+      // user 문서에서 삭제
+      const userDocRef = doc(UserCollection, currentUid);
+
+      /** 이 조건 만족 시 좋아요가 모두 사라지는 것으로 판단합니다. */
+      const deleteParentField =
+        Object.keys(videoDocData.likedList[currentUid]).length == 1;
+      if (deleteParentField) {
+        await setDoc(
+          userDocRef,
+          {
+            reactions: {
+              likes: {
+                video: {
+                  [targetVideoId]: deleteField(),
+                },
+              },
+            },
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          userDocRef,
+          {
+            reactions: {
+              likes: {
+                video: {
+                  [targetVideoId]: {
+                    [likeId]: deleteField(),
+                  },
+                },
+              },
+            },
+          },
+          { merge: true }
+        );
+      }
+
+      // video 문서에서 삭제
+      if (deleteParentField) {
+        await setDoc(
+          videoDocRef,
+          {
+            likedList: {
+              [currentUid]: deleteField(),
+            },
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          videoDocRef,
+          {
+            likedList: {
+              [currentUid]: {
+                [likeId]: deleteField(),
+              },
+            },
+          },
+          { merge: true }
+        );
+      }
+
+      /** 반환용 데이터 정제 */
+      const rtLikeData = [];
+      for (let itrLikeId in videoDocData.likedList[currentUid]) {
+        if (itrLikeId === likeId) {
+          // 제외
+        } else {
+          rtLikeData.push(videoDocData.likedList[currentUid][itrLikeId]);
+        }
+      }
+
+      return {
+        success: true,
+        payload: rtLikeData,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
