@@ -139,18 +139,30 @@ function MainVideoPlayer(props: VideoPlayerProps) {
     }
   }, [isPlaying]);
 
+  useEffect(() => {
+    console.log(videoPosition);
+  }, [videoPosition]);
+
   /** 좋아요 버튼 터치 시 API 호출 함수 */
+  // TBD 영상 재생 위치가 바로 반영되지 않는 문제가 있음.
   const likeThisVideo = useCallback(() => {
+    console.log("liked", videoPosition);
     // tmpcode 임시 데이터로 바꾸기
+    // TBD 이 코드 덩어리 다듬기
     QueResourceClient.getMyLikeReactions("video", "pha8C9I05D3ifOYEpGdT").then(
       (response) => {
-        console.log(response);
         if (response.success) {
-          setTmpLikeData(response.payload!);
+          QueResourceClient.likeVideo(
+            "pha8C9I05D3ifOYEpGdT",
+            videoPosition
+          ).then((result) => {
+            if (result.success && result.payload)
+              setTmpLikeData(result.payload);
+          });
         }
       }
     );
-  }, []);
+  }, [videoPosition]);
 
   // 임시데이터
   const [tmpLikeData, setTmpLikeData] = useState<LikeType[]>([

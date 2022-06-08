@@ -32,13 +32,9 @@ if (process.env.NODE_ENV !== "test") {
     uploadUserProfileImage: resourceClient.uploadUserProfileImage,
     uploadVideo: resourceClient.uploadVideo,
     getMyLikeReactions: resourceClient.getMyLikeReactions,
-    dislikeVideo: () => {
-      throw new Error("Not Implemented");
-    },
+    dislikeVideo: resourceClient.dislikeVideo,
     increaseVideoViewCount: resourceClient.increaseVideoViewCount,
-    likeVideo: () => {
-      throw new Error("Not Implemented");
-    },
+    likeVideo: resourceClient.likeVideo,
   };
 } else {
   // 테스트용 Mock API

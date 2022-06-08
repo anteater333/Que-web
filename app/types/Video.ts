@@ -31,7 +31,7 @@ export default interface VideoType {
   /** 총 좋아요 수 */
   likeCount?: number;
   /** 좋아요 한 사람 목록 */
-  likedList?: { [userId: string]: LikeType[] };
+  likedList?: { [userId: string]: { [likeId: string]: LikeType } };
   /** 총 평가 수 */
   starCount?: number;
   /** 평가 한 사람 목록 */

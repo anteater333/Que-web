@@ -19,10 +19,12 @@ import UserType from "../../../types/User";
 import {
   QueResourceResponse,
   QueResourceResponseErrorType,
+  MAX_VIDEO_LIKE_LIMIT,
 } from "../../interfaces";
 import firebaseConfig from "../config";
 import LikeType, { LikeTypeSelector } from "../../../types/Like";
 import { getCurrentUID } from "../auth/auth";
+import { genSimpleUUID } from "../../../utils/generator";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
@@ -309,8 +311,95 @@ export async function likeVideo(
   targetVideoId: string,
   likedAt: number
 ): Promise<QueResourceResponse<LikeType[]>> {
-  return {
-    success: false,
-    errorType: QueResourceResponseErrorType.UndefinedError,
-  };
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  /** 기존 좋아요 가져오기 */
+  const getLikeRequest = await getMyLikeReactions("video", targetVideoId);
+  if (!getLikeRequest.success) {
+    return {
+      success: false,
+      errorType: getLikeRequest.errorType,
+    };
+  }
+
+  const likedData = getLikeRequest.payload!;
+  if (likedData.length >= MAX_VIDEO_LIKE_LIMIT) {
+    // 좋아요 개수 상한 도달
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.TooManyRequest,
+    };
+  }
+
+  // 좋아요 가능한 조건 만족하였으니 좋아요 추가하기
+
+  try {
+    /** 새로 추가할 좋아요 데이터의 ID */
+    const newLikeId = genSimpleUUID();
+    /** 추가할 데이터 */
+    const newLikeData: LikeType = {
+      likeType: "video",
+      likeId: newLikeId,
+      targetId: targetVideoId,
+      userId: currentUid,
+      likePosition: likedAt,
+      likedAt: new Date(),
+    };
+
+    /** 사용자 컬렉션에 대해 동적 생성을 위한 객체 */
+    const newVideoLikeObject: {
+      [targetId: string]: { [likeId: string]: LikeType };
+    } = {};
+    newVideoLikeObject[targetVideoId] = {};
+    newVideoLikeObject[targetVideoId][newLikeId] = newLikeData;
+
+    /** 사용자 collection에 등록 */
+    const userDocRef = doc(UserCollection, currentUid);
+    await setDoc(
+      userDocRef,
+      {
+        reactions: {
+          likes: {
+            video: newVideoLikeObject,
+          },
+        },
+      },
+      { merge: true }
+    );
+
+    /** 비디오 컬렉션에 대해 동적 생성을 위한 객체 */
+    const newVideoUserLikeObject: {
+      [userId: string]: { [likeId: string]: LikeType };
+    } = {};
+    newVideoUserLikeObject[currentUid] = {};
+    newVideoUserLikeObject[currentUid][newLikeId] = newLikeData;
+
+    /** 비디오 collection에 등록 */
+    const videoDocRef = doc(VideoCollection, targetVideoId);
+    await setDoc(
+      videoDocRef,
+      {
+        likeCount: increment(1),
+        likedList: newVideoUserLikeObject,
+      },
+      { merge: true }
+    );
+
+    /** 좋아요 이후 상태 */
+    const rtLikedData = [...likedData, newLikeData];
+
+    return {
+      success: true,
+      payload: rtLikedData,
+    };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
