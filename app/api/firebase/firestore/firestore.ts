@@ -12,8 +12,6 @@ import {
   increment,
 } from "firebase/firestore";
 
-import { getAuth } from "firebase/auth";
-
 import { VideoCollection, UserCollection } from "./collections";
 
 import VideoType from "../../../types/Video";
@@ -24,7 +22,7 @@ import {
 } from "../../interfaces";
 import firebaseConfig from "../config";
 import LikeType, { LikeTypeSelector } from "../../../types/Like";
-import { getApp } from "firebase/app";
+import { getCurrentUID } from "../auth/auth";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
@@ -125,8 +123,8 @@ export async function getUserProfile(
 export async function updateCurrentUserProfile(
   updateData: UserType
 ): Promise<QueResourceResponse> {
-  const currentUser = getAuth().currentUser;
-  if (!currentUser) {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
     // 로그인 해주세요
     return {
       success: false,
@@ -134,7 +132,6 @@ export async function updateCurrentUserProfile(
     };
   }
 
-  const uid = currentUser.uid;
   try {
     let savedDoc: UserType = {};
     if (
@@ -142,9 +139,9 @@ export async function updateCurrentUserProfile(
       !updateData.nickname ||
       !updateData.profilePictureUrl
     )
-      savedDoc = (await getUserProfile(uid)).user;
+      savedDoc = (await getUserProfile(currentUid)).user;
 
-    await updateDoc<UserType>(doc(UserCollection, uid), {
+    await updateDoc<UserType>(doc(UserCollection, currentUid), {
       description: updateData.description
         ? updateData.description
         : savedDoc.description
@@ -202,19 +199,20 @@ export async function setUserDocument(
  */
 export async function setVideoDocument(videoData: VideoType): Promise<string> {
   try {
-    const uid = getAuth().currentUser?.uid;
+    const currentUid = getCurrentUID();
     const newDocRef = doc(VideoCollection);
     const videoId = newDocRef.id;
 
     const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
     await setDoc<VideoType>(newDocRef, {
       ...videoData,
-      sourceUrl: storagePathPrefix + `users/${uid}/videos/${videoId}/video`,
+      sourceUrl:
+        storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
       thumbnailUrl:
-        storagePathPrefix + `users/${uid}/videos/${videoId}/thumbnail`,
+        storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
       uploadedAt: new Date(),
       uploadDone: false,
-      uploader: doc(UserCollection, uid),
+      uploader: doc(UserCollection, currentUid),
     });
 
     return newDocRef.id;
@@ -241,15 +239,15 @@ export async function getMyLikeReactions(
   targetId: string
 ): Promise<QueResourceResponse<LikeType[]>> {
   try {
-    if (!getAuth().currentUser) {
+    const currentUid = getCurrentUID();
+    if (!currentUid) {
       return {
         success: false,
         errorType: QueResourceResponseErrorType.SignInRequired,
       };
     }
 
-    const uid = getAuth().currentUser?.uid!;
-    const userDoc = doc(UserCollection, uid);
+    const userDoc = doc(UserCollection, currentUid);
     const userDocSnapshot = await getDoc(userDoc);
     const selectedData = userDocSnapshot.get(
       `reactions.likes.${likeType}.${targetId}`
@@ -272,7 +270,7 @@ export async function getMyLikeReactions(
     for (let likeId in selectedData) {
       rtLikeData.push({
         likeType: "video",
-        userId: uid,
+        userId: currentUid,
         targetId: targetId,
         likeId: likeId,
         ...selectedData[likeId],
@@ -304,4 +302,15 @@ export async function increaseVideoViewCount(
   });
 
   return { success: true };
+}
+
+/** 영상에 대해 좋아요를 기록하는 함수, users, videos 컬렉션 모두 수정함 */
+export async function likeVideo(
+  targetVideoId: string,
+  likedAt: number
+): Promise<QueResourceResponse<LikeType[]>> {
+  return {
+    success: false,
+    errorType: QueResourceResponseErrorType.UndefinedError,
+  };
 }

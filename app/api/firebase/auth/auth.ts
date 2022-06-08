@@ -178,4 +178,11 @@ export async function refreshUser(): Promise<void> {
   getAuth().currentUser;
 }
 
-/** TBD 현재 사용자 UID 가져오는 함수 */
+/** 현재 사용자 UID 가져오는 함수 */
+export function getCurrentUID(): string | undefined {
+  if (getAuth().currentUser) {
+    return getAuth().currentUser?.uid;
+  } else {
+    return undefined;
+  }
+}
