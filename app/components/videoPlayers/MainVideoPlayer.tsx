@@ -155,24 +155,29 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   const [noMoreLike, setNoMoreLike] = useState<boolean>(false);
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
-  // TBD 영상 재생 위치가 바로 반영되지 않는 문제가 있음.
-  const likeThisVideo = useCallback(() => {
-    // tmpcode 임시 데이터로 바꾸기
-    // TBD 이 코드 덩어리 다듬기
-    QueResourceClient.getMyLikeReactions("video", "pha8C9I05D3ifOYEpGdT").then(
-      (response) => {
-        if (response.success) {
-          QueResourceClient.likeVideo(
-            "pha8C9I05D3ifOYEpGdT",
-            videoPosition
-          ).then((result) => {
-            if (result.success && result.payload)
-              setLikeDataArray(result.payload);
-          });
-        }
+  const likeThisVideo = useCallback(async () => {
+    if (props.videoData.videoId) {
+      // videoPosition status를 사용하면 즉각적으로 위치가 업데이트 되지 않습니다.
+      // 따라서 videoPlayer ref를 사용해서 데이터를 가져옵니다.
+      // 성능을 일부 포기하고 기능을 구현했다고 생각하면 될듯합니다.
+      const videoStatus = await videoPlayer.current?.getStatusAsync();
+      const likePosition = videoStatus?.isLoaded
+        ? videoStatus.positionMillis
+        : 0;
+      const result = await QueResourceClient.likeVideo(
+        props.videoData.videoId,
+        likePosition
+      );
+
+      if (result.success && result.payload) {
+        setLikeDataArray(result.payload);
+      } else {
+        toast.show({
+          description: `좋아요 중 문제가 발생했습니다. ${result.errorType}`,
+        });
       }
-    );
-  }, [videoPosition]);
+    }
+  }, [videoPosition, props.videoData, videoPlayer]);
 
   /** 좋아요 버튼 취소 API 호출 함수 */
   const dislikeThisVideo = useCallback(async (likeData: LikeType) => {
@@ -191,14 +196,14 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   }, []);
 
   /** 화면 최초 로드 시 영상 데이터 불러오기 */
-  // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 like 가져오기
+  // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 video에 대한 모든 정보 가져오기
   useEffect(() => {
     const getLikes = async () => {
       const rt = await QueResourceClient.getMyLikeReactions(
         "video",
         props.videoData.videoId!
       );
-      console.log(rt, props.videoData.videoId, getCurrentUID());
+
       if (rt.success) setLikeDataArray(rt.payload!);
       else {
         console.log(rt.errorType);
@@ -371,11 +376,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           />
           {!isControlHidden ? (
             <View style={styles.videoMiddleButtonContainer}>
-              <Pressable
-                onPress={() => {
-                  /** TBD 좋아하기 */
-                }}
-              >
+              <Pressable onPress={likeThisVideo}>
                 <MaterialIcons
                   selectable={false}
                   style={styles.videoMiddleButton}
