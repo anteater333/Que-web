@@ -28,6 +28,7 @@ import { formatTimer } from "../../utils/formatter";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import { useToast } from "native-base";
 import QueResourceClient from "../../api/QueResourceUtils";
+import { useToggleTimer } from "../../hooks/useTimer";
 
 /** 비디오 플레이어 프로퍼티 타입 */
 export interface VideoPlayerProps {
@@ -85,7 +86,7 @@ type VideoLikeType =
       /** 좋아요 기능 사용 여부 */
       useLikes: true;
       /** 좋아요 API 호출 */
-      onLike: () => void;
+      onLike: () => Promise<void>;
       /** 좋아요 취소 API 호출 */
       onDislike: (likeData: LikeType) => Promise<void>;
       /** 좋아요 데이터들 */
@@ -125,60 +126,53 @@ export function VideoBottomController(props: VideoBottomControllerPropType) {
     outputRange: [iconStyles.color, iconStyles.heartColor],
   });
 
-  /** 좋아요 개수 제한에 도달했을 경우 더 좋아요 요청할 수 없도록 하기 */
-  if (props.useLikes) {
-    useEffect(() => {
-      if (props.useLikes) {
-        if (props.noMoreLike) {
-          setLikable(false);
-          Animated.timing(animation, {
-            toValue: 1,
-            duration: HEART_COLOR_TIMER / 2,
-            useNativeDriver: false,
-          }).start();
-        } else {
-          setLikable(true);
-          Animated.timing(animation, {
-            toValue: 0,
-            duration: HEART_COLOR_TIMER / 2,
-            useNativeDriver: false,
-          }).start();
-        }
-      }
-    }, [props.useLikes, props.noMoreLike]);
-  }
+  /** likable 디바운싱 타이머 */
+  const refreshLikableTimer = useToggleTimer(
+    setLikable,
+    true,
+    HEART_COLOR_TIMER * 2
+  );
 
-  /** 버튼 터치 시 색상 변경 fade 애니메이션 사용, 색상이 다 사라져야지 좋아요 할 수 있음 */
-  const handleButtonColorAnimation = useCallback(() => {
-    setLikable(false);
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: HEART_COLOR_TIMER / 2,
-      useNativeDriver: false,
-    }).start(() => {
+  /** 좋아요 개수 제한에 도달했을 경우 더 좋아요 요청할 수 없도록 하기 */
+  useEffect(() => {
+    if (props.useLikes) {
+      refreshLikableTimer();
+      setLikable(!props.noMoreLike);
+    }
+  }, [props.useLikes, props.useLikes ? props.noMoreLike : undefined]);
+
+  /** 좋아요 가능 여부에 따라 버튼 색상 변경 */
+  useEffect(() => {
+    if (likable) {
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: HEART_COLOR_TIMER,
+        useNativeDriver: false,
+      }).start();
+    } else {
       Animated.timing(animation, {
         toValue: 1,
-        duration: HEART_COLOR_TIMER * 5,
+        duration: HEART_COLOR_TIMER,
         useNativeDriver: false,
-      }).start(() => {
-        Animated.timing(animation, {
-          toValue: 0,
-          duration: HEART_COLOR_TIMER,
-          useNativeDriver: false,
-        }).start(() => setLikable(true));
-      });
-    });
-  }, [animation]);
+      }).start();
+    }
+  }, [likable, animation]);
+
+  /** 버튼 터치 시 색상 변경 fade 애니메이션 사용, 색상이 다 사라져야지 좋아요 할 수 있음 */
+  const handleButtonDebouncing = useCallback(() => {
+    setLikable(false);
+    refreshLikableTimer({ updateNewTimer: true });
+  }, []);
 
   /** 우측 좋아요 버튼 눌렀을 때의 액션 설정, 디바운싱 처리됨 */
-  const handleLikeBottonPressed = useCallback(() => {
+  const handleLikeBottonPressed = useCallback(async () => {
     if (likable && props.useLikes) {
-      handleButtonColorAnimation();
-      props.onLike();
+      handleButtonDebouncing();
+      await props.onLike();
     } else if (props.useLikes && props.noMoreLike) {
       // TBD 좋아요 개수 제한에 대해 설명하든 아니면 그냥 아무 리액션 하지 않든
     }
-  }, [likable]);
+  }, [likable, props.useLikes, props.useLikes ? props.noMoreLike : undefined]);
 
   /** 좋아요 위치 목록 */
   let heartIndicators = null;
@@ -267,7 +261,7 @@ function SliderHeartIndicator(props: {
   const handleDislike = useCallback(async () => {
     setModalVisible(false);
     await props.onDislike(props.likeData);
-  }, []);
+  }, [props.likeData]);
 
   return (
     <Pressable
