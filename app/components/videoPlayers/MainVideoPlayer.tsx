@@ -10,16 +10,11 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useToggleTimer } from "../../hooks/useTimer";
 import { INFO_HIDE_TIMER } from "./VideoPlayer.global";
-import { formatCount } from "../../utils/formatter";
+import { formatCount, formatDate } from "../../utils/formatter";
 import QueResourceClient from "../../api/QueResourceUtils";
 import LikeType from "../../types/Like";
-import { increaseVideoViewCount } from "../../api/firebase/firestore/firestore";
-import {
-  MAX_VIDEO_LIKE_LIMIT,
-  QueResourceResponseErrorType,
-} from "../../api/interfaces";
+import { MAX_VIDEO_LIKE_LIMIT } from "../../api/interfaces";
 import { useToast } from "native-base";
-import { getCurrentUID } from "../../api/firebase/auth/auth";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -156,7 +151,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
   const likeThisVideo = useCallback(async () => {
-    if (props.videoData.videoId) {
+    if (props.videoData.videoId && !noMoreLike) {
       // videoPosition status를 사용하면 즉각적으로 위치가 업데이트 되지 않습니다.
       // 따라서 videoPlayer ref를 사용해서 데이터를 가져옵니다.
       // 성능을 일부 포기하고 기능을 구현했다고 생각하면 될듯합니다.
@@ -177,7 +172,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
         });
       }
     }
-  }, [videoPosition, props.videoData, videoPlayer]);
+  }, [videoPosition, props.videoData, videoPlayer, noMoreLike]);
 
   /** 좋아요 버튼 취소 API 호출 함수 */
   const dislikeThisVideo = useCallback(async (likeData: LikeType) => {
@@ -331,7 +326,9 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                 </Text>
                 <Text style={[styles.videoInfoText, styles.videoInfoColor]}>
                   {
-                    props.videoData.uploadedAt?.toDateString() /** TBD 날짜 변환 Util 함수 */
+                    props.videoData.uploadedAt
+                      ? formatDate(props.videoData.uploadedAt)
+                      : "0000-00-00" /** TBD 날짜 변환 Util 함수 */
                   }
                 </Text>
               </View>
@@ -380,6 +377,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                 <MaterialIcons
                   selectable={false}
                   style={styles.videoMiddleButton}
+                  color={noMoreLike ? iconStyles.heartColor : iconStyles.color}
                   name={"favorite"}
                 />
                 <Text selectable={false} style={styles.videoMiddleButtonText}>
@@ -395,6 +393,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                 <MaterialIcons
                   selectable={false}
                   style={styles.videoMiddleButton}
+                  color={iconStyles.color}
                   name={"star"}
                 />
                 <Text selectable={false} style={styles.videoMiddleButtonText}>

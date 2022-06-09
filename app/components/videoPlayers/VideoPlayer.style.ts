@@ -115,7 +115,6 @@ const videoPlayerStyles = StyleSheet.create({
     width: bSpace.xlarge * 6,
   },
   videoMiddleButton: {
-    color: bColors.white + bColors.tpPrimary,
     fontSize: bFont.large * 4,
   },
   videoMiddleButtonText: {
