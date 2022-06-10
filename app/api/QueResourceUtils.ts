@@ -26,11 +26,16 @@ if (process.env.NODE_ENV !== "test") {
   QueResourceClient = {
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
-    getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    getVideoData: resourceClient.getVideoData,
+    getVideoDownloadURL: resourceClient.getVideoDownloadURL,
     getUserProfileData: resourceClient.getUserProfileData,
     updateUserProfile: resourceClient.updateUserProfile,
     uploadUserProfileImage: resourceClient.uploadUserProfileImage,
     uploadVideo: resourceClient.uploadVideo,
+    getMyLikeReactions: resourceClient.getMyLikeReactions,
+    dislikeVideo: resourceClient.dislikeVideo,
+    increaseVideoViewCount: resourceClient.increaseVideoViewCount,
+    likeVideo: resourceClient.likeVideo,
   };
 } else {
   // 테스트용 Mock API
@@ -49,6 +54,21 @@ if (process.env.NODE_ENV !== "test") {
     },
     uploadVideo: async () => {
       return { success: true };
+    },
+    getMyLikeReactions: () => {
+      throw new Error("Not Implemented");
+    },
+    dislikeVideo: () => {
+      throw new Error("Not Implemented");
+    },
+    increaseVideoViewCount: () => {
+      throw new Error("Not Implemented");
+    },
+    likeVideo: () => {
+      throw new Error("Not Implemented");
+    },
+    getVideoData: () => {
+      throw new Error("Not Implemented");
     },
   };
 }

@@ -17,8 +17,6 @@ import {
   REGISTER,
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // v6
-// import storage from "redux-persist/lib/storage"; // local storage
-// import session from "redux-persist/lib/storage/session"; // session storage
 
 const persistConfig = {
   key: "root",

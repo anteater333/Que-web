@@ -22,7 +22,8 @@ import { useIsFocused } from "@react-navigation/native";
 import QueResourceClient from "../../../api/QueResourceUtils";
 import { useConfirm } from "../../../hooks/useConfirm";
 import { setCredential } from "../../../reducers/authReducer";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
 
 const styles = signUpScreenStyle;
 
@@ -64,8 +65,10 @@ export default function SetUserProfileScreen() {
     setHideButton,
     newUserProfile,
     setNewUserProfile,
-    setIsLoading,
   } = useContext(SignUpContext);
+
+  const { hideLoading, setLoadingMessage, showLoading } =
+    useLoadingIndicator("");
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
   const openImagePickerAsync = useCallback(async () => {
@@ -101,7 +104,7 @@ export default function SetUserProfileScreen() {
 
   /** 사용자가 입력한 프로필 정보를 컨텍스트에 저장하는 함수 */
   const saveUserProfile = useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
     if (
       !profileLocalURL &&
       !(await asyncAlert(
@@ -109,7 +112,7 @@ export default function SetUserProfileScreen() {
         "프로필 변경 기능은 개발 중입니다."
       ))
     ) {
-      setIsLoading(false);
+      hideLoading();
       return;
     }
 
@@ -135,7 +138,7 @@ export default function SetUserProfileScreen() {
     /** 회원가입 과정 중 context 변화 */
     setNewUserProfile(updateData);
 
-    setIsLoading(false);
+    hideLoading();
 
     if (updateResult.success) {
       dispatch(

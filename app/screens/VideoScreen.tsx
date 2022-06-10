@@ -1,51 +1,70 @@
 import { Video } from "expo-av";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
-import { getVideoDownloadURL } from "../api/QueResourceUtils";
+import QueResourceClient, {
+  getVideoDownloadURL,
+} from "../api/QueResourceUtils";
+import MainVideoPlayer from "../components/videoPlayers/MainVideoPlayer";
+import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
+import { useViewList } from "../hooks/useViewList";
 import { MainStackScreenProp } from "../navigators/MainNavigator";
+import { bColors } from "../styles/base";
+import VideoType from "../types/Video";
 
 /**
  * 비디오 재생 화면
  */
 const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
-  const videoPlayer = useRef<Video>(null);
+  const [targetVideoData, setTargetVideoData] = useState<VideoType>({});
   const [videoUrl, setVideoUrl] = useState<string>("");
 
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  /** 비디오에 대한 시청 수를 올리는 커스텀 훅 Callback */
+  const increaseViewCount = useViewList();
+
+  const loading = useLoadingIndicator();
+
+  /** 비디오 화면 최초 렌더링 시 로딩 표시 우선 */
+  useEffect(() => {
+    loading.showLoading();
+  }, []);
+
+  /** 비디오 다운로드 가능한 주소 반환 */
+  useEffect(() => {
+    async function fetchVideo(videoUrl: string) {
+      const httpDownloadUrl = await getVideoDownloadURL(videoUrl);
+      setVideoUrl(httpDownloadUrl);
+      loading.hideLoading();
+    }
+
+    if (targetVideoData.sourceUrl) fetchVideo(targetVideoData.sourceUrl);
+  }, [targetVideoData.sourceUrl]);
 
   useEffect(() => {
-    async function fetchVideo() {
-      const httpDownloadUrl = await getVideoDownloadURL(route.params.url);
-      setVideoUrl(httpDownloadUrl);
+    /** 비디오 정보를 서버로부터 가져옴 */
+    async function fetchVideoInfo(videoId: string) {
+      const result = await QueResourceClient.getVideoData(videoId);
+
+      if (result.success) {
+        setTargetVideoData(result.payload!);
+      } else {
+        // TBD 에러 처리
+        console.error(result.errorType);
+      }
     }
 
-    fetchVideo();
-  }, [videoUrl]);
-
-  /** 임시 버튼 액션 함수, 재생 / 정지 */
-  const togglePlay = useCallback(() => {
-    if (isPlaying) {
-      setIsPlaying(false);
-      videoPlayer.current?.pauseAsync();
+    if (route.params.videoId) {
+      increaseViewCount(route.params.videoId);
+      fetchVideoInfo(route.params.videoId);
     } else {
-      setIsPlaying(true);
-      videoPlayer.current?.playAsync();
+      // TBD VideoId 제공되지 않았음을 알리는 컴포넌트 표출
     }
-  }, [isPlaying]);
+  }, [route.params.videoId]);
 
   return (
     <View style={styles.container}>
-      <Video
-        style={styles.video}
-        ref={videoPlayer}
-        source={{
-          uri: videoUrl,
-        }}
-        usePoster={true}
-      ></Video>
-      <View style={styles.buttons}>
-        <Button title={"test"} onPress={togglePlay} />
-      </View>
+      {!targetVideoData.videoId ? null : (
+        <MainVideoPlayer videoData={targetVideoData} videoSource={videoUrl} />
+      )}
     </View>
   );
 };
@@ -53,9 +72,8 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: bColors.black,
   },
-  video: { flex: 1 },
-  buttons: {},
 });
 
 export default VideoScreen;

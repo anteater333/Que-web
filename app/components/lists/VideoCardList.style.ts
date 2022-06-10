@@ -4,7 +4,6 @@ import { bColors, bDimensions, bFont, bSpace } from "../../styles/base";
 const videoCardListStyles = StyleSheet.create({
   cardListConatiner: {
     backgroundColor: bColors.white,
-    maxWidth: 480,
   },
   indicatorContainer: {
     margin: bSpace.large,

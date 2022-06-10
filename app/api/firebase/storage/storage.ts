@@ -6,6 +6,7 @@ import {
   QueResourceResponse,
   QueResourceResponseErrorType,
 } from "../../interfaces";
+import { getCurrentUID } from "../auth/auth";
 import { getUserProfile } from "../firestore/firestore";
 
 /**
@@ -27,8 +28,8 @@ export async function getMediaFromStorage(url: string): Promise<string> {
 export async function uploadCurrentUserProfileImage(
   filePath: string
 ): Promise<QueResourceResponse> {
-  const currentUser = getAuth().currentUser;
-  if (!currentUser) {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
     // 로그인 해주세요
     return {
       success: false,
@@ -36,9 +37,8 @@ export async function uploadCurrentUserProfileImage(
     };
   }
 
-  const uid = currentUser.uid;
   /** storage 내의 프로필 사진 경로 */
-  const storagePath = `users/${uid}/images/profilePic`;
+  const storagePath = `users/${currentUid}/images/profilePic`;
 
   try {
     /** ImagePicker의 결과를 Blob으로 변환 */
@@ -75,8 +75,8 @@ export async function uploadVideoSource(
     thumbnailOk: false,
   };
 
-  const currentUser = getAuth().currentUser;
-  if (!currentUser) {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
     // 로그인 해주세요
     return rtStatus;
   }
@@ -84,12 +84,10 @@ export async function uploadVideoSource(
   /** storage instance */
   const storage = getStorage();
 
-  const uid = currentUser.uid;
-
   /** 영상 업로드 */
   try {
     /** storage 내의 영상 경로 */
-    const videoStoragePath = `users/${uid}/videos/${videoId}/video`;
+    const videoStoragePath = `users/${currentUid}/videos/${videoId}/video`;
 
     const videoBlob: Blob = await dataURLToBlob(videoSourcePath);
 
@@ -104,7 +102,7 @@ export async function uploadVideoSource(
   /** 썸네일 업로드 */
   try {
     /** storage 내의 썸네일 경로 */
-    const thumbnailStoragePath = `users/${uid}/videos/${videoId}/thumbnail`;
+    const thumbnailStoragePath = `users/${currentUid}/videos/${videoId}/thumbnail`;
 
     const thumbnailBlob: Blob = await dataURLToBlob(thumbnailSourcePath);
 

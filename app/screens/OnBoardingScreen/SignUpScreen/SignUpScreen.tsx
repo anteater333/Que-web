@@ -36,7 +36,6 @@ function SignUpScreen({
   const [buttonAction, setButtonAction] = useState<{ action: () => void }>({
     action: useCallback(() => {}, []),
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newUserProfile, setNewUserProfile] = useState<UserType>({});
 
   /** 건너뛰기 질문용도 */
@@ -71,8 +70,6 @@ function SignUpScreen({
           buttonAction,
           setButtonAction,
           signUpNavigator,
-          isLoading,
-          setIsLoading,
           newUserProfile,
           setNewUserProfile,
         }}
@@ -137,7 +134,6 @@ function SignUpScreen({
             />
           )}
         </SignUpContext.Consumer>
-        {isLoading ? <ScreenCoverLoadingSpinner /> : null}
       </SignUpContext.Provider>
     </SafeAreaView>
   );

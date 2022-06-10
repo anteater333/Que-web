@@ -15,6 +15,7 @@ import screens from "../../../styles/screens";
 import { validateEmail } from "../../../utils/validator";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
 
 /** 메일 입력 후 오류 안내 메세지 */
 const failMessages: {
@@ -75,8 +76,10 @@ export default function VerifyMailScreen() {
     buttonAction,
     setButtonAction,
     signUpNavigator,
-    setIsLoading,
   } = useContext(SignUpContext);
+
+  const { hideLoading, setLoadingMessage, showLoading } =
+    useLoadingIndicator("");
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
   // ref 사용방법 갈구하란 의미입니다.
@@ -85,7 +88,7 @@ export default function VerifyMailScreen() {
 
   /** 메일을 전송하고 전송 여부에 따라 인증 코드 입력 UI를 활성화합니다. */
   const sendVerificationMail = useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
     try {
       // 메일 요청
       const mailReqResult = await authClient.requestVerificationCodeMail(
@@ -120,12 +123,12 @@ export default function VerifyMailScreen() {
       setFailMessage(failMessages.default);
       alert("메일 전송 요청 과정에서 에러가 발생했습니다 : " + error);
     }
-    setIsLoading(false);
+    hideLoading();
   }, [userEmail]);
 
   /** 사용자가 입력한 코드를 검증한 다음 결과에 따라 다음 단계로 넘어갑니다. */
   const verifyWithCode = useCallback(async () => {
-    setIsLoading(true);
+    hideLoading();
     try {
       // 코드 인증 요청
       const reqResult = await authClient.sendVerificationCode(
@@ -155,7 +158,7 @@ export default function VerifyMailScreen() {
       setCodeMatchingMessage(codeMatchingMessages.default);
       alert(`인증 과정에서 에러가 발생했습니다 : ${error}`);
     }
-    setIsLoading(false);
+    hideLoading();
   }, [userEmail, verifyingCode]);
 
   /** 첫 렌더링 시 입력 데이터 초기화 */

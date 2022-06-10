@@ -4,7 +4,7 @@ import { bColors, bFont, bSpace } from "../../styles/base";
 /**
  * 화면 전체를 커버하는 로딩 표시
  */
-export default function ScreenCoverLoadingSpinner(props: { message: string }) {
+export default function ScreenCoverLoadingSpinner(props: { message?: string }) {
   return (
     <View
       style={{

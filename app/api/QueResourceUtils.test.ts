@@ -87,8 +87,8 @@ describe("getVideoCardData", () => {
       expect(data.likeCount).not.toBeUndefined();
       expect(data.starCount).not.toBeUndefined();
       expect(data.viewed).not.toBeUndefined();
-      expect(data.likedData).not.toBeUndefined();
-      expect(data.starredData).not.toBeUndefined();
+      expect(data.myLikedData).not.toBeUndefined();
+      expect(data.myStarredData).not.toBeUndefined();
     });
   });
 });

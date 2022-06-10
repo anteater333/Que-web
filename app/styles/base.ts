@@ -32,9 +32,9 @@ export const bColors = {
   tpTetiary: "66",
   /** 완전 투명 */
   transparent: "#00000000",
-  error: "#DD3730",
-  errorDark: "#BA1B1B",
-  errorLight: "#FFB4A9",
+  red: "#DD3730",
+  redDark: "#BA1B1B",
+  redLight: "#FFB4A9",
 };
 
 /**

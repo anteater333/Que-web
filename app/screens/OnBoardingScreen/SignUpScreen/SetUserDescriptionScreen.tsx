@@ -1,17 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Alert, SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 import { updateUserProfile } from "../../../api/QueResourceUtils";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNavigator";
-import { getUserProfileData } from "../../../api/QueResourceUtils";
 import screens from "../../../styles/screens";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { setCredential } from "../../../reducers/authReducer";
 import { useAuth } from "../../../hooks/useAuth";
 import { useConfirm } from "../../../hooks/useConfirm";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
 
 const styles = signUpScreenStyle;
 
@@ -37,13 +37,11 @@ export default function SetUserDescriptionScreen() {
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   /** SignUp 컨텍스트 */
-  const {
-    setButtonAction,
-    setButtonEnabled,
-    setHideButton,
-    newUserProfile,
-    setIsLoading,
-  } = useContext(SignUpContext);
+  const { setButtonAction, setButtonEnabled, setHideButton, newUserProfile } =
+    useContext(SignUpContext);
+
+  const { hideLoading, setLoadingMessage, showLoading } =
+    useLoadingIndicator("");
 
   /** Description 길이 제한 */
   const updateDescriptionInput = useCallback(
@@ -58,7 +56,7 @@ export default function SetUserDescriptionScreen() {
 
   /** 버튼 액션, 자기소개를 서버에 등록하기 */
   const postUserDescription = useCallback(async () => {
-    setIsLoading(true);
+    showLoading();
 
     if (
       !description.length &&
@@ -67,7 +65,7 @@ export default function SetUserDescriptionScreen() {
         "프로필 변경 기능은 개발 중입니다."
       ))
     ) {
-      setIsLoading(false);
+      hideLoading();
       return;
     }
 
@@ -76,7 +74,7 @@ export default function SetUserDescriptionScreen() {
     });
 
     if (result.success) {
-      setIsLoading(false);
+      hideLoading();
       // 업데이트한 프로필을 클라이언트에도 적용
       dispatch(
         setCredential({
@@ -90,7 +88,7 @@ export default function SetUserDescriptionScreen() {
       // 온보딩 화면 처음으로 이동 -> 해당 화면에서 로그인 여부 판단 -> 메인화면으로 이동
       onBoardingNavigator.navigate("CatchPhrase");
     } else {
-      setIsLoading(false);
+      hideLoading();
       // TBD 업데이트 과정 에러 처리
       alert(`프로필 등록 과정에서 에러가 발생했습니다. : ` + result.errorType);
     }

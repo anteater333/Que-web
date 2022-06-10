@@ -1,6 +1,7 @@
 import UserLevel from "./UserLevel";
 import UserPage from "./UserPage";
 import UserPersonality from "./UserPersonality";
+import UserReaction from "./UserReaction";
 import UserStatus from "./UserStatus";
 
 /**
@@ -31,4 +32,6 @@ export default interface UserType {
   status?: UserStatus;
   /** 사용자 서비스 가입일 */
   registeredAt?: Date;
+  /** 사용자가 한 반응 모음 */
+  reactions?: UserReaction;
 }

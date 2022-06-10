@@ -68,19 +68,19 @@ export default function VideoCard(props: VideoCardProps) {
 
   /**
    * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
-   * 해당 비디오 카드가 가지고 있는 url을 기반으로 해서 VideoScreen으로 Navigation 합니다.
+   * 해당 비디오 카드가 가지고 있는 videoId을 기반으로 해서 VideoScreen으로 Navigation 합니다.
    */
   const onPressCard = useCallback(async () => {
     navigation.navigate("Video", {
-      url: props.videoInfo.sourceUrl!,
+      videoId: props.videoInfo.videoId!,
     });
-  }, [props.videoInfo.sourceUrl]);
+  }, [props.videoInfo.videoId]);
 
   /**
    * 카드 컴포넌트의 평가 버튼을 눌렀을 때 실행됩니다.
    */
   const navigateToEvalutaion = useCallback(async () => {
-    navigation.navigate("Criticism", { videoId: props.videoInfo.videoId });
+    navigation.navigate("Criticism", { videoId: props.videoInfo.videoId! });
   }, []);
 
   /**
@@ -181,11 +181,17 @@ function CardThumbnailView(props: CardThumbnailProps) {
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
       <Image
+        testID="cardThumbnailBackground"
+        style={styles.videoThumbnailBackground}
+        resizeMode={"stretch"}
+        source={thumbnail}
+      />
+      <Image
         testID="cardThumbnailImage"
         style={styles.videoThumbnailImage}
         resizeMode={resizeMode}
         source={thumbnail}
-      ></Image>
+      />
       <Text testID="cardThumbnailTime" style={styles.videoTime}>
         {modifiedVideoLength}
       </Text>

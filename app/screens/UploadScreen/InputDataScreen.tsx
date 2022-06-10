@@ -26,7 +26,6 @@ function InputDataScreen() {
     videoTitle,
     setVideoTitle,
     videoPath,
-    setLoadingMessage,
   } = useContext(UploadContext);
 
   /** 첫 렌더링 시 버튼 숨김 해제 */
@@ -50,9 +49,7 @@ function InputDataScreen() {
       <View style={styles.videoContainer}>
         <SimplifiedVideoPlayer
           // 임시 데이터입니다.
-          videoData={{
-            videoId: "Dummy",
-          }}
+          videoData={{}}
           videoSource={videoPath}
         />
       </View>

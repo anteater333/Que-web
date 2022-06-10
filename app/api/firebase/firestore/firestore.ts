@@ -9,9 +9,10 @@ import {
   doc,
   updateDoc,
   setDoc,
+  increment,
+  deleteField,
+  Timestamp,
 } from "firebase/firestore";
-
-import { getAuth } from "firebase/auth";
 
 import { VideoCollection, UserCollection } from "./collections";
 
@@ -20,10 +21,17 @@ import UserType from "../../../types/User";
 import {
   QueResourceResponse,
   QueResourceResponseErrorType,
+  MAX_VIDEO_LIKE_LIMIT,
 } from "../../interfaces";
+import firebaseConfig from "../config";
+import LikeType, { LikeTypeSelector } from "../../../types/Like";
+import { getCurrentUID } from "../auth/auth";
+import { genSimpleUUID } from "../../../utils/generator";
 
 /** 페이지네이션에 사용할 마지막 문서 메모 */
 let lastDocument: QueryDocumentSnapshot<VideoType>;
+
+// TBD ID로 비디오 정보 불러오는 API
 
 /**
  * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
@@ -73,10 +81,10 @@ export async function getVideoCardDataFromFirestore(
         (filteredData.uploader as Partial<UserType>).userId = uploaderData.id;
       }
 
-      // 리액션 관련 데이터 생성 (TBD)
-      filteredData.viewed = false;
-      filteredData.likedData = [];
-      filteredData.starredData = {};
+      // // 리액션 관련 데이터 생성 (TBD)
+      // filteredData.viewed = false;
+      // filteredData.likedData = [];
+      // filteredData.starredData = {};
 
       // 정제한 데이터 추가
       rtDataset.push(filteredData);
@@ -102,7 +110,6 @@ export async function getUserProfile(
     const userDataSnap = await getDoc<UserType>(doc(UserCollection, userId));
 
     if (!userDataSnap.exists()) {
-      console.error(`getUserProfile: 404`);
       return { user: {}, errorType: QueResourceResponseErrorType.NotFound };
     } else {
       return { user: { userId: userId, ...userDataSnap.data() } };
@@ -120,8 +127,8 @@ export async function getUserProfile(
 export async function updateCurrentUserProfile(
   updateData: UserType
 ): Promise<QueResourceResponse> {
-  const currentUser = getAuth().currentUser;
-  if (!currentUser) {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
     // 로그인 해주세요
     return {
       success: false,
@@ -129,7 +136,6 @@ export async function updateCurrentUserProfile(
     };
   }
 
-  const uid = currentUser.uid;
   try {
     let savedDoc: UserType = {};
     if (
@@ -137,9 +143,9 @@ export async function updateCurrentUserProfile(
       !updateData.nickname ||
       !updateData.profilePictureUrl
     )
-      savedDoc = (await getUserProfile(uid)).user;
+      savedDoc = (await getUserProfile(currentUid)).user;
 
-    await updateDoc<UserType>(doc(UserCollection, uid), {
+    await updateDoc<UserType>(doc(UserCollection, currentUid), {
       description: updateData.description
         ? updateData.description
         : savedDoc.description
@@ -197,22 +203,68 @@ export async function setUserDocument(
  */
 export async function setVideoDocument(videoData: VideoType): Promise<string> {
   try {
-    const uid = getAuth().currentUser?.uid;
+    const currentUid = getCurrentUID();
     const newDocRef = doc(VideoCollection);
     const videoId = newDocRef.id;
+
+    const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
     await setDoc<VideoType>(newDocRef, {
       ...videoData,
-      sourceUrl: `users/${uid}/videos/${videoId}/video`,
-      thumbnailUrl: `users/${uid}/videos/${videoId}/thumbnail`,
+      sourceUrl:
+        storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
+      thumbnailUrl:
+        storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
       uploadedAt: new Date(),
       uploadDone: false,
-      uploader: doc(UserCollection, uid),
+      uploader: doc(UserCollection, currentUid),
     });
 
     return newDocRef.id;
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+export async function getVideoDocument(
+  videoId: string
+): Promise<QueResourceResponse<VideoType>> {
+  try {
+    const videoDataSnap = await getDoc<VideoType>(
+      doc(VideoCollection, videoId)
+    );
+
+    if (!videoDataSnap.exists()) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
+    } else {
+      const snapData = videoDataSnap.data();
+      const uploaderDataSnap = await getDoc<UserType>(snapData.uploader);
+      const uploaderData = uploaderDataSnap.data();
+      const uploadedAtDate = timestampToDate(snapData.uploadedAt);
+      const rtVideoData: VideoType = {
+        videoId: videoId,
+        ...snapData,
+        uploadedAt: uploadedAtDate,
+        uploader: {
+          userId: uploaderDataSnap.id,
+          nickname: uploaderData?.nickname,
+          profilePictureUrl: uploaderData?.profilePictureUrl,
+        } as UserType,
+      };
+      return {
+        success: true,
+        payload: rtVideoData,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -225,4 +277,303 @@ export async function updateVideoUploaded(videoId: string, isDone: boolean) {
   } catch (error) {
     throw error;
   }
+}
+
+/** 해당 대상에 대한 사용자의 좋아요 목록을 가져옵니다. */
+export async function getMyLikeReactions(
+  likeType: LikeTypeSelector,
+  targetId: string
+): Promise<QueResourceResponse<LikeType[]>> {
+  try {
+    const currentUid = getCurrentUID();
+    if (!currentUid) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.SignInRequired,
+      };
+    }
+
+    const userDoc = doc(UserCollection, currentUid);
+    const userDocSnapshot = await getDoc(userDoc);
+    const selectedData = userDocSnapshot.get(
+      `reactions.likes.${likeType}.${targetId}`
+    ) as {
+      [likeId: string]: LikeType;
+    };
+
+    if (!selectedData) {
+      // 전달 받은 likeType + targetId 조합에 대한 좋아요 정보가 없음
+      return {
+        success: true,
+        payload: [],
+      };
+    }
+
+    /** 정제된 좋아요 데이터 배열. 함수의 결과로 반환용도 */
+    const rtLikeData: LikeType[] = [];
+
+    // 데이터 배열로 정제
+    for (let likeId in selectedData) {
+      rtLikeData.push({
+        likeType: "video",
+        userId: currentUid,
+        targetId: targetId,
+        likeId: likeId,
+        ...selectedData[likeId],
+      });
+    }
+
+    return { success: true, payload: rtLikeData };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+/** 영상 시청수를 증가시키는 함수 */
+export async function increaseVideoViewCount(
+  targetVideoId: string
+): Promise<QueResourceResponse> {
+  const videoDocSnap = await getDoc<VideoType>(
+    doc(VideoCollection, targetVideoId)
+  );
+
+  if (!videoDocSnap.exists()) {
+    // 그런 비디오 없습니다.
+    return { success: false, errorType: QueResourceResponseErrorType.NotFound };
+  }
+
+  await updateDoc(videoDocSnap.ref, {
+    viewCount: increment(1),
+  });
+
+  return { success: true };
+}
+
+/** 영상에 대해 좋아요를 기록하는 함수, users, videos 컬렉션 모두 수정함 */
+export async function likeVideo(
+  targetVideoId: string,
+  likedAt: number
+): Promise<QueResourceResponse<LikeType[]>> {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  /** 기존 좋아요 가져오기 */
+  const getLikeRequest = await getMyLikeReactions("video", targetVideoId);
+  if (!getLikeRequest.success) {
+    return {
+      success: false,
+      errorType: getLikeRequest.errorType,
+    };
+  }
+
+  const likedData = getLikeRequest.payload!;
+  if (likedData.length >= MAX_VIDEO_LIKE_LIMIT) {
+    // 좋아요 개수 상한 도달
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.TooManyRequest,
+    };
+  }
+
+  // 좋아요 가능한 조건 만족하였으니 좋아요 추가하기
+
+  try {
+    /** 새로 추가할 좋아요 데이터의 ID */
+    const newLikeId = genSimpleUUID();
+    /** 추가할 데이터 */
+    const newLikeData: LikeType = {
+      likeType: "video",
+      likeId: newLikeId,
+      targetId: targetVideoId,
+      userId: currentUid,
+      likePosition: likedAt,
+      likedAt: new Date(),
+    };
+
+    /** 사용자 컬렉션에 대해 동적 생성을 위한 객체 */
+    const newVideoLikeObject: {
+      [targetId: string]: { [likeId: string]: LikeType };
+    } = {};
+    newVideoLikeObject[targetVideoId] = {};
+    newVideoLikeObject[targetVideoId][newLikeId] = newLikeData;
+
+    /** 사용자 collection에 등록 */
+    const userDocRef = doc(UserCollection, currentUid);
+    await setDoc(
+      userDocRef,
+      {
+        reactions: {
+          likes: {
+            video: newVideoLikeObject,
+          },
+        },
+      },
+      { merge: true }
+    );
+
+    /** 비디오 컬렉션에 대해 동적 생성을 위한 객체 */
+    const newVideoUserLikeObject: {
+      [userId: string]: { [likeId: string]: LikeType };
+    } = {};
+    newVideoUserLikeObject[currentUid] = {};
+    newVideoUserLikeObject[currentUid][newLikeId] = newLikeData;
+
+    /** 비디오 collection에 등록 */
+    const videoDocRef = doc(VideoCollection, targetVideoId);
+    await setDoc(
+      videoDocRef,
+      {
+        likeCount: increment(1),
+        likedList: newVideoUserLikeObject,
+      },
+      { merge: true }
+    );
+
+    /** 좋아요 이후 상태 */
+    const rtLikedData = [...likedData, newLikeData];
+
+    return {
+      success: true,
+      payload: rtLikedData,
+    };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+/** 영상에 대해 좋아요를 취소하는 함수, users, videos 컬렉션 모두 수정함 */
+export async function dislikeVideo(
+  targetVideoId: string,
+  likeId: string
+): Promise<QueResourceResponse<LikeType[]>> {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  // 내 좋아요 맞는지 확인하기
+  /** 비디오 도큐먼트 레퍼런스 */
+  const videoDocRef = doc(VideoCollection, targetVideoId);
+  /** 비디오 도큐먼트 스냅샷 */
+  const videoDocSnap = await getDoc<VideoType>(videoDocRef);
+  if (!videoDocSnap.exists()) {
+    // 해당 영상(이 없으니까 당연히 좋아요 정보도 없음) 정보 없음
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.NotFound,
+    };
+  }
+
+  const videoDocData = videoDocSnap.data();
+  if (
+    !videoDocData.likedList || // 좋아요 목록 자체가 없음
+    !videoDocData.likedList[currentUid] || // 이 사용자가 좋아요 한 적 자체가 없음
+    !videoDocData.likedList[currentUid][likeId] // 해당 좋아요 정보가 없음
+  ) {
+    return {
+      // 해당 좋아요 정보가 없음
+      success: false,
+      errorType: QueResourceResponseErrorType.NotFound,
+    };
+  } else {
+    try {
+      // user 문서에서 삭제
+      const userDocRef = doc(UserCollection, currentUid);
+
+      /** 이 조건 만족 시 좋아요가 모두 사라지는 것으로 판단합니다. */
+      const deleteParentField =
+        Object.keys(videoDocData.likedList[currentUid]).length == 1;
+      if (deleteParentField) {
+        await setDoc(
+          userDocRef,
+          {
+            reactions: {
+              likes: {
+                video: {
+                  [targetVideoId]: deleteField(),
+                },
+              },
+            },
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          userDocRef,
+          {
+            reactions: {
+              likes: {
+                video: {
+                  [targetVideoId]: {
+                    [likeId]: deleteField(),
+                  },
+                },
+              },
+            },
+          },
+          { merge: true }
+        );
+      }
+
+      // video 문서에서 삭제
+      if (deleteParentField) {
+        await setDoc(
+          videoDocRef,
+          {
+            likeCount: increment(-1),
+            likedList: {
+              [currentUid]: deleteField(),
+            },
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          videoDocRef,
+          {
+            likeCount: increment(-1),
+            likedList: {
+              [currentUid]: {
+                [likeId]: deleteField(),
+              },
+            },
+          },
+          { merge: true }
+        );
+      }
+
+      /** 반환용 데이터 정제 */
+      const rtLikeData = [];
+      for (let itrLikeId in videoDocData.likedList[currentUid]) {
+        if (itrLikeId === likeId) {
+          // 제외
+        } else {
+          rtLikeData.push(videoDocData.likedList[currentUid][itrLikeId]);
+        }
+      }
+
+      return {
+        success: true,
+        payload: rtLikeData,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+}
+
+/** Firestore에 저장된 timestamp 형식을 date로 변환하는 함수 */
+function timestampToDate(timestamp: any): Date {
+  return new Date(timestamp.toDate());
 }

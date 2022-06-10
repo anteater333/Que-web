@@ -1,5 +1,9 @@
+import LikeType, { LikeTypeSelector } from "../../types/Like";
 import UserType from "../../types/User";
 import VideoType from "../../types/Video";
+
+/** 한 영상에 할 수 있는 최대 좋아요 수 */
+export const MAX_VIDEO_LIKE_LIMIT = 3; // 근데 여기 두는게 맞나?
 
 export enum QueResourceResponseErrorType {
   // Bad Requests
@@ -15,8 +19,12 @@ export enum QueResourceResponseErrorType {
   UndefinedError = "500",
 }
 
-export interface QueResourceResponse {
+export interface QueResourceResponse<T = void> {
+  /** 요청 성공 여부 */
   success: boolean;
+  /** 요청한 데이터 */
+  payload?: T;
+  /** 에러 발생 시 에러 종류 */
   errorType?: QueResourceResponseErrorType;
 }
 
@@ -36,10 +44,16 @@ export interface QueResourceAPI {
   /**
    * 리소스 서버에 접근해 VideoCardList에 적용할 수 있는 데이터 묶음을 반환합니다.
    * (firebase 사용 중인 현재 페이지 번호를 통한 pagination이 작동하지 않음)
+   * // TBD 함수명 변경 (복수의 비디오 데이터를 가져온다는 의미를 좀 더 강조)
    * @param per 한 번에 가저올 데이터 개수
    * @param page 페이지 번호 (0이면 처음부터, 1이면 다음부터)
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
+  /**
+   * 리소스 서버에 접근해 지정한 Video에 대한 메타 정보를 가져옵니다.
+   * @param videoId 가저올 비디오의 고유 아이디
+   */
+  getVideoData(videoId: string): Promise<QueResourceResponse<VideoType>>;
   /**
    * 영상과 영상의 메타 정보를 업로드합니다.
    * @param videoSourcePath 원본 영상 경로
@@ -50,9 +64,47 @@ export interface QueResourceAPI {
     videoData: VideoType
   ): Promise<QueResourceResponse>;
 
+  ////////////////////////////////////////////////// 반응 관련 인터페이스
+  /**
+   * 로그인한 사용자가 해당 대상(영상, 공지, 재생목록 등등)에 반응한 좋아요를 가져옵니다.
+   */
+  getMyLikeReactions(
+    likeType: LikeTypeSelector,
+    targetId: string
+  ): Promise<QueResourceResponse<LikeType[]>>;
+
+  ////////////////////////////////////////////////// 영상에 대한 반응 관련 인터페이스
+  /**
+   * 영상의 시청 수를 증가시킵니다.
+   * TBD 중복 시청 수 증가 방지, 당분간은 중복 허용
+   * @param targetVideoId
+   */
+  increaseVideoViewCount(targetVideoId: string): Promise<QueResourceResponse>;
+  /**
+   * 로그인한 사용자가 영상에 좋아요를 추가합니다.
+   * @param targetVideoId
+   * @param likedAt
+   * @returns 좋아요 수행 이후 해당 영상에 대한 좋아요 상태
+   */
+  likeVideo(
+    targetVideoId: string,
+    likedAt: number
+  ): Promise<QueResourceResponse<LikeType[]>>;
+  /**
+   * 로그인한 사용자가 영상에 좋아요 추가를 취소합니다.
+   * @param targetVideoId
+   * @param likeId
+   * @returns 좋아요 취소 수행 이후 해당 영상에 대한 좋아요 상태
+   */
+  dislikeVideo(
+    targetVideoId: string,
+    likeId: string
+  ): Promise<QueResourceResponse<LikeType[]>>;
+
   ////////////////////////////////////////////////// 유저 정보 관련 인터페이스
   /**
    * userId를 통해 특정 사용자의 프로필 데이터를 가져옵니다.
+   * TBD return 타입 통일하기(payload 사용하도록)
    */
   getUserProfileData(
     userId: string

@@ -23,6 +23,7 @@ import { useToast } from "native-base";
 import { getThumbnails } from "video-metadata-thumbnails";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { blobToDataURL } from "../../utils/converter";
+import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
 
 const SIZE_LIMIT = 20; // MB
 
@@ -38,14 +39,10 @@ function SelectTypeScreen() {
   const Toast = useToast();
 
   /** Upload Context */
-  const {
-    setButtonHidden,
-    setThumbnailPath,
-    setVideoPath,
-    setIsLoading,
-    setLoadingMessage,
-    setVideoLength,
-  } = useContext(UploadContext);
+  const { setButtonHidden, setThumbnailPath, setVideoPath, setVideoLength } =
+    useContext(UploadContext);
+
+  const { hideLoading, setLoadingMessage, showLoading } = useLoadingIndicator();
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
   const uploadExistingVideo = useCallback(async () => {
@@ -74,12 +71,12 @@ function SelectTypeScreen() {
     });
 
     if (!pickerResult.cancelled) {
-      setIsLoading(true);
+      showLoading();
       const fileSize = await checkFileSize(pickerResult.uri);
       if (!fileSize) {
         // TBD 이런 경우 파악해서 에러 처리
 
-        setIsLoading(false);
+        hideLoading();
         return;
       }
       if (!checkSizeLimitMB(fileSize, SIZE_LIMIT)) {
@@ -88,7 +85,7 @@ function SelectTypeScreen() {
           description: `영상이 너무 큽니다! (크기 제한 : ${SIZE_LIMIT}MB)`,
         });
 
-        setIsLoading(false);
+        hideLoading();
         return;
       }
 
@@ -123,7 +120,7 @@ function SelectTypeScreen() {
 
       setThumbnailPath(thumbnailUri);
 
-      setIsLoading(false);
+      hideLoading();
 
       /** 메타 정보 입력 화면으로 이동 */
       uploadNavigator.navigate("InputData");

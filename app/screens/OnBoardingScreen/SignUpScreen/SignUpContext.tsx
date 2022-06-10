@@ -10,8 +10,6 @@ type SignUpContextType = {
   setHideButton: Dispatch<SetStateAction<boolean>>;
   buttonAction: { action: () => void }; // function을 바로 쓰지 않고 객체로 wrapping 해야 변경 가능합니다.
   setButtonAction: Dispatch<SetStateAction<{ action: () => void }>>;
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
   newUserProfile: UserType;
   setNewUserProfile: Dispatch<SetStateAction<UserType>>;
 };
@@ -27,10 +25,6 @@ const defaultSignUpContext: SignUpContextType = {
     },
   },
   setButtonAction: function (): void {
-    throw new Error("Function not implemented.");
-  },
-  isLoading: false,
-  setIsLoading: function (value: SetStateAction<boolean>): void {
     throw new Error("Function not implemented.");
   },
   hideButton: false,

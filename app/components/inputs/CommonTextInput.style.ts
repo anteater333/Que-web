@@ -18,7 +18,7 @@ const commonTextInputStyles = StyleSheet.create({
     borderColor: bColors.black,
   },
   invalid: {
-    borderColor: bColors.error,
+    borderColor: bColors.red,
   },
   disabled: {
     borderColor: bColors.greyTetiary,

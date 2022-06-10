@@ -19,7 +19,7 @@ const TestApiClient = {
     return "https://firebasestorage.googleapis.com/v0/b/que-backend-dev.appspot.com/o/testvideo.mp4?alt=media&token=92554770-0ef5-4e1f-8ee8-21b70f29dc53";
   },
   getImageDownloadURL: async (storageURL: string) => {
-    return "https://firebasestorage.googleapis.com/v0/b/que-backend-dev.appspot.com/o/videos%2Fthumbnail%2Fimage%202.png?alt=media&token=eb095c87-0a2c-46e0-a436-dc3fc958e8e3";
+    return "https://firebasestorage.googleapis.com/v0/b/que-backend-dev.appspot.com/o/users%2FD6aaATPLmub8NMZGVcd9KrHEGzU2%2Fvideos%2Fpha8C9I05D3ifOYEpGdT%2Fthumbnail?alt=media&token=f2d4da20-ff9d-481e-a060-129cc421645b";
   },
   getVideoCardData: getTestVideoCardData,
 };

@@ -42,7 +42,7 @@ export const signUpScreenStyle = StyleSheet.create({
     color: bColors.black,
   },
   errorMessageText: {
-    color: bColors.error,
+    color: bColors.red,
   },
   messageTextButton: {
     color: bColors.primary,

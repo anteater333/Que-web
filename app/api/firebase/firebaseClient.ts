@@ -6,8 +6,13 @@ import {
   uploadVideoSource,
 } from "./storage/storage";
 import {
+  dislikeVideo,
+  getMyLikeReactions,
   getUserProfile,
   getVideoCardDataFromFirestore,
+  getVideoDocument,
+  increaseVideoViewCount,
+  likeVideo,
   setVideoDocument,
   updateCurrentUserProfile,
   updateVideoUploaded,
@@ -30,10 +35,12 @@ if (!getApps().length) {
   initializeApp(firebaseConfig);
 }
 
+// TBD 너무 비대해지는 것 같으니까 좀 분리하기.
 export const FirebaseResourceClient: QueResourceAPI = {
   getVideoDownloadURL: getMediaFromStorage,
   getImageDownloadURL: getMediaFromStorage,
   getVideoCardData: getVideoCardDataFromFirestore,
+  getVideoData: getVideoDocument,
   getUserProfileData: getUserProfile,
   updateUserProfile: updateCurrentUserProfile,
   uploadUserProfileImage: uploadCurrentUserProfileImage,
@@ -64,6 +71,10 @@ export const FirebaseResourceClient: QueResourceAPI = {
       };
     }
   },
+  getMyLikeReactions: getMyLikeReactions,
+  dislikeVideo: dislikeVideo,
+  increaseVideoViewCount: increaseVideoViewCount,
+  likeVideo: likeVideo,
 };
 
 export const FirebaseAuthClient = {

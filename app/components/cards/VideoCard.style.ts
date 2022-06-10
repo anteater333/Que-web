@@ -16,10 +16,18 @@ const videoCardStyles = StyleSheet.create({
   thumbnailView: {
     height: thumbnailHeight,
     backgroundColor: bColors.black,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  videoThumbnailBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
   videoThumbnailImage: {
     width: "100%",
     height: "100%",
+    backgroundColor: bColors.black + bColors.tpPrimary,
   },
   videoTime: {
     position: "absolute",
@@ -62,7 +70,7 @@ const videoCardStyles = StyleSheet.create({
     marginTop: bSpace.large,
   },
   infoTitleText: {
-    height: bFont.middle + 4,
+    height: bFont.middle + bFont.small / 2,
     fontSize: bFont.middle,
     marginBottom: bSpace.small,
   },
