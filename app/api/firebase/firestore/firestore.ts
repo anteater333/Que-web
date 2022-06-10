@@ -11,6 +11,7 @@ import {
   setDoc,
   increment,
   deleteField,
+  Timestamp,
 } from "firebase/firestore";
 
 import { VideoCollection, UserCollection } from "./collections";
@@ -222,6 +223,41 @@ export async function setVideoDocument(videoData: VideoType): Promise<string> {
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+export async function getVideoDocument(
+  videoId: string
+): Promise<QueResourceResponse<VideoType>> {
+  try {
+    const videoDataSnap = await getDoc<VideoType>(
+      doc(VideoCollection, videoId)
+    );
+
+    if (!videoDataSnap.exists()) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
+    } else {
+      const snapData = videoDataSnap.data();
+      const uploadedAtDate = timestampToDate(snapData.uploadedAt);
+      const rtVideoData: VideoType = {
+        videoId: videoId,
+        ...snapData,
+        uploadedAt: uploadedAtDate,
+      };
+      return {
+        success: true,
+        payload: rtVideoData,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -526,4 +562,9 @@ export async function dislikeVideo(
       throw error;
     }
   }
+}
+
+/** Firestore에 저장된 timestamp 형식을 date로 변환하는 함수 */
+function timestampToDate(timestamp: any): Date {
+  return new Date(timestamp.toDate());
 }

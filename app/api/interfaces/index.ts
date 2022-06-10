@@ -44,10 +44,16 @@ export interface QueResourceAPI {
   /**
    * 리소스 서버에 접근해 VideoCardList에 적용할 수 있는 데이터 묶음을 반환합니다.
    * (firebase 사용 중인 현재 페이지 번호를 통한 pagination이 작동하지 않음)
+   * // TBD 함수명 변경 (복수의 비디오 데이터를 가져온다는 의미를 좀 더 강조)
    * @param per 한 번에 가저올 데이터 개수
    * @param page 페이지 번호 (0이면 처음부터, 1이면 다음부터)
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
+  /**
+   * 리소스 서버에 접근해 지정한 Video에 대한 메타 정보를 가져옵니다.
+   * @param videoId 가저올 비디오의 고유 아이디
+   */
+  getVideoData(videoId: string): Promise<QueResourceResponse<VideoType>>;
   /**
    * 영상과 영상의 메타 정보를 업로드합니다.
    * @param videoSourcePath 원본 영상 경로

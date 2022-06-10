@@ -11,7 +11,7 @@ export type MainStackParamList = {
   Home: undefined;
   UserPage: { userId: string };
   Upload: undefined;
-  Video: { videoInfo: VideoType; url: string };
+  Video: { videoId: string };
   Criticism: { videoId: string };
   Search: undefined;
   Notification: undefined;
