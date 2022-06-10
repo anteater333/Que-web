@@ -22,7 +22,7 @@ import { useIsFocused } from "@react-navigation/native";
 import QueResourceClient from "../../../api/QueResourceUtils";
 import { useConfirm } from "../../../hooks/useConfirm";
 import { setCredential } from "../../../reducers/authReducer";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
 
 const styles = signUpScreenStyle;

@@ -1,9 +1,9 @@
 import { Toast } from "native-base";
 import * as Google from "expo-auth-session/providers/google";
-import React, { SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 import QueAuthClient from "../api/QueAuthUtils";
 import { QueAuthResponse } from "../api/interfaces";
-import { useAppDispatch } from "./store";
+import { useAppDispatch } from "./useAppDispatch";
 import { clearCredential, setCredential } from "../reducers/authReducer";
 import { useNavigation } from "@react-navigation/native";
 import { OnBoardingStackNavigationProp } from "../navigators/OnBoardingNavigator";

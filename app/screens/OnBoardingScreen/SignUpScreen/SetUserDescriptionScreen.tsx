@@ -7,7 +7,7 @@ import { OnBoardingStackNavigationProp } from "../../../navigators/OnBoardingNav
 import screens from "../../../styles/screens";
 import { SignUpContext } from "./SignUpContext";
 import { signUpScreenStyle } from "./SignUpScreen.style";
-import { useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { setCredential } from "../../../reducers/authReducer";
 import { useAuth } from "../../../hooks/useAuth";
 import { useConfirm } from "../../../hooks/useConfirm";

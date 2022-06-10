@@ -9,12 +9,15 @@ export type AuthState = {
   user: UserType;
   /** 사용자 로그인 여부 */
   isSigned: boolean;
+  /** 사용자가 시청한 목록 */ // 사용자가 로그인한 동안 시청한 영상들을 저장합니다. 중복 View Counting을 방지합니다.
+  viewList: { [videoId: string]: boolean };
 };
 
 /** 최초 상태 */
 const initialState: AuthState = {
   user: {},
   isSigned: false,
+  viewList: {},
 };
 
 // Ducks 패턴
@@ -43,14 +46,20 @@ const { actions, reducer: authReducer } = createSlice({
     clearCredential: (state) => {
       state.user = {};
       state.isSigned = false;
+      state.viewList = {};
+    },
+    /** 시청한 영상을 목록에 추가합니다. */
+    addViewedVideo: (state, action: PayloadAction<{ videoId: string }>) => {
+      state.viewList[action.payload.videoId] = true;
     },
   },
   extraReducers: {},
 });
 
-export const { setCredential, clearCredential } = actions;
+export const { setCredential, clearCredential, addViewedVideo } = actions;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectIsSigned = (state: RootState) => state.auth.isSigned;
+export const selectViewList = (state: RootState) => state.auth.viewList;
 
 export default authReducer;
