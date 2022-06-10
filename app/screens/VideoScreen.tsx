@@ -5,6 +5,7 @@ import QueResourceClient, {
   getVideoDownloadURL,
 } from "../api/QueResourceUtils";
 import MainVideoPlayer from "../components/videoPlayers/MainVideoPlayer";
+import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import { useViewList } from "../hooks/useViewList";
 import { MainStackScreenProp } from "../navigators/MainNavigator";
 import { bColors } from "../styles/base";
@@ -20,11 +21,19 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
   /** 비디오에 대한 시청 수를 올리는 커스텀 훅 Callback */
   const increaseViewCount = useViewList();
 
+  const loading = useLoadingIndicator();
+
+  /** 비디오 화면 최초 렌더링 시 로딩 표시 우선 */
+  useEffect(() => {
+    loading.showLoading();
+  }, []);
+
   /** 비디오 다운로드 가능한 주소 반환 */
   useEffect(() => {
     async function fetchVideo(videoUrl: string) {
       const httpDownloadUrl = await getVideoDownloadURL(videoUrl);
       setVideoUrl(httpDownloadUrl);
+      loading.hideLoading();
     }
 
     if (targetVideoData.sourceUrl) fetchVideo(targetVideoData.sourceUrl);
@@ -53,7 +62,9 @@ const VideoScreen = ({ route, navigation }: MainStackScreenProp<"Video">) => {
 
   return (
     <View style={styles.container}>
-      <MainVideoPlayer videoData={targetVideoData} videoSource={videoUrl} />
+      {!targetVideoData.videoId ? null : (
+        <MainVideoPlayer videoData={targetVideoData} videoSource={videoUrl} />
+      )}
     </View>
   );
 };

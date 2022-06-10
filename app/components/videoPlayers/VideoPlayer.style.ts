@@ -49,6 +49,7 @@ const videoPlayerStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: bSpace.middle,
   },
   videoInfoColor: {
@@ -63,6 +64,7 @@ const videoPlayerStyles = StyleSheet.create({
   },
   videoUploaderText: {
     fontSize: bFont.large,
+    textAlignVertical: "center",
   },
   videoDescriptionContainer: {
     height: bFont.middle * 8,

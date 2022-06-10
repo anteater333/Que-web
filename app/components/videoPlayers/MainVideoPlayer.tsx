@@ -15,6 +15,7 @@ import QueResourceClient from "../../api/QueResourceUtils";
 import LikeType from "../../types/Like";
 import { MAX_VIDEO_LIKE_LIMIT } from "../../api/interfaces";
 import { useToast } from "native-base";
+import UserType from "../../types/User";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -36,6 +37,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
   const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
+  const [uploaderData, setUploaderData] = useState<UserType>({});
 
   /** 에러 표시용 */
   const toast = useToast();
@@ -325,16 +327,16 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     : "곡 정보 없음"}
                 </Text>
                 <Text style={[styles.videoInfoText, styles.videoInfoColor]}>
-                  {
-                    props.videoData.uploadedAt
-                      ? formatDate(props.videoData.uploadedAt)
-                      : "0000-00-00" /** TBD 날짜 변환 Util 함수 */
-                  }
+                  {props.videoData.uploadedAt
+                    ? formatDate(props.videoData.uploadedAt)
+                    : "0000-00-00"}
                 </Text>
               </View>
               <View style={styles.videoInfoRow}>
                 <Text style={[styles.videoUploaderText, styles.videoInfoColor]}>
-                  {"placeholderUser"}
+                  {(props.videoData.uploader as UserType).nickname
+                    ? (props.videoData.uploader as UserType).nickname
+                    : "placeholderUser"}
                 </Text>
                 <Pressable>
                   <MaterialIcons

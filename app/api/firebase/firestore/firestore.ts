@@ -241,11 +241,18 @@ export async function getVideoDocument(
       };
     } else {
       const snapData = videoDataSnap.data();
+      const uploaderDataSnap = await getDoc<UserType>(snapData.uploader);
+      const uploaderData = uploaderDataSnap.data();
       const uploadedAtDate = timestampToDate(snapData.uploadedAt);
       const rtVideoData: VideoType = {
         videoId: videoId,
         ...snapData,
         uploadedAt: uploadedAtDate,
+        uploader: {
+          userId: uploaderDataSnap.id,
+          nickname: uploaderData?.nickname,
+          profilePictureUrl: uploaderData?.profilePictureUrl,
+        } as UserType,
       };
       return {
         success: true,
@@ -523,6 +530,7 @@ export async function dislikeVideo(
         await setDoc(
           videoDocRef,
           {
+            likeCount: increment(-1),
             likedList: {
               [currentUid]: deleteField(),
             },
@@ -533,6 +541,7 @@ export async function dislikeVideo(
         await setDoc(
           videoDocRef,
           {
+            likeCount: increment(-1),
             likedList: {
               [currentUid]: {
                 [likeId]: deleteField(),
