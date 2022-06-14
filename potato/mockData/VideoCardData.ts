@@ -29,13 +29,14 @@ const mockVideoCardData: VideoType[] = [
   },
   {
     videoId: "1",
-    title: "test1",
+    title:
+      "test1asfdsafadsfasfdasfjalkdsjflkdsaflkasdjflkasjfdlkdsajflkajslkfsajlkfjsklfdsgdsafasfsafd",
     uploader: {
       userId: "12345",
       nickname: "nobody",
       profilePictureUrl: "http://",
     },
-    viewCount: 4567890,
+    viewCount: 456414321412413247890,
     starCount: 123,
     likeCount: 0,
     thumbnailUrl: "gs://que-backend-dev.appspot.com/videos/thumbnail/image.png",

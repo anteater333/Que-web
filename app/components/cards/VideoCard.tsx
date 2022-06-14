@@ -275,10 +275,18 @@ function CardInfoView(props: VideoCardInfoProps) {
         userId={props.uploaderId!}
       />
       <View style={styles.infoTitleView}>
-        <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
+        <Text
+          testID="cardInfoTitleText"
+          style={styles.infoTitleText}
+          numberOfLines={1}
+        >
           {props.title}
         </Text>
-        <Text testID="cardInfoSingerText" style={styles.infoSingerText}>
+        <Text
+          testID="cardInfoSingerText"
+          style={styles.infoSingerText}
+          numberOfLines={1}
+        >
           {props.uploaderName}
         </Text>
       </View>
@@ -287,23 +295,33 @@ function CardInfoView(props: VideoCardInfoProps) {
       <TouchableWithoutFeedback>
         <View style={styles.reactionView}>
           <View style={styles.reactionChildView}>
-            <TouchableOpacity onPress={props.onPressLike}>
-              {likeButton}
-              <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
-                {props.likeCount}
-              </Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={props.onPressLike}> */}
+            {likeButton}
+            <Text
+              testID="cardInfoLikeCount"
+              style={styles.lowerCountText}
+              numberOfLines={1}
+            >
+              {props.likeCount}
+            </Text>
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.reactionChildView}>
-            <TouchableOpacity onPress={props.onPressStar}>
-              {starButton}
-              <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
-                {props.starCount}
-              </Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={props.onPressStar}> */}
+            {starButton}
+            <Text
+              testID="cardInfoStarCount"
+              style={styles.lowerCountText}
+              numberOfLines={1}
+            >
+              {props.starCount}
+            </Text>
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.reactionChildView}>
-            <Text style={styles.upperCountText}>{props.viewCount}</Text>
+            <Text style={styles.upperCountText} numberOfLines={1}>
+              {props.viewCount}
+            </Text>
             <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
               Views
             </Text>
