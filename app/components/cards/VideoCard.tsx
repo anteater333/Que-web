@@ -18,7 +18,11 @@ import styles from "./VideoCard.style";
 import { MainStackParamList } from "../../navigators/MainNavigator";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
-import { formatCount, formatTimer } from "../../utils/formatter";
+import {
+  formatCount,
+  formatDateByDifference,
+  formatTimer,
+} from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
 import { useAssets } from "expo-asset";
@@ -116,6 +120,7 @@ export default function VideoCard(props: VideoCardProps) {
       <CardThumbnailView
         uri={props.videoInfo.thumbnailUrl!}
         length={props.videoInfo.length!}
+        uploadedAt={props.videoInfo.uploadedAt!}
         direction="vertical"
         onPressMenuButton={() => setMenuModalVisible(true)}
       />
@@ -138,6 +143,7 @@ export default function VideoCard(props: VideoCardProps) {
 type CardThumbnailProps = {
   uri: string;
   length: number;
+  uploadedAt: Date;
   direction: "horizontal" | "vertical";
   onPressMenuButton: () => void;
 };
@@ -149,8 +155,12 @@ type CardThumbnailProps = {
  */
 function CardThumbnailView(props: CardThumbnailProps) {
   /** 영상 길이 */
-  const [modifiedVideoLength, setModifiedLength] = useState<String>(
+  const [modifiedVideoLength, setModifiedLength] = useState<string>(
     props.length ? formatTimer(props.length) : "0:00"
+  );
+  /** 영상 업로드 날짜 */
+  const [modifiedVideoDate, setModifiedVideoDate] = useState<string>(
+    props.uploadedAt ? formatDateByDifference(props.uploadedAt) : "알 수 없음"
   );
   /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
   const [thumbnail, setThumbnail] = useState<ImageSourcePropType>({});
@@ -192,7 +202,16 @@ function CardThumbnailView(props: CardThumbnailProps) {
         resizeMode={resizeMode}
         source={thumbnail}
       />
-      <Text testID="cardThumbnailTime" style={styles.videoTime}>
+      <Text
+        testID="cardThumbnailDate"
+        style={[styles.videoThumbnailText, styles.videoDate]}
+      >
+        {modifiedVideoDate}
+      </Text>
+      <Text
+        testID="cardThumbnailTime"
+        style={[styles.videoThumbnailText, styles.videoTime]}
+      >
         {modifiedVideoLength}
       </Text>
       <TouchableOpacity

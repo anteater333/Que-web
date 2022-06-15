@@ -29,13 +29,21 @@ const videoCardStyles = StyleSheet.create({
     height: "100%",
     backgroundColor: bColors.black + bColors.tpPrimary,
   },
+  videoThumbnailText: {
+    backgroundColor: bColors.black + bColors.tpPrimary,
+    color: bColors.white,
+    fontSize: bFont.small,
+  },
+  videoDate: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    paddingHorizontal: bSpace.small,
+  },
   videoTime: {
     position: "absolute",
     bottom: 8,
     right: 8,
-    backgroundColor: bColors.black + bColors.tpPrimary,
-    color: bColors.white,
-    fontSize: bFont.small,
     paddingHorizontal: bSpace.small,
   },
   optionButton: {

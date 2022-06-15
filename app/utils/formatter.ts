@@ -1,3 +1,6 @@
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
+
 /**
  * 큰 수를 축약해 문자열로 표시하는 유틸 함수. ex) 12345 => 12.3k
  * @param count 표시 형식을 변환하려는 수
@@ -48,4 +51,12 @@ export function formatDate(sourceDate: Date, separator = "-") {
   let day = addZeroPadding(sourceDate.getDate().toString());
 
   return [year, month, day].join(separator);
+}
+
+/**
+ * 특정 날짜를 현재 날짜와 비교한 차이를 나타내는 문자열로 변환합니다.
+ * @param targetDate
+ */
+export function formatDateByDifference(targetDate: Date): string {
+  return formatDistanceToNow(targetDate, { locale: ko }) + " 전";
 }

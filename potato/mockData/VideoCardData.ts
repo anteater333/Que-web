@@ -25,7 +25,7 @@ const mockVideoCardData: VideoType[] = [
       userId: "123456",
       nickname: "testData",
     },
-    uploadedAt: new Date(),
+    uploadedAt: new Date("2021-12-17T03:24:00"),
   },
   {
     videoId: "1",
