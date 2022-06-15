@@ -96,7 +96,10 @@ function HomeHeaderButtonGroup() {
         />
       </TouchableOpacity>
       <View style={styles.headerButtonView}>
-        <ProfilePictureButton userId="test" style={styles.headerButtonIcon} />
+        <ProfilePictureButton
+          userId="test"
+          style={styles.headerProfilePicSize}
+        />
       </View>
     </View>
   );

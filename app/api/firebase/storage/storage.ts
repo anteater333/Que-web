@@ -7,6 +7,7 @@ import {
   QueResourceResponseErrorType,
 } from "../../interfaces";
 import { getCurrentUID } from "../auth/auth";
+import firebaseConfig from "../config";
 import { getUserProfile } from "../firestore/firestore";
 
 /**
@@ -115,4 +116,20 @@ export async function uploadVideoSource(
   }
 
   return rtStatus;
+}
+
+/** 사용자 Id를 기반으로 프로필 사진을 가져옵니다. */
+export async function getProfilePicByUserId(
+  userId: string
+): Promise<QueResourceResponse<string>> {
+  const storageUrl = `gs://${firebaseConfig.storageBucket}/users/${userId}/images/profilePic`;
+
+  try {
+    const downloadUrl = await getMediaFromStorage(storageUrl);
+
+    return { success: true, payload: downloadUrl };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
 }

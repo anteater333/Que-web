@@ -38,6 +38,9 @@ export const mainScreenHeaderStyle = StyleSheet.create({
   headerButtonIcon: {
     fontSize: sharedSize,
   },
+  headerProfilePicSize: {
+    fontSize: sharedSize + bFont.small,
+  },
 });
 
 /** CommonHeader용 스타일 */

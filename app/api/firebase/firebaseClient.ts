@@ -2,6 +2,7 @@ import { getApps, initializeApp } from "firebase/app";
 import firebaseConfig from "./config";
 import {
   getMediaFromStorage,
+  getProfilePicByUserId,
   uploadCurrentUserProfileImage,
   uploadVideoSource,
 } from "./storage/storage";
@@ -42,6 +43,7 @@ export const FirebaseResourceClient: QueResourceAPI = {
   getVideoCardData: getVideoCardDataFromFirestore,
   getVideoData: getVideoDocument,
   getUserProfileData: getUserProfile,
+  getUserProfilePicture: getProfilePicByUserId,
   updateUserProfile: updateCurrentUserProfile,
   uploadUserProfileImage: uploadCurrentUserProfileImage,
   uploadVideo: async function (

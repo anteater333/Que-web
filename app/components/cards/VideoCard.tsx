@@ -25,7 +25,6 @@ import {
 } from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
-import { useAssets } from "expo-asset";
 import ProfilePicture from "../buttons/ProfilePictureButton";
 
 /** 메인 네비게이션 프로퍼티 */

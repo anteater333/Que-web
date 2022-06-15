@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Avvvatars from "avvvatars-react";
 import { useAssets } from "expo-asset";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -12,6 +12,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import QueResourceClient from "../../api/QueResourceUtils";
 import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 import profilePictureStyles from "./ProfilePictureButton.style";
 
@@ -28,6 +29,29 @@ interface ProfilePictureProps extends TouchableOpacityProps {
 function ProfilePicture(props: ProfilePictureProps) {
   /** 페이지 전환을 위한 메인 네비게이터 사용 */
   const mainNavigator = useNavigation<MainStackNavigationProp>();
+
+  /** 프로필 사진 URL */
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>("");
+
+  useEffect(() => {
+    async function getDownloadUrl() {
+      if (props.userId) {
+        const downloadUrlResult = await QueResourceClient.getUserProfilePicture(
+          props.userId
+        );
+
+        if (downloadUrlResult.success) {
+          setProfilePictureUrl(downloadUrlResult.payload!);
+        } else {
+          setProfilePictureUrl("");
+        }
+      } else {
+        setProfilePictureUrl("");
+      }
+    }
+
+    getDownloadUrl();
+  }, [props.userId]);
 
   /** 임시 프로필 사진Placeholder */
   const [assets, error] = useAssets([
@@ -60,12 +84,16 @@ function ProfilePicture(props: ProfilePictureProps) {
       onPress={navigateToUserPage}
       style={[props.style, styles.default]}
     >
-      {assets ? (
+      {profilePictureUrl ? (
         <Image
           style={[styles.profilePic]}
-          source={assets[0] as ImageSourcePropType}
+          source={{ uri: profilePictureUrl }}
         />
-      ) : null}
+      ) : (
+        <View style={[styles.profilePic]}>
+          <Avvvatars value={props.userId} style="shape" />
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

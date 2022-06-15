@@ -36,6 +36,7 @@ if (process.env.NODE_ENV !== "test") {
     dislikeVideo: resourceClient.dislikeVideo,
     increaseVideoViewCount: resourceClient.increaseVideoViewCount,
     likeVideo: resourceClient.likeVideo,
+    getUserProfilePicture: resourceClient.getUserProfilePicture,
   };
 } else {
   // 테스트용 Mock API
@@ -68,6 +69,9 @@ if (process.env.NODE_ENV !== "test") {
       throw new Error("Not Implemented");
     },
     getVideoData: () => {
+      throw new Error("Not Implemented");
+    },
+    getUserProfilePicture: () => {
       throw new Error("Not Implemented");
     },
   };

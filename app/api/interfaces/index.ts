@@ -109,6 +109,7 @@ export interface QueResourceAPI {
   getUserProfileData(
     userId: string
   ): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }>;
+  getUserProfilePicture(userId: string): Promise<QueResourceResponse<string>>;
   /**
    * 리소스 서버에 접근해 사용자 정보를 변경합니다.
    * 전달받은 속성만 변경되며, 정의되지 않은 속성은 변경되지 않습니다.
