@@ -71,7 +71,13 @@ export async function getVideoCardDataFromFirestore(
     // 반환할 데이터셋 제작
     const rtDataset: VideoType[] = [];
     for await (const doc of querySnapshot.docs) {
-      const filteredData = { ...doc.data() };
+      const wholeData = doc.data();
+
+      /** 비디오 카드에 필요한 데이터만 추출 */
+      const filteredData: VideoType = {
+        ...doc.data(),
+        uploadedAt: timestampToDate(wholeData.uploadedAt),
+      };
       filteredData.videoId = doc.id;
 
       // 사용자 데이터 생성

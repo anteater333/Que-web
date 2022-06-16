@@ -1,6 +1,10 @@
-import { getAuth } from "firebase/auth";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import VideoType from "../../../types/Video";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  StorageError,
+} from "firebase/storage";
 import { dataURLToBlob } from "../../../utils/converter";
 import {
   QueResourceResponse,
@@ -8,7 +12,6 @@ import {
 } from "../../interfaces";
 import { getCurrentUID } from "../auth/auth";
 import firebaseConfig from "../config";
-import { getUserProfile } from "../firestore/firestore";
 
 /**
  * firebase storage에 접근해 파일을 다운받을 수 있는 url을 반환받습니다.
@@ -129,7 +132,9 @@ export async function getProfilePicByUserId(
 
     return { success: true, payload: downloadUrl };
   } catch (error) {
-    console.error(error);
+    if ((error as StorageError).code === "storage/object-not-found") {
+      // Do Nothing
+    } else console.error(error);
     return { success: false };
   }
 }

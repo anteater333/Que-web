@@ -16,28 +16,24 @@ let QueResourceClient: QueResourceAPI;
 if (process.env.NODE_ENV !== "test") {
   // // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
   const resourceClient = FirebaseResourceClient;
-  // QueResourceClient = {
-  //   getImageDownloadURL: resourceClient.getImageDownloadURL,
-  //   getVideoCardData: resourceClient.getVideoCardData,
-  //   getVideoDownloadURL: resourceClient.getVideoDownloadURL
-  // }
+  QueResourceClient = resourceClient;
 
   // 개발중이니까 일단은 테스트로
-  QueResourceClient = {
-    getImageDownloadURL: TestApiClient.getImageDownloadURL,
-    getVideoCardData: TestApiClient.getVideoCardData,
-    getVideoData: resourceClient.getVideoData,
-    getVideoDownloadURL: resourceClient.getVideoDownloadURL,
-    getUserProfileData: resourceClient.getUserProfileData,
-    updateUserProfile: resourceClient.updateUserProfile,
-    uploadUserProfileImage: resourceClient.uploadUserProfileImage,
-    uploadVideo: resourceClient.uploadVideo,
-    getMyLikeReactions: resourceClient.getMyLikeReactions,
-    dislikeVideo: resourceClient.dislikeVideo,
-    increaseVideoViewCount: resourceClient.increaseVideoViewCount,
-    likeVideo: resourceClient.likeVideo,
-    getUserProfilePicture: resourceClient.getUserProfilePicture,
-  };
+  // QueResourceClient = {
+  //   getImageDownloadURL: TestApiClient.getImageDownloadURL,
+  //   getVideoCardData: TestApiClient.getVideoCardData,
+  //   getVideoData: resourceClient.getVideoData,
+  //   getVideoDownloadURL: resourceClient.getVideoDownloadURL,
+  //   getUserProfileData: resourceClient.getUserProfileData,
+  //   updateUserProfile: resourceClient.updateUserProfile,
+  //   uploadUserProfileImage: resourceClient.uploadUserProfileImage,
+  //   uploadVideo: resourceClient.uploadVideo,
+  //   getMyLikeReactions: resourceClient.getMyLikeReactions,
+  //   dislikeVideo: resourceClient.dislikeVideo,
+  //   increaseVideoViewCount: resourceClient.increaseVideoViewCount,
+  //   likeVideo: resourceClient.likeVideo,
+  //   getUserProfilePicture: resourceClient.getUserProfilePicture,
+  // };
 } else {
   // 테스트용 Mock API
   QueResourceClient = {

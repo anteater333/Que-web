@@ -185,7 +185,7 @@ function CardThumbnailView(props: CardThumbnailProps) {
 
     // clean-up
     return () => setIsLoading(false);
-  }, []);
+  }, [props.uri]);
 
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
