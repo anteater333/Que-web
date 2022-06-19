@@ -4,7 +4,6 @@ import { useAssets } from "expo-asset";
 import { useCallback, useEffect, useState } from "react";
 import {
   Image,
-  ImageSourcePropType,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
@@ -13,6 +12,7 @@ import {
   ViewStyle,
 } from "react-native";
 import QueResourceClient from "../../api/QueResourceUtils";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 import profilePictureStyles from "./ProfilePictureButton.style";
 
@@ -33,8 +33,12 @@ function ProfilePicture(props: ProfilePictureProps) {
   /** 프로필 사진 URL */
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>("");
 
+  /** 프로필 로딩 중 여부 */
+  const [profileLoading, setProfileLoading] = useState<boolean>(true);
+
   useEffect(() => {
     async function getDownloadUrl() {
+      setProfileLoading(true);
       if (props.userId) {
         const downloadUrlResult = await QueResourceClient.getUserProfilePicture(
           props.userId
@@ -48,24 +52,24 @@ function ProfilePicture(props: ProfilePictureProps) {
       } else {
         setProfilePictureUrl("");
       }
+      setProfileLoading(false);
     }
 
     getDownloadUrl();
   }, [props.userId]);
 
-  /** 임시 프로필 사진Placeholder */
-  const [assets, error] = useAssets([
-    require("../../../potato/placeholders/profilePic.png"),
-  ]);
+  const notImplemented = useNotImplementedWarning();
 
   /**
    * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
    * 프로필을 업로드한 사용자의 Studio 페이지로 이동합니다.
    */
   const navigateToUserPage = useCallback(async () => {
-    mainNavigator.navigate("UserPage", {
-      userId: props.userId,
-    });
+    // TBD
+    // mainNavigator.navigate("UserPage", {
+    //   userId: props.userId,
+    // });
+    notImplemented();
   }, []);
 
   /** 상속받은 스타일에서 fontSize 추출 */
@@ -84,7 +88,7 @@ function ProfilePicture(props: ProfilePictureProps) {
       onPress={navigateToUserPage}
       style={[props.style, styles.default]}
     >
-      {profilePictureUrl ? (
+      {profileLoading ? null : profilePictureUrl ? (
         <Image
           style={[styles.profilePic]}
           source={{ uri: profilePictureUrl }}

@@ -175,9 +175,7 @@ export const useSignOut = () => {
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   return useCallback(async () => {
-    // TBD 정말 로그아웃 하시겠습니까? 물어보기 Modal 등을 통해
-
-    if (await asyncAlert("정말 로그아웃 하시겠습니까?")) {
+    if (await asyncAlert("로그아웃 하시겠습니까?")) {
       try {
         await QueAuthClient.signOut();
 

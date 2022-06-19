@@ -9,6 +9,7 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import navBarStyle, { iconStyles } from "./navbar.style";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 
 /** 스타일 객체 */
 const styles = navBarStyle;
@@ -76,6 +77,8 @@ function HomeNavBar(props: BottomTabBarProps) {
     return dict[name];
   };
 
+  const notImplemented = useNotImplementedWarning();
+
   /**
    * 네비게이션 바 버튼 컴포넌트 매핑
    */
@@ -96,6 +99,9 @@ function HomeNavBar(props: BottomTabBarProps) {
         if (route.name === "Upload") {
           // 업로드 화면의 경우 상위의 main stack navigator 사용
           props.navigation.getParent()?.navigate(route.name, { merge: true });
+        } else if (route.name === "Preference") {
+          // TBD NotImplemented
+          notImplemented();
         } else {
           // `merge: true` 옵션은 탭 스크린 안의 파라미터가 보존되도록 한다.
           props.navigation.navigate(route.name, { merge: true });

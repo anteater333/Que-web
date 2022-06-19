@@ -16,6 +16,7 @@ import LikeType from "../../types/Like";
 import { MAX_VIDEO_LIKE_LIMIT } from "../../api/interfaces";
 import { useToast } from "native-base";
 import UserType from "../../types/User";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -150,6 +151,8 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   const [likeDataArray, setLikeDataArray] = useState<LikeType[]>([]);
   /** 좋아요 추가 가능 여부 */
   const [noMoreLike, setNoMoreLike] = useState<boolean>(false);
+
+  const notImplemented = useNotImplementedWarning();
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
   const likeThisVideo = useCallback(async () => {
@@ -338,7 +341,12 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     ? (props.videoData.uploader as UserType).nickname
                     : "placeholderUser"}
                 </Text>
-                <Pressable>
+                <Pressable
+                  onPress={() => {
+                    // TBD 팔로우 기능
+                    notImplemented();
+                  }}
+                >
                   <MaterialIcons
                     selectable={false}
                     name="person-add"
@@ -390,6 +398,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
               <Pressable
                 onPress={() => {
                   /** TBD 평가하기 */
+                  notImplemented();
                 }}
               >
                 <MaterialIcons

@@ -6,12 +6,11 @@ import {
   Text,
   View,
 } from "react-native";
-import mockVideoCardData from "../../../potato/mockData/VideoCardData";
-import VideoCard, { VideoCardProps } from "../cards/VideoCard";
+import VideoCard from "../cards/VideoCard";
 
-import { Asset, useAssets } from "expo-asset";
+import { useAssets } from "expo-asset";
 import styles from "./VideoCardList.style";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import VideoType from "../../types/Video";
 import { bColors } from "../../styles/base";
 
@@ -118,7 +117,9 @@ function NoMoreDataIndicator() {
           source={assets[0] as ImageSourcePropType}
         />
       ) : null}
-      <Text style={styles.easterMessage}>QUE는 아직 자라나는 중이에요 ;)</Text>
+      <Text
+        style={styles.easterMessage}
+      >{`QUE는 아직 자라나는 중이에요 ;)`}</Text>
     </View>
   );
 }

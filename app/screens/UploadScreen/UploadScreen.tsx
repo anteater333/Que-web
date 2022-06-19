@@ -45,7 +45,7 @@ function UploadScreen() {
   const mainNavigator = useNavigation<MainStackNavigationProp>();
   const uploadNavigator = useNavigation<UploadStackNavigationProp>();
 
-  const { hideLoading, setLoadingMessage, showLoading } = useLoadingIndicator();
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /**
    * 업로드 확인 버튼 눌렀을 때 실행되는 콜백함수
@@ -55,10 +55,9 @@ function UploadScreen() {
     // TBD 업로드 API 함수 호출 및 업로드 진행률 표시 방법론 구상
     // TBD 업로드 하시겠습니까? 질문하기.
     if (await asyncAlert("업로드 하시겠습니까?")) {
-      setLoadingMessage(
+      showLoading(
         `영상을 업로드 중입니다.\n제발 종료하지 말아주세요...\n로딩은 개선 예정입니다.`
       );
-      showLoading();
 
       const newVideoData: VideoType = {
         title: videoTitle,

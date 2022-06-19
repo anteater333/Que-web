@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import QueResourceClient from "../api/QueResourceUtils";
 import VideoCardList from "../components/lists/VideoCardList";
+import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import VideoType from "../types/Video";
 
 /**
@@ -17,10 +18,13 @@ function TimelineScreen() {
 
   const isFocused = useIsFocused();
 
+  const loading = useLoadingIndicator();
+
   /** 초기 데이터 설정 */
   useEffect(() => {
     if (isFocused) {
       async function getInitialData() {
+        loading.showLoading("영상 목록을 불러오고 있습니다.");
         const initialDataLength = 5;
         const initialData = await QueResourceClient.getVideoCardData(
           initialDataLength,
@@ -31,6 +35,7 @@ function TimelineScreen() {
         if (initialData.length < initialDataLength) {
           setNoMoreData(true);
         }
+        loading.hideLoading();
       }
 
       getInitialData();

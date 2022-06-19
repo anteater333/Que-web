@@ -67,8 +67,7 @@ export default function SetUserProfileScreen() {
     setNewUserProfile,
   } = useContext(SignUpContext);
 
-  const { hideLoading, setLoadingMessage, showLoading } =
-    useLoadingIndicator("");
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /** 프로필 업로드를 위한 이미지 픽커를 실행하는 함수 */
   const openImagePickerAsync = useCallback(async () => {

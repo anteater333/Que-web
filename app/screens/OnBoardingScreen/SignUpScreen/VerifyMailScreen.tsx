@@ -78,8 +78,7 @@ export default function VerifyMailScreen() {
     signUpNavigator,
   } = useContext(SignUpContext);
 
-  const { hideLoading, setLoadingMessage, showLoading } =
-    useLoadingIndicator("");
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /** TBD: In RN w/ typescript, using ref for custom functional component. To autofocus on second textinput */
   // ref 사용방법 갈구하란 의미입니다.

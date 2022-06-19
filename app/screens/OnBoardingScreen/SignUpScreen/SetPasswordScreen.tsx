@@ -55,8 +55,7 @@ export default function SetPasswordScreen({
     signUpNavigator,
   } = useContext(SignUpContext);
 
-  const { hideLoading, setLoadingMessage, showLoading } =
-    useLoadingIndicator("");
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   const signIn = useSignInWithQue(route.params.userEmail, password);
 
