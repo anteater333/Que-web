@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 import DummyComponent from "../components/common/DummyComponent";
 import MainScreenHeader from "../components/headers/MainScreenHeader";
 import { useAuth } from "../hooks/useAuth";

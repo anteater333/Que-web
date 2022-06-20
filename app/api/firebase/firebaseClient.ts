@@ -10,6 +10,7 @@ import {
   dislikeVideo,
   getMyLikeReactions,
   getUserProfile,
+  getVideoCardDataByUserIdFromFirestore,
   getVideoCardDataFromFirestore,
   getVideoDocument,
   increaseVideoViewCount,
@@ -41,6 +42,7 @@ export const FirebaseResourceClient: QueResourceAPI = {
   getVideoDownloadURL: getMediaFromStorage,
   getImageDownloadURL: getMediaFromStorage,
   getVideoCardData: getVideoCardDataFromFirestore,
+  getVideoCardDataByUserId: getVideoCardDataByUserIdFromFirestore,
   getVideoData: getVideoDocument,
   getUserProfileData: getUserProfile,
   getUserProfilePicture: getProfilePicByUserId,
@@ -77,6 +79,12 @@ export const FirebaseResourceClient: QueResourceAPI = {
   dislikeVideo: dislikeVideo,
   increaseVideoViewCount: increaseVideoViewCount,
   likeVideo: likeVideo,
+  updateVideoData: () => {
+    throw new Error("NotImplemented");
+  },
+  deleteVideo: () => {
+    throw new Error("NotImplemented");
+  },
 };
 
 export const FirebaseAuthClient = {

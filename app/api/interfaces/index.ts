@@ -50,19 +50,44 @@ export interface QueResourceAPI {
    */
   getVideoCardData(per: number, page: number): Promise<VideoType[]>;
   /**
-   * 리소스 서버에 접근해 지정한 Video에 대한 메타 정보를 가져옵니다.
+   * 특정 사용자가 업로드한 영상 목록을 반환합니다.
+   * @param userId 사용자 아이디
+   * @param per 한 번에 가저올 데이터 개수
+   * @param page 페이지 번호 (0이면 처음부터, 1이면 다음부터)
+   */
+  getVideoCardDataByUserId(
+    userId: string,
+    per: number,
+    page: number
+  ): Promise<VideoType[]>;
+  /**
+   * 리소스 서버에 접근해 지정한 비디오에 대한 메타 정보를 가져옵니다.
    * @param videoId 가저올 비디오의 고유 아이디
    */
   getVideoData(videoId: string): Promise<QueResourceResponse<VideoType>>;
   /**
-   * 영상과 영상의 메타 정보를 업로드합니다.
-   * @param videoSourcePath 원본 영상 경로
+   * 비디오와 비디오의 메타 정보를 업로드합니다.
+   * @param videoSourcePath 원본 비디오 경로
    */
   uploadVideo(
     thumbnailSourcePath: string,
     videoSourcePath: string,
     videoData: VideoType
   ): Promise<QueResourceResponse>;
+  /**
+   * 비디오의 메타 정보를 수정합니다.
+   * @param videoId 수정할 비디오 아이디
+   * @param newVideoData 수정할 비디오 정보
+   */
+  updateVideoData(
+    videoId: string,
+    newVideoData: VideoType
+  ): Promise<QueResourceResponse>;
+  /**
+   * 비디오를 삭제합니다.
+   * @param videoId 삭제할 비디오 아이디
+   */
+  deleteVideo(videoId: string): Promise<QueResourceResponse>;
 
   ////////////////////////////////////////////////// 반응 관련 인터페이스
   /**
@@ -104,11 +129,11 @@ export interface QueResourceAPI {
   ////////////////////////////////////////////////// 유저 정보 관련 인터페이스
   /**
    * userId를 통해 특정 사용자의 프로필 데이터를 가져옵니다.
-   * TBD return 타입 통일하기(payload 사용하도록)
    */
-  getUserProfileData(
-    userId: string
-  ): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }>;
+  getUserProfileData(userId: string): Promise<QueResourceResponse<UserType>>;
+  /**
+   * userId를 통해 사용자의 프로필 사진을 가져옵니다.
+   */
   getUserProfilePicture(userId: string): Promise<QueResourceResponse<string>>;
   /**
    * 리소스 서버에 접근해 사용자 정보를 변경합니다.

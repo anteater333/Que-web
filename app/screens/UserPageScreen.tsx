@@ -1,18 +1,134 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Text } from "react-native";
-import {
-  MainStackParamList,
-  MainStackScreenProp,
-} from "../navigators/MainNavigator";
+import { useCallback, useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import QueResourceClient, { getUserProfileData } from "../api/QueResourceUtils";
+import MainScreenHeader from "../components/headers/MainScreenHeader";
+import VideoCardList from "../components/lists/VideoCardList";
+import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
+import { MainStackScreenProp } from "../navigators/MainNavigator";
+import { bColors, bFont, bSpace } from "../styles/base";
+import UserType from "../types/User";
+import VideoType from "../types/Video";
 
 /**
- * 어플리케이션 설정 화면
+ * 사용자 프로필 화면, 스튜디오
+ * TBD 임시로 최소 기능만 구현된 상태임. 추후 원래 기획대로 구현하기.
  */
 function UserPageScreen({
   route,
   navigation,
 }: MainStackScreenProp<"UserPage">) {
-  return <Text>Hello, This is {route.params.userId}'s Studio</Text>;
+  /** 사용자 정보 */
+  const [userData, setUserData] = useState<UserType>({});
+  /** 서버로부터 가저온 비디오 데이터 목록 */
+  const [videoDataList, setVideoDataList] = useState<VideoType[]>([]);
+  /** 가저올 비디오 데이터가 더 있는지 여부 */
+  const [noMoreData, setNoMoreData] = useState<boolean>(false);
+
+  /** 사용자 정보 가저오기 */
+  useEffect(() => {
+    async function getUserData() {
+      const userResult = await getUserProfileData(route.params.userId);
+
+      if (userResult.success) {
+        setUserData(userResult.payload!);
+      } else {
+        // 에러처리
+      }
+    }
+
+    getUserData();
+  }, [route.params.userId]);
+
+  /** 헤더 타이틀 설정 */
+  useEffect(() => {
+    navigation.setOptions({
+      header: (props) => {
+        return (
+          <MainScreenHeader
+            {...props}
+            back={{
+              title: userData.nickname + "의 스튜디오",
+            }}
+          />
+        );
+      },
+    });
+  }, [userData.nickname]);
+
+  const loading = useLoadingIndicator();
+
+  /** 초기 데이터 설정 */
+  useEffect(() => {
+    if (route.params.userId) {
+      async function getInitialData() {
+        loading.showLoading("영상 목록을 불러오고 있습니다.");
+        const initialDataLength = 5;
+        const initialData = await QueResourceClient.getVideoCardDataByUserId(
+          route.params.userId,
+          initialDataLength,
+          0
+        );
+        setVideoDataList(initialData);
+
+        if (initialData.length < initialDataLength) {
+          setNoMoreData(true);
+        }
+        loading.hideLoading();
+      }
+
+      getInitialData();
+    }
+  }, [route.params.userId]);
+
+  /** 스크롤 시 비디오 더 가져오기 */
+  const getMoreVideoData = useCallback(async () => {
+    const cardPerPage = 3;
+    const newDataset = await QueResourceClient.getVideoCardDataByUserId(
+      route.params.userId,
+      cardPerPage,
+      1
+    );
+    setVideoDataList((prev) => {
+      return [...prev, ...newDataset];
+    });
+
+    if (newDataset.length < cardPerPage) {
+      setNoMoreData(true);
+    }
+  }, [videoDataList, route.params.userId]);
+
+  return (
+    <View style={userPageStyle.userPageRootContainer}>
+      <Text style={userPageStyle.labelText}>무대</Text>
+      {videoDataList.length === 0 ? (
+        <Text style={userPageStyle.noVideoText}>
+          아직 사용자가 업로드한 영상이 없습니다.
+        </Text>
+      ) : null}
+      <VideoCardList
+        videoData={videoDataList}
+        onScrollEnded={getMoreVideoData}
+      />
+    </View>
+  );
 }
+
+/** 임시 스타일 객체 */
+const userPageStyle = StyleSheet.create({
+  userPageRootContainer: {
+    backgroundColor: bColors.white,
+    paddingTop: bSpace.xlarge,
+  },
+  labelText: {
+    fontSize: bFont.xlarge,
+    marginLeft: bSpace.middle,
+    paddingBottom: bSpace.middle,
+  },
+  noVideoText: {
+    fontSize: bFont.middle,
+    textAlign: "center",
+    marginVertical: bSpace.xlarge,
+  },
+});
 
 export default UserPageScreen;

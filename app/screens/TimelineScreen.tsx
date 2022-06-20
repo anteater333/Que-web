@@ -1,6 +1,5 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
 import QueResourceClient from "../api/QueResourceUtils";
 import VideoCardList from "../components/lists/VideoCardList";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
@@ -42,6 +41,7 @@ function TimelineScreen() {
     }
   }, [isFocused]);
 
+  /** 스크롤 시 비디오 더 가져오기 */
   const getMoreVideoData = useCallback(async () => {
     const cardPerPage = 3;
     const newDataset = await QueResourceClient.getVideoCardData(cardPerPage, 1);

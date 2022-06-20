@@ -12,6 +12,8 @@ import {
   increment,
   deleteField,
   Timestamp,
+  where,
+  QueryConstraint,
 } from "firebase/firestore";
 
 import { VideoCollection, UserCollection } from "./collections";
@@ -33,34 +35,26 @@ let lastDocument: QueryDocumentSnapshot<VideoType>;
 
 // TBD ID로 비디오 정보 불러오는 API
 
-/**
- * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
- * Firestore Client side SDK는 offset 기능을 지원하지 않기 때문에 page 변수는 제대로 작동하지 않습니다.
- * @param per 한 번에 가저올 데이터 수
- * @param page 페이지 수(0일 경우 초기화, 1일 경우 다음 페이지)
- * @returns
- */
-export async function getVideoCardDataFromFirestore(
+export async function getVideoCardDataByUserIdFromFirestore(
+  userId: string,
   per: number,
   page: number
-): Promise<VideoType[]> {
-  let videoCardQuery;
-  if (page == 0) {
-    // pagination 초기화
-    videoCardQuery = query(
-      VideoCollection,
-      orderBy("uploadedAt", "desc"),
-      limit(per)
-    );
-  } else {
-    // 다음 페이지
-    videoCardQuery = query(
-      VideoCollection,
-      orderBy("uploadedAt", "desc"),
-      limit(per),
-      startAfter(lastDocument)
-    );
+) {
+  /** Building queries */
+  const queryConstraintsArray: QueryConstraint[] = [
+    orderBy("uploadedAt", "desc"),
+    limit(per),
+  ];
+
+  if (page == 1) {
+    queryConstraintsArray.push(startAfter(lastDocument));
   }
+  if (userId) {
+    const userDocRef = doc(UserCollection, userId);
+    queryConstraintsArray.push(where("uploader", "==", userDocRef));
+  }
+
+  const videoCardQuery = query(VideoCollection, ...queryConstraintsArray);
 
   try {
     // 쿼리를 통해 문서 스냅샷 생성
@@ -105,24 +99,47 @@ export async function getVideoCardDataFromFirestore(
 }
 
 /**
+ * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
+ * Firestore Client side SDK는 offset 기능을 지원하지 않기 때문에 page 변수는 제대로 작동하지 않습니다.
+ * @param per 한 번에 가저올 데이터 수
+ * @param page 페이지 수(0일 경우 초기화, 1일 경우 다음 페이지)
+ * @returns
+ */
+export async function getVideoCardDataFromFirestore(
+  per: number,
+  page: number
+): Promise<VideoType[]> {
+  return await getVideoCardDataByUserIdFromFirestore("", per, page);
+}
+
+/**
  * userId를 입력받아 특정 유저에 대한 프로필 데이터를 가져옴
  * @param userId
  * @returns
  */
 export async function getUserProfile(
   userId: string
-): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }> {
+): Promise<QueResourceResponse<UserType>> {
   try {
     const userDataSnap = await getDoc<UserType>(doc(UserCollection, userId));
 
     if (!userDataSnap.exists()) {
-      return { user: {}, errorType: QueResourceResponseErrorType.NotFound };
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
     } else {
-      return { user: { userId: userId, ...userDataSnap.data() } };
+      return {
+        success: true,
+        payload: { userId: userId, ...userDataSnap.data() },
+      };
     }
   } catch (error) {
     console.error(error);
-    return { user: {}, errorType: QueResourceResponseErrorType.UndefinedError };
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -148,8 +165,10 @@ export async function updateCurrentUserProfile(
       !updateData.description ||
       !updateData.nickname ||
       !updateData.profilePictureUrl
-    )
-      savedDoc = (await getUserProfile(currentUid)).user;
+    ) {
+      const docResult = await getUserProfile(currentUid);
+      savedDoc = docResult.payload ? docResult.payload : {};
+    }
 
     await updateDoc<UserType>(doc(UserCollection, currentUid), {
       description: updateData.description

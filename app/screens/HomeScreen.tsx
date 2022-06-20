@@ -1,6 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import DummyComponent from "../components/common/DummyComponent";
 import HomeNavBar from "../components/navbars/HomeNavbar";
 import { HomeTabParamList } from "../navigators/HomeNavigator";

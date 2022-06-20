@@ -1,15 +1,15 @@
-import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { useAssets } from "expo-asset";
 import {
   Image,
   ImageSourcePropType,
   SafeAreaView,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { mainScreenHeaderStyle } from "./header.style";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { MainStackNavigationProp } from "../../navigators/MainNavigator";
@@ -17,6 +17,7 @@ import ProfilePictureButton from "../buttons/ProfilePictureButton";
 import { useSignOut } from "../../hooks/useSign";
 import { useAuth } from "../../hooks/useAuth";
 import { useNotImplementedWarning } from "../../hooks/useWarning";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 const styles = mainScreenHeaderStyle;
 
@@ -34,27 +35,40 @@ function MainScreenHeader(props: NativeStackHeaderProps) {
 
   return (
     <SafeAreaView style={styles.default} testID="homeScreenHeader">
-      <View style={styles.titleContainer} testID="homeHeaderTitleContainer">
-        <TouchableOpacity
-          onPress={() => {
-            mainNavigator.navigate("Home");
-          }}
-        >
-          {assets ? (
-            <Image
-              style={styles.titleLogo}
-              source={assets[0] as ImageSourcePropType}
-            />
-          ) : null}
-        </TouchableOpacity>
-      </View>
-      <HomeHeaderButtonGroup />
+      {props.back ? (
+        <>
+          <HeaderBackButton onPress={() => props.navigation.goBack()} />
+          <Text
+            numberOfLines={2}
+            ellipsizeMode={"tail"}
+            style={[styles.titleText]}
+          >
+            {props.back.title}
+          </Text>
+        </>
+      ) : (
+        <View style={styles.titleContainer} testID="homeHeaderTitleContainer">
+          <TouchableOpacity
+            onPress={() => {
+              mainNavigator.navigate("Home");
+            }}
+          >
+            {assets ? (
+              <Image
+                style={styles.titleLogo}
+                source={assets[0] as ImageSourcePropType}
+              />
+            ) : null}
+          </TouchableOpacity>
+        </View>
+      )}
+      <HomeHeaderButtonGroup hideLogout={!!props.back} />
     </SafeAreaView>
   );
 }
 
 /** 버튼 묶음 코드 분리 */
-function HomeHeaderButtonGroup() {
+function HomeHeaderButtonGroup({ hideLogout }: { hideLogout: boolean }) {
   /** 메인 네비게이터 사용 */
   const navigation = useNavigation<MainStackNavigationProp>();
 
@@ -79,13 +93,15 @@ function HomeHeaderButtonGroup() {
 
   return (
     <View style={styles.buttonsContainer} testID="homeHeaderButtonsContainer">
-      <TouchableOpacity style={styles.headerButtonView}>
-        <MaterialIcons
-          style={styles.headerButtonIcon}
-          onPress={signOut}
-          name="exit-to-app"
-        />
-      </TouchableOpacity>
+      {hideLogout ? null : (
+        <TouchableOpacity style={styles.headerButtonView}>
+          <MaterialIcons
+            style={styles.headerButtonIcon}
+            onPress={signOut}
+            name="exit-to-app"
+          />
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         style={styles.headerButtonView}
         onPress={handleOnPressSearch}

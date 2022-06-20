@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { bColors, bFont, bSpace } from "../../styles/base";
 
 const sharedSize = bFont.xlarge;
@@ -19,6 +19,11 @@ export const mainScreenHeaderStyle = StyleSheet.create({
     justifyContent: "flex-start",
     marginLeft: bSpace.xlarge,
     marginVertical: bSpace.middle,
+  },
+  titleText: {
+    fontSize: bFont.large,
+    paddingVertical: bSpace.middle,
+    flex: 1,
   },
   titleLogo: {
     height: sharedSize,

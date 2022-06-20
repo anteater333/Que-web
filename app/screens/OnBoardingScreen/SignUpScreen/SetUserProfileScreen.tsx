@@ -63,7 +63,6 @@ export default function SetUserProfileScreen() {
     setButtonEnabled,
     signUpNavigator,
     setHideButton,
-    newUserProfile,
     setNewUserProfile,
   } = useContext(SignUpContext);
 
@@ -169,8 +168,8 @@ export default function SetUserProfileScreen() {
       const saved = await QueResourceClient.getUserProfileData(
         currentUser.userId!
       );
-      if (!saved.errorType) {
-        setUserNickname(saved.user.nickname ? saved.user.nickname : "");
+      if (saved.success) {
+        setUserNickname(saved.payload!.nickname ? saved.payload!.nickname : "");
       }
     };
     if (isFocused) {
