@@ -6,6 +6,7 @@ import VideoCardList from "../components/lists/VideoCardList";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import { MainStackScreenProp } from "../navigators/MainNavigator";
 import { bColors, bFont, bSpace } from "../styles/base";
+import screens from "../styles/screens";
 import UserType from "../types/User";
 import VideoType from "../types/Video";
 
@@ -98,24 +99,28 @@ function UserPageScreen({
   }, [videoDataList, route.params.userId]);
 
   return (
-    <View style={userPageStyle.userPageRootContainer}>
-      <Text style={userPageStyle.labelText}>무대</Text>
-      {videoDataList.length === 0 ? (
-        <Text style={userPageStyle.noVideoText}>
-          아직 사용자가 업로드한 영상이 없습니다.
-        </Text>
-      ) : null}
-      <VideoCardList
-        videoData={videoDataList}
-        onScrollEnded={getMoreVideoData}
-      />
+    <View style={screens.defaultScreenLayout}>
+      <View style={userPageStyle.userPageUploadedVideoListContainer}>
+        <Text style={userPageStyle.labelText}>무대</Text>
+        {videoDataList.length === 0 ? (
+          <Text style={userPageStyle.noVideoText}>
+            아직 사용자가 업로드한 영상이 없습니다.
+          </Text>
+        ) : null}
+        <VideoCardList
+          videoData={videoDataList}
+          onScrollEnded={getMoreVideoData}
+          noMoreData={noMoreData}
+          hideNoMoreDataIndicator
+        />
+      </View>
     </View>
   );
 }
 
 /** 임시 스타일 객체 */
 const userPageStyle = StyleSheet.create({
-  userPageRootContainer: {
+  userPageUploadedVideoListContainer: {
     backgroundColor: bColors.white,
     paddingTop: bSpace.xlarge,
   },

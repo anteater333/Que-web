@@ -31,6 +31,9 @@ if (process.env.NODE_ENV !== "test") {
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    getVideoCardDataByUserId: () => {
+      throw new Error("Not Implemented");
+    },
     updateUserProfile: async (user) => {
       return { success: true };
     },

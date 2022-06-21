@@ -1,8 +1,10 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
 import QueResourceClient from "../api/QueResourceUtils";
 import VideoCardList from "../components/lists/VideoCardList";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
+import screens from "../styles/screens";
 import VideoType from "../types/Video";
 
 /**
@@ -55,11 +57,13 @@ function TimelineScreen() {
   }, [videoDataList]);
 
   return (
-    <VideoCardList
-      videoData={videoDataList}
-      onScrollEnded={getMoreVideoData}
-      noMoreData={noMoreData}
-    />
+    <View style={screens.defaultScreenLayout}>
+      <VideoCardList
+        videoData={videoDataList}
+        onScrollEnded={getMoreVideoData}
+        noMoreData={noMoreData}
+      />
+    </View>
   );
 }
 

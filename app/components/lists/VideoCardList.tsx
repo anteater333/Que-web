@@ -17,6 +17,7 @@ import { bColors } from "../../styles/base";
 type VideoCardListProps = {
   videoData: VideoType[];
   noMoreData?: boolean;
+  hideNoMoreDataIndicator?: boolean;
   onScrollEnded: () => Promise<void>;
 };
 
@@ -51,7 +52,9 @@ export default function VideoCardList(props: VideoCardListProps) {
           return isLoading ? <LoadingIndicator /> : null;
         else if ((item as Indicator).indicatorType == "noMoreData")
           // 더 이상 데이터가 없는 경우 데이터 없음 표시
-          return props.noMoreData ? <NoMoreDataIndicator /> : null;
+          return props.noMoreData && !props.hideNoMoreDataIndicator ? (
+            <NoMoreDataIndicator />
+          ) : null;
       }
       return null;
     },

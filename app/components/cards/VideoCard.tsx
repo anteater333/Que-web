@@ -26,6 +26,7 @@ import {
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
 import ProfilePicture from "../buttons/ProfilePictureButton";
+import { useAuth } from "../../hooks/useAuth";
 
 /** 메인 네비게이션 프로퍼티 */
 type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
@@ -64,7 +65,16 @@ export default function VideoCard(props: VideoCardProps) {
   // 상위 컴포넌트의 UnitTest를 위한 testID가 주어진 경우
   let inheritedTestID = props.testID ? props.testID : "videoCard";
 
-  useEffect(() => {}, []);
+  /** 내가 올린 영상인지 여부 확인 */
+  const [isMyVideo, setIsMyVideo] = useState<boolean>(false);
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user.userId === (props.videoInfo.uploader as UserType).userId) {
+      setIsMyVideo(true);
+    } else {
+      setIsMyVideo(false);
+    }
+  }, [user.userId, props.videoInfo.uploader]);
 
   /** 네비게이션 객체 사용 */
   const navigation = useNavigation<MainNavProps>();
@@ -110,11 +120,19 @@ export default function VideoCard(props: VideoCardProps) {
           menuText="공유"
           onMenuPress={() => alert("menu1")}
         />
-        <MenuModalItem
-          iconName="flag"
-          menuText="신고"
-          onMenuPress={() => alert("menu2")}
-        />
+        {isMyVideo ? (
+          <MenuModalItem
+            iconName="create-outline"
+            menuText="수정"
+            onMenuPress={() => alert("TBD 수정 화면 이동")}
+          />
+        ) : (
+          <MenuModalItem
+            iconName="flag"
+            menuText="신고"
+            onMenuPress={() => alert("menu2")}
+          />
+        )}
       </MenuModal>
       <CardThumbnailView
         uri={props.videoInfo.thumbnailUrl!}
