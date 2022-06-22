@@ -74,9 +74,9 @@ const videoCardStyles = StyleSheet.create({
     margin: bSpace.middle,
   },
   infoTitleView: {
-    marginTop: bSpace.large,
     flex: 1,
     alignItems: "flex-start",
+    justifyContent: "center",
   },
   infoTitleText: {
     height: bFont.middle + bFont.small / 2,

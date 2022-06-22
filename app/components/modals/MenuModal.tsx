@@ -9,6 +9,8 @@ import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./MenuModal.style";
 
+// TBD Ionicons => MaterialIcon으로 변경하기
+
 /**
  * 메뉴 모달 컴포넌트
  * @param props

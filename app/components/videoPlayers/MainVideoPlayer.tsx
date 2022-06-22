@@ -17,6 +17,7 @@ import { MAX_VIDEO_LIKE_LIMIT } from "../../api/interfaces";
 import { useToast } from "native-base";
 import UserType from "../../types/User";
 import { useNotImplementedWarning } from "../../hooks/useWarning";
+import { useAuth } from "../../hooks/useAuth";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -38,7 +39,17 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
   const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
-  const [uploaderData, setUploaderData] = useState<UserType>({});
+
+  /** 현재 로그인한 사용자의 영상인지 확인 */
+  const [isMyVideo, setIsMyVideo] = useState<boolean>(false);
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user.userId === (props.videoData.uploader as UserType).userId) {
+      setIsMyVideo(true);
+    } else {
+      setIsMyVideo(false);
+    }
+  }, [user.userId, props.videoData.uploader]);
 
   /** 에러 표시용 */
   const toast = useToast();
@@ -341,19 +352,34 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     ? (props.videoData.uploader as UserType).nickname
                     : "placeholderUser"}
                 </Text>
-                <Pressable
-                  onPress={() => {
-                    // TBD 팔로우 기능
-                    notImplemented();
-                  }}
-                >
-                  <MaterialIcons
-                    selectable={false}
-                    name="person-add"
-                    color={iconStyles.color}
-                    size={iconStyles.sizeXlarge}
-                  />
-                </Pressable>
+                {isMyVideo ? (
+                  <Pressable
+                    onPress={() => {
+                      // TBD 수정 화면으로 이동
+                    }}
+                  >
+                    <MaterialIcons
+                      selectable={false}
+                      name="create"
+                      color={iconStyles.color}
+                      size={iconStyles.sizeXlarge}
+                    />
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    onPress={() => {
+                      // TBD 팔로우 기능
+                      notImplemented();
+                    }}
+                  >
+                    <MaterialIcons
+                      selectable={false}
+                      name="person-add"
+                      color={iconStyles.color}
+                      size={iconStyles.sizeXlarge}
+                    />
+                  </Pressable>
+                )}
               </View>
               <View style={styles.videoInfoRow}>
                 {/* {TBD 더보기 누르면 description 표시} */}
@@ -425,7 +451,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           useLikes
           onLike={likeThisVideo}
           onDislike={dislikeThisVideo}
-          likesData={/** 임시데이터 */ likeDataArray}
+          likesData={likeDataArray}
           noMoreLike={noMoreLike}
         />
       </View>

@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, ViewStyle } from "react-native";
 import { bColors, bDimensions, bFont, bSpace } from "../../styles/base";
 
-const videoHeartIconSIze = bSpace.xlarge;
+const videoHeartIconSIze = bFont.xlarge;
 
 const videoPlayerStyles = StyleSheet.create({
   container: {
@@ -166,8 +166,10 @@ const videoPlayerStyles = StyleSheet.create({
     color: bColors.white + bColors.tpPrimary,
     fontSize: bFont.small,
     textAlign: "center",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
     width: bFont.small * 4,
-    height: bFont.small * 2,
+    // height: bFont.small * 2,
   },
   videoHeartIndicatorIcon: {
     color: bColors.red + bColors.tpPrimary,
