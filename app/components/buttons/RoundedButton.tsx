@@ -10,12 +10,14 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { buttonInsideStyles, buttonLayoutStyles } from "./RoundedButton.style";
+import { useState } from "react";
 
 export type RoundedButtonType =
   | "primary"
   | "enabledDark"
   | "enabledBorder"
   | "white"
+  | "danger"
   | "disabled";
 
 /**
@@ -40,7 +42,7 @@ export interface RoundedButtonProps extends TextProps {
  * <Text> 처럼 사용할 수 있습니다.
  */
 function RoundedButton(props: RoundedButtonProps) {
-  const insideStyles = buttonInsideStyles(props);
+  const [insideStyles, _] = useState(buttonInsideStyles(props));
 
   const iconComponent = !props.iconData ? null : props.iconData?.iconType ===
     "image" ? (

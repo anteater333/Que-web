@@ -18,6 +18,8 @@ import { useToast } from "native-base";
 import UserType from "../../types/User";
 import { useNotImplementedWarning } from "../../hooks/useWarning";
 import { useAuth } from "../../hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
+import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -163,6 +165,14 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   /** 좋아요 추가 가능 여부 */
   const [noMoreLike, setNoMoreLike] = useState<boolean>(false);
 
+  // 영상 수정 관련 기능 영역
+  /** 네비게이션 객체 사용 */
+  const navigation = useNavigation<MainStackNavigationProp>();
+  const handleOnEditPressed = useCallback(() => {
+    navigation.navigate("VideoEdit", { videoData: props.videoData });
+  }, [props.videoData]);
+
+  // 아직 미구현 표시
   const notImplemented = useNotImplementedWarning();
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
@@ -353,11 +363,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     : "placeholderUser"}
                 </Text>
                 {isMyVideo ? (
-                  <Pressable
-                    onPress={() => {
-                      // TBD 수정 화면으로 이동
-                    }}
-                  >
+                  <Pressable onPress={handleOnEditPressed}>
                     <MaterialIcons
                       selectable={false}
                       name="create"

@@ -15,6 +15,7 @@ export type MainStackParamList = {
   Criticism: { videoId: string };
   Search: undefined;
   Notification: undefined;
+  VideoEdit: { videoData: VideoType };
 };
 
 /**

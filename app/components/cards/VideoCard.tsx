@@ -15,7 +15,10 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
-import { MainStackParamList } from "../../navigators/MainNavigator";
+import {
+  MainStackNavigationProp,
+  MainStackParamList,
+} from "../../navigators/MainNavigator";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
 import {
@@ -27,9 +30,7 @@ import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
 import ProfilePicture from "../buttons/ProfilePictureButton";
 import { useAuth } from "../../hooks/useAuth";
-
-/** 메인 네비게이션 프로퍼티 */
-type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 
 export type VideoCardProps = {
   videoInfo: VideoType;
@@ -77,7 +78,7 @@ export default function VideoCard(props: VideoCardProps) {
   }, [user.userId, props.videoInfo.uploader]);
 
   /** 네비게이션 객체 사용 */
-  const navigation = useNavigation<MainNavProps>();
+  const navigation = useNavigation<MainStackNavigationProp>();
 
   /**
    * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
@@ -105,6 +106,8 @@ export default function VideoCard(props: VideoCardProps) {
     setVideoLiked(!videoLiked);
   }, [videoLiked]);
 
+  const notImplemented = useNotImplementedWarning();
+
   return (
     <TouchableOpacity
       testID={inheritedTestID}
@@ -118,19 +121,22 @@ export default function VideoCard(props: VideoCardProps) {
         <MenuModalItem
           iconName="share"
           menuText="공유"
-          onMenuPress={() => alert("menu1")}
+          onMenuPress={() => notImplemented()}
         />
         {isMyVideo ? (
           <MenuModalItem
             iconName="create-outline"
             menuText="수정"
-            onMenuPress={() => alert("TBD 수정 화면 이동")}
+            onMenuPress={() => {
+              setMenuModalVisible(false);
+              navigation.navigate("VideoEdit", { videoData: props.videoInfo });
+            }}
           />
         ) : (
           <MenuModalItem
             iconName="flag"
             menuText="신고"
-            onMenuPress={() => alert("menu2")}
+            onMenuPress={() => notImplemented()}
           />
         )}
       </MenuModal>

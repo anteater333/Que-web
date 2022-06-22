@@ -1,14 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import DummyComponent from "../components/common/DummyComponent";
 import MainScreenHeader from "../components/headers/MainScreenHeader";
-import { useAuth } from "../hooks/useAuth";
 import { MainStackParamList } from "../navigators/MainNavigator";
 import screens from "../styles/screens";
 import HomeScreen from "./HomeScreen";
 import UploadScreen from "./UploadScreen/UploadScreen";
 import UserPageScreen from "./UserPageScreen";
+import VideoEditScreen from "./VideoEditScreen";
 import VideoScreen from "./VideoScreen";
 
 /** 메인 스택 네비게이터 컴포넌트 */
@@ -18,8 +17,6 @@ const MainStack = createNativeStackNavigator<MainStackParamList>();
  * 어플리케이션 메인 스크린
  */
 function MainScreen() {
-  const { user } = useAuth();
-
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
       <MainStack.Navigator
@@ -41,6 +38,11 @@ function MainScreen() {
         <MainStack.Screen name="UserPage" component={UserPageScreen} />
         <MainStack.Screen name="Notification" component={DummyComponent} />
         <MainStack.Screen name="Search" component={DummyComponent} />
+        <MainStack.Screen
+          name="VideoEdit"
+          options={{ headerShown: false }}
+          component={VideoEditScreen}
+        />
       </MainStack.Navigator>
     </SafeAreaView>
   );

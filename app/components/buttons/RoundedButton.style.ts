@@ -39,6 +39,11 @@ const colorsetByTypes = {
     bdColor: bColors.white,
     txColor: bColors.black,
   },
+  danger: {
+    bgColor: bColors.red,
+    bdColor: bColors.red,
+    txColor: bColors.white,
+  },
 };
 /** 버튼 타입등 프로퍼티에 영향을 받는 스타일 */
 export const buttonInsideStyles = (props: RoundedButtonProps) => {

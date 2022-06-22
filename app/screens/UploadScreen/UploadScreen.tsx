@@ -15,7 +15,7 @@ import screens from "../../styles/screens";
 import PlaceType from "../../types/Place";
 import SongType from "../../types/Song";
 import VideoType from "../../types/Video";
-import InputDataScreen from "./InputDataScreen";
+import InputVideoDataScreen from "./InputDataScreen";
 import SelectTypeScreen from "./SelectTypeScreen";
 import { UploadContext } from "./UploadContext";
 
@@ -157,7 +157,7 @@ function UploadScreen() {
           <UploadStack.Screen
             options={{ headerShown: true }}
             name="InputData"
-            component={InputDataScreen}
+            component={InputVideoDataScreen}
           />
           {/* TBD 음악 검색 시스템 개발하기 (장기계획) */}
           {/* <UploadStack.Screen
