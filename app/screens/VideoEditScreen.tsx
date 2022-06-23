@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { getVideoDownloadURL } from "../api/QueResourceUtils";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
@@ -10,6 +15,7 @@ import SongType from "../types/Song";
 import PlaceType from "../types/Place";
 import RoundedButton from "../components/buttons/RoundedButton";
 import { bFont, bSpace } from "../styles/base";
+import { useConfirm } from "../hooks/useConfirm";
 
 /**
  * 비디오 재생 화면
@@ -23,8 +29,14 @@ const VideoEditScreen = ({
   const [editVideoDescription, setEditVideoDescription] = useState<string>("");
   const [editSongInfo, setEditSongInfo] = useState<SongType>({});
   const [editPlaceInfo, setEditPlaceInfo] = useState<PlaceType>({});
+  const [initVideoTitle, setInitVideoTitle] = useState<string>("");
+  const [initVideoDescription, setInitVideoDescription] = useState<string>("");
+  const [initSongInfo, setInitSongInfo] = useState<SongType>({});
+  const [initPlaceInfo, setInitPlaceInfo] = useState<PlaceType>({});
 
   const [postable, setPostable] = useState<boolean>(false);
+
+  const asyncAlert = useConfirm();
 
   const loading = useLoadingIndicator();
 
@@ -38,33 +50,110 @@ const VideoEditScreen = ({
       if (prVideoData.sourceUrl)
         httpDownloadUrl = await getVideoDownloadURL(prVideoData.sourceUrl!);
       setVideoPath(httpDownloadUrl);
+      // 수정할 데이터들 초기화
       setEditVideoTitle(prVideoData.title!);
       setEditVideoDescription(prVideoData.description!);
       setEditSongInfo(prVideoData.song!);
       setEditPlaceInfo(prVideoData.place!);
+      // 초기 데이터들 가져오기, 초기 데이터에서 변경점이 생겨야지 수정 등록 가능
+      setInitVideoTitle(prVideoData.title!);
+      setInitVideoDescription(prVideoData.description!);
+      setInitSongInfo(prVideoData.song!);
+      setInitPlaceInfo(prVideoData.place!);
       loading.hideLoading();
     }
 
     if (route.params.videoData.videoId) fetchVideo();
   }, [route.params.videoData]);
 
-  /** 헤더 설정 */
   useEffect(() => {
+    // 바뀐게 없으면 수정하게 두지 말기
+    if (
+      editVideoTitle === initVideoTitle &&
+      editVideoDescription === initVideoDescription &&
+      editSongInfo.title === initSongInfo.title &&
+      editSongInfo.singer === initSongInfo.singer &&
+      editPlaceInfo.name === initPlaceInfo.name
+    ) {
+      setPostable(false);
+    }
+    // 장소, 설명은 optional 제목, 노래는 required
+    else if (editVideoTitle.length < 2 || !editSongInfo.title) {
+      setPostable(false);
+    } else {
+      setPostable(true);
+    }
+  }, [
+    editVideoTitle,
+    editVideoDescription,
+    editSongInfo,
+    editPlaceInfo,
+    initPlaceInfo,
+    initSongInfo,
+    initVideoDescription,
+    initVideoTitle,
+  ]);
+
+  /** 수정버튼 눌렀을 때의 처리 */
+  const handleOnEditPressed = useCallback(async () => {
+    const answer = await asyncAlert("수정하시겠습니까?");
+
+    if (postable) {
+      loading.showLoading("영상 정보를 수정하고 있습니다.");
+
+      // TBD 수정 API 호출
+
+      alert("수정이 완료되었습니다.");
+      loading.hideLoading();
+
+      navigation.navigate("Home");
+    }
+  }, [
+    editVideoTitle,
+    editVideoDescription,
+    editSongInfo,
+    editPlaceInfo,
+    postable,
+  ]);
+
+  /** 삭제버튼 눌렀을 때의 처리 */
+  const handleOnDeletePressed = useCallback(async () => {
+    const answer = await asyncAlert(
+      "정말 삭제하시겠습니까?",
+      "삭제는 되돌릴 수 없습니다!"
+    );
+
+    // 개발 중 auto reload 시 버그로 인해 추가합니다.
+    if (videoPath) {
+      if (answer) {
+        // OK
+        loading.showLoading("영상을 삭제하고 있습니다.");
+
+        // TBD 삭제 API 호출
+
+        alert("삭제가 완료되었습니다.");
+        loading.hideLoading();
+
+        navigation.navigate("Home");
+      } else {
+        // NO, do nothing
+      }
+    }
+  }, [videoPath]);
+
+  /** 헤더 설정 */
+  useLayoutEffect(() => {
     navigation.setOptions({
-      header: (props) => {
-        return (
-          <CommonHeader
-            {...props}
-            buttonType={postable ? "enabledBorder" : "disabled"}
-            onPress={() => {
-              alert("TBD");
-            }}
-          />
-        );
-      },
+      header: (props) => (
+        <CommonHeader
+          {...props}
+          buttonType={postable ? "enabledBorder" : "disabled"}
+          onPress={handleOnEditPressed}
+        />
+      ),
       headerShown: true,
     });
-  }, [postable]);
+  }, [postable, handleOnEditPressed, navigation]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
@@ -80,7 +169,11 @@ const VideoEditScreen = ({
         setPlaceInfo={setEditPlaceInfo}
       />
       <View style={styles.bottomDangerZone}>
-        <RoundedButton style={styles.roundedButton} buttonType="danger">
+        <RoundedButton
+          style={styles.roundedButton}
+          buttonType="danger"
+          onPress={handleOnDeletePressed}
+        >
           영상 삭제
         </RoundedButton>
       </View>

@@ -50,7 +50,7 @@ function InputVideoDataScreen(props: InputDataScreenPropType) {
 
   /** 필요 데이터가 입력된 경우를 확인해 버튼 활성화하기 */
   useEffect(() => {
-    // TBD 장소, 설명은 optional 제목, 노래는 required
+    // 장소, 설명은 optional 제목, 노래는 required
     if (videoTitle.length >= 2 && !!songInfo.title) {
       setButtonEnabled(true);
     }
