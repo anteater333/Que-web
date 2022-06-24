@@ -1,12 +1,14 @@
 import { getApps, initializeApp } from "firebase/app";
 import firebaseConfig from "./config";
 import {
+  deleteVideoSource,
   getMediaFromStorage,
   getProfilePicByUserId,
   uploadCurrentUserProfileImage,
   uploadVideoSource,
 } from "./storage/storage";
 import {
+  deleteVideoDocument,
   dislikeVideo,
   getMyLikeReactions,
   getUserProfile,
@@ -17,6 +19,7 @@ import {
   likeVideo,
   setVideoDocument,
   updateCurrentUserProfile,
+  updateVideoDocument,
   updateVideoUploaded,
 } from "./firestore/firestore";
 import {
@@ -48,12 +51,18 @@ export const FirebaseResourceClient: QueResourceAPI = {
   getUserProfilePicture: getProfilePicByUserId,
   updateUserProfile: updateCurrentUserProfile,
   uploadUserProfileImage: uploadCurrentUserProfileImage,
+
+  getMyLikeReactions: getMyLikeReactions,
+  dislikeVideo: dislikeVideo,
+  increaseVideoViewCount: increaseVideoViewCount,
+  likeVideo: likeVideo,
+  updateVideoData: updateVideoDocument,
   uploadVideo: async function (
     thumbnailSourcePath: string,
     videoSourcePath: string,
     videoData: VideoType
   ): Promise<QueResourceResponse> {
-    /** 여러 단계로 나뉘어진 행동이라 메소드를 조립하는 방식으로 사용 */
+    /** 여러 단계로, 여러 Firebase 서비스에 걸쳐 나뉘어진 행동이라 메소드를 조립하는 방식으로 사용 */
     /** 영상 Document 먼저 등록 */
     const videoId = await setVideoDocument(videoData);
     /** 원본 영상 Storage에 업로드 */
@@ -75,15 +84,27 @@ export const FirebaseResourceClient: QueResourceAPI = {
       };
     }
   },
-  getMyLikeReactions: getMyLikeReactions,
-  dislikeVideo: dislikeVideo,
-  increaseVideoViewCount: increaseVideoViewCount,
-  likeVideo: likeVideo,
-  updateVideoData: () => {
-    throw new Error("NotImplemented");
-  },
-  deleteVideo: () => {
-    throw new Error("NotImplemented");
+  deleteVideo: async function (videoId: string) {
+    /** 2단계로 나뉩니다. */
+    try {
+      /** 1. 도큐먼트 삭제 */
+      const docResult = await deleteVideoDocument(videoId);
+      if (!docResult.success) return docResult;
+
+      /** 2. 원본 영상 삭제 */
+      const storageResult = await deleteVideoSource(videoId);
+      if (!storageResult.success) return storageResult;
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.UndefinedError,
+      };
+    }
   },
 };
 

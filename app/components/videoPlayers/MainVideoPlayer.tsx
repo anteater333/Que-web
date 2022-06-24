@@ -176,6 +176,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   const notImplemented = useNotImplementedWarning();
 
   /** 좋아요 버튼 터치 시 API 호출 함수 */
+  // TBD 좋아요 / 좋아요 취소 시 화면상의 좋아요 개수 반영하기, (숫자 증감, 좋아요 개수를 state로 만들기)
   const likeThisVideo = useCallback(async () => {
     if (props.videoData.videoId && !noMoreLike) {
       // videoPosition status를 사용하면 즉각적으로 위치가 업데이트 되지 않습니다.
@@ -217,7 +218,6 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   }, []);
 
   /** 화면 최초 로드 시 영상 데이터 불러오기 */
-  // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 video에 대한 모든 정보 가져오기
   useEffect(() => {
     const getLikes = async () => {
       const rt = await QueResourceClient.getMyLikeReactions(

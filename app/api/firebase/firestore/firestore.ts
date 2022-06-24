@@ -11,7 +11,7 @@ import {
   setDoc,
   increment,
   deleteField,
-  Timestamp,
+  deleteDoc,
   where,
   QueryConstraint,
 } from "firebase/firestore";
@@ -225,29 +225,68 @@ export async function setUserDocument(
  * 비디오 메타 정보를 입력합니다.
  * TBD 필요하지 않은 데이터가 초기에 생성되는지 파악하기
  * @param videoData 비디오 정보
+ * @param videoId 비디오 아이디, 비디오 아이디가 전달되지 않으면 새 문서 생성
  */
-export async function setVideoDocument(videoData: VideoType): Promise<string> {
+export async function setVideoDocument(
+  videoData: VideoType,
+  videoId?: string
+): Promise<string> {
   try {
-    const currentUid = getCurrentUID();
-    const newDocRef = doc(VideoCollection);
-    const videoId = newDocRef.id;
+    if (!videoId) {
+      const currentUid = getCurrentUID();
+      const videoDocRef = doc(VideoCollection);
+      const videoId = videoDocRef.id;
 
-    const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
-    await setDoc<VideoType>(newDocRef, {
-      ...videoData,
-      sourceUrl:
-        storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
-      thumbnailUrl:
-        storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
-      uploadedAt: new Date(),
-      uploadDone: false,
-      uploader: doc(UserCollection, currentUid),
-    });
+      const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
+      await setDoc<VideoType>(videoDocRef, {
+        ...videoData,
+        sourceUrl:
+          storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
+        thumbnailUrl:
+          storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
+        uploadedAt: new Date(),
+        uploadDone: false,
+        uploader: doc(UserCollection, currentUid),
+      });
 
-    return newDocRef.id;
+      return videoDocRef.id;
+    } else {
+      // TBD 인증 blocking, 내 영상만 수정할 수 있도록 하기
+      const videoDocRef = doc(VideoCollection, videoId);
+      await setDoc<VideoType>(videoDocRef, videoData, { merge: true });
+
+      return videoDocRef.id;
+    }
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+/** 별 큰 의미 없는 래핑 함수 */
+export async function updateVideoDocument(
+  videoId: string,
+  newVideoData: VideoType
+): Promise<QueResourceResponse> {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  try {
+    await setVideoDocument(newVideoData, videoId);
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -290,6 +329,54 @@ export async function getVideoDocument(
       success: false,
       errorType: QueResourceResponseErrorType.UndefinedError,
     };
+  }
+}
+
+/** 비디오 문서를 삭제합니다. */
+// TBD 공식 문서에서 삭제는 믿을 수 있는 서버 환경에서만 하도록 권장함
+//
+export async function deleteVideoDocument(
+  videoId: string
+): Promise<QueResourceResponse> {
+  try {
+    /** 비디오 도큐먼트 레퍼런스 */
+    const videoDocRef = doc(VideoCollection, videoId);
+    /** 비디오 도큐먼트 스냅샷 */
+    const videoDocSnap = await getDoc<VideoType>(videoDocRef);
+    if (!videoDocSnap.exists()) {
+      // 해당 영상 정보 없음
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
+    }
+    /** 스냅샷으로부터 추출한 데이터 */
+    const snapData = videoDocSnap.data();
+
+    const currentUid = getCurrentUID();
+    if (!currentUid) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.SignInRequired,
+      };
+    }
+
+    // 사용자의 영상이 맞는지 판단
+    const uploaderDataSnap = await getDoc<UserType>(snapData.uploader);
+    if (currentUid !== uploaderDataSnap.id) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.Wrong, // Not my video
+      };
+    }
+
+    await deleteDoc(videoDocRef);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    throw error;
   }
 }
 

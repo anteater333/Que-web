@@ -5,7 +5,9 @@ import React, {
   useState,
 } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { getVideoDownloadURL } from "../api/QueResourceUtils";
+import QueResourceClient, {
+  getVideoDownloadURL,
+} from "../api/QueResourceUtils";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import { MainStackScreenProp } from "../navigators/MainNavigator";
 import screens from "../styles/screens";
@@ -16,6 +18,7 @@ import PlaceType from "../types/Place";
 import RoundedButton from "../components/buttons/RoundedButton";
 import { bFont, bSpace } from "../styles/base";
 import { useConfirm } from "../hooks/useConfirm";
+import { Toast } from "native-base";
 
 /**
  * 비디오 재생 화면
@@ -98,15 +101,33 @@ const VideoEditScreen = ({
   const handleOnEditPressed = useCallback(async () => {
     const answer = await asyncAlert("수정하시겠습니까?");
 
-    if (postable) {
-      loading.showLoading("영상 정보를 수정하고 있습니다.");
+    if (answer) {
+      if (postable) {
+        loading.showLoading("영상 정보를 수정하고 있습니다.");
 
-      // TBD 수정 API 호출
+        const result = await QueResourceClient.updateVideoData(
+          route.params.videoData.videoId!,
+          {
+            title: editVideoTitle,
+            description: editVideoDescription,
+            song: editSongInfo,
+            place: editPlaceInfo,
+          }
+        );
 
-      alert("수정이 완료되었습니다.");
-      loading.hideLoading();
+        if (result.success) {
+          alert("수정이 완료되었습니다.");
+        } else {
+          alert("수정에 실패했습니다.");
+        }
+        loading.hideLoading();
 
-      navigation.navigate("Home");
+        if (result.success) navigation.navigate("Home");
+      } else {
+        Toast.show({
+          description: "수정에 실패했습니다. 입력을 확인해주세요.",
+        });
+      }
     }
   }, [
     editVideoTitle,
@@ -114,6 +135,7 @@ const VideoEditScreen = ({
     editSongInfo,
     editPlaceInfo,
     postable,
+    route.params.videoData.videoId,
   ]);
 
   /** 삭제버튼 눌렀을 때의 처리 */
@@ -129,9 +151,15 @@ const VideoEditScreen = ({
         // OK
         loading.showLoading("영상을 삭제하고 있습니다.");
 
-        // TBD 삭제 API 호출
+        const result = await QueResourceClient.deleteVideo(
+          route.params.videoData.videoId!
+        );
 
-        alert("삭제가 완료되었습니다.");
+        if (result.success) {
+          alert("삭제가 완료되었습니다.");
+        } else {
+          alert("삭제에 실패했습니다.");
+        }
         loading.hideLoading();
 
         navigation.navigate("Home");
@@ -139,7 +167,7 @@ const VideoEditScreen = ({
         // NO, do nothing
       }
     }
-  }, [videoPath]);
+  }, [videoPath, route.params.videoData.videoId]);
 
   /** 헤더 설정 */
   useLayoutEffect(() => {
