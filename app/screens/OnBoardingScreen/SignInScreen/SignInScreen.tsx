@@ -1,7 +1,14 @@
 import { useAssets } from "expo-asset";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { Image, ImageSourcePropType, SafeAreaView, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  NativeSyntheticEvent,
+  SafeAreaView,
+  TextInputKeyPressEventData,
+  View,
+} from "react-native";
 import SocialLoginButton from "../../../components/buttons/SocialLoginButton";
 import CommonTextInput from "../../../components/inputs/CommonTextInput";
 import WizardNavBar from "../../../components/navbars/WizardNavBar";
@@ -33,7 +40,7 @@ function SignInScreen() {
   ]);
 
   /** 이메일과 비밀번호를 통해 로그인 진행 */
-  const loginWithQue = useSignInWithQue(userEmail, password, true);
+  const loginWithQue = useSignInWithQue(true);
 
   /**
    * Google Auth를 통한 계정 인증
@@ -45,6 +52,21 @@ function SignInScreen() {
   /** 이메일과 비밀번호가 입력되었으면 버튼 활성화 */
   useEffect(() => {
     setIsTriable(validateEmail(userEmail) && password.length >= 8);
+  }, [userEmail, password]);
+
+  const handleOnEnterPressed = useCallback(
+    async (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+      if (event.nativeEvent.key == "Enter" && isTriable) {
+        await loginWithQue(userEmail, password);
+      } else {
+        // do nothing
+      }
+    },
+    [userEmail, password, isTriable]
+  );
+
+  const handleOnNextButtonPressed = useCallback(async () => {
+    await loginWithQue(userEmail, password);
   }, [userEmail, password]);
 
   return (
@@ -80,13 +102,7 @@ function SignInScreen() {
           placeholder="비밀번호"
           onChangeText={(newStr) => setPassword(newStr)}
           value={password}
-          onKeyPress={(event) => {
-            if (event.nativeEvent.key == "Enter" && isTriable) {
-              loginWithQue();
-            } else {
-              // do nothing
-            }
-          }}
+          onKeyPress={handleOnEnterPressed}
         />
         <View>
           <SocialLoginButton
@@ -98,7 +114,7 @@ function SignInScreen() {
       <WizardNavBar
         enableNextButton={isTriable}
         hideSkipButton={true}
-        onNext={loginWithQue}
+        onNext={handleOnNextButtonPressed}
       ></WizardNavBar>
     </SafeAreaView>
   );

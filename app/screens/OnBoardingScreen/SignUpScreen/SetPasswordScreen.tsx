@@ -57,7 +57,7 @@ export default function SetPasswordScreen({
 
   const { hideLoading, showLoading } = useLoadingIndicator();
 
-  const signIn = useSignInWithQue(route.params.userEmail, password);
+  const signIn = useSignInWithQue();
 
   /** 사용자의 비밀번호를 서버에 등록, 회원가입 요청 수행됨 */
   const postUserPassword = useCallback(async () => {
@@ -73,7 +73,7 @@ export default function SetPasswordScreen({
         // 회원 가입 성공함
 
         // 회원 가입에 사용한 정보를 통해 로그인
-        await signIn();
+        await signIn(route.params.userEmail, password);
 
         // 다음 화면으로 이동
         signUpNavigator!.navigate("SetUserProfile");
@@ -86,7 +86,7 @@ export default function SetPasswordScreen({
       alert(`비밀번호 설정 과정에서 에러가 발생했습니다. : ` + error);
     }
     hideLoading();
-  }, [password]);
+  }, [route.params.userEmail, password]);
 
   /** 첫 렌더링 시 입력 데이터 초기화 */
   useEffect(() => {

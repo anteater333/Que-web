@@ -333,8 +333,6 @@ export async function getVideoDocument(
 }
 
 /** 비디오 문서를 삭제합니다. */
-// TBD 공식 문서에서 삭제는 믿을 수 있는 서버 환경에서만 하도록 권장함
-//
 export async function deleteVideoDocument(
   videoId: string
 ): Promise<QueResourceResponse> {

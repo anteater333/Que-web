@@ -168,6 +168,8 @@ export default function SetUserProfileScreen() {
       const saved = await QueResourceClient.getUserProfileData(
         currentUser.userId!
       );
+      console.log(currentUser);
+      console.log(saved);
       if (saved.success) {
         setUserNickname(saved.payload!.nickname ? saved.payload!.nickname : "");
       }
@@ -175,7 +177,7 @@ export default function SetUserProfileScreen() {
     if (isFocused) {
       getUser();
     }
-  }, [isFocused]);
+  }, [isFocused, currentUser.userId]);
 
   /** 닉네임 유효성 검증 */
   useEffect(() => {

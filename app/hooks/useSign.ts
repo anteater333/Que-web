@@ -114,18 +114,14 @@ export const useSignWithGoogle = () => {
 /**
  * 외부 OAuth Provider 사용 없이 이메일과 비밀번호를 통해 로그인합니다.
  */
-export const useSignInWithQue = (
-  userEmail: string,
-  password: string,
-  navigateAfter?: boolean
-) => {
+export const useSignInWithQue = (navigateAfter?: boolean) => {
   const dispatch = useAppDispatch();
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   const { hideLoading, showLoading } = useLoadingIndicator("");
 
-  return useCallback(async () => {
+  return useCallback(async (userEmail: string, password: string) => {
     showLoading();
     try {
       const loginResult = await QueAuthClient.signInWithQueSelfManaged(
@@ -135,6 +131,8 @@ export const useSignInWithQue = (
 
       /** 에러 발생 시 토스트에 표시할 메세지 */
       let errMsg: string | undefined;
+
+      console.log(loginResult, userEmail, password);
 
       switch (loginResult.status) {
         case QueAuthResponse.OK: {
@@ -160,7 +158,7 @@ export const useSignInWithQue = (
     }
 
     hideLoading();
-  }, [userEmail, password]);
+  }, []);
 };
 
 /**

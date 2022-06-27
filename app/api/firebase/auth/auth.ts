@@ -77,7 +77,7 @@ export async function signInWithGoogle(
       const signInResult = await signInWithCredential(auth, credential);
 
       // 유저 정보 생성
-      const signedUser = (await getUserProfile(signInResult.user.uid)).user;
+      const signedUser = (await getUserProfile(signInResult.user.uid)).payload!;
 
       return {
         status: QueAuthResponse.OK,
@@ -134,7 +134,7 @@ export async function signInWithEmail(
 
     // 로그인 여부 저장
     // 유저 정보 생성
-    const signedUser = (await getUserProfile(signInResult.user.uid)).user;
+    const signedUser = (await getUserProfile(signInResult.user.uid)).payload!;
 
     return { status: QueAuthResponse.OK, user: signedUser };
   } catch (error) {
