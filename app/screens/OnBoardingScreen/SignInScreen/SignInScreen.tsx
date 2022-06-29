@@ -17,7 +17,6 @@ import { validateEmail } from "../../../utils/validator";
 import { signInScreenStyle } from "./SignInScreen.style";
 
 import * as WebBrowser from "expo-web-browser";
-import ScreenCoverLoadingSpinner from "../../../components/common/ScreenCoverLoadingIndicator";
 import { useSignInWithQue, useSignWithGoogle } from "../../../hooks/useSign";
 
 const styles = signInScreenStyle;

@@ -1,5 +1,7 @@
+import getEnv from "../../config/env";
 import { QueAuthResponse } from "../interfaces";
-import config from "./config";
+
+const config = getEnv().VERIFICATION_SERVER;
 
 const URL =
   config.PROTOCOL + "://" + config.HOST + ":" + config.PORT + config.PREFIX;

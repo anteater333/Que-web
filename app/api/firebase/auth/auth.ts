@@ -1,3 +1,4 @@
+import { getApps, initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -13,7 +14,12 @@ import {
   QueSignInFailed,
   QueSignInSucceeded,
 } from "../../interfaces";
+import firebaseConfig from "../config";
 import { getUserProfile, setUserDocument } from "../firestore/firestore";
+
+if (!getApps().length) {
+  initializeApp(firebaseConfig);
+}
 
 /** Access token을 통해 사용자 email 확인 */
 async function fetchUserEmail(token: string): Promise<string> {

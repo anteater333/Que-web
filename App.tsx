@@ -14,7 +14,6 @@ LogBox.ignoreLogs(["Setting a timer"]);
 
 /**
  * 어플리케이션 프로그램 최상단 컴포넌트, 엔트리 포인트
- * TBD: 최소한의 로직만 남겨두기
  */
 export default function App() {
   return (
