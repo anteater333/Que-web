@@ -1,8 +1,9 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import QueResourceClient from "../api/QueResourceUtils";
 import VideoCardList from "../components/lists/VideoCardList";
+import NoticeModal from "../components/modals/NoticeModal";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import screens from "../styles/screens";
 import VideoType from "../types/Video";
@@ -16,6 +17,9 @@ function TimelineScreen() {
   const [videoDataList, setVideoDataList] = useState<VideoType[]>([]);
   /** 가저올 비디오 데이터가 더 있는지 여부 */
   const [noMoreData, setNoMoreData] = useState<boolean>(false);
+
+  /** 서비스 공지사항 존재 시 안내 메세지 표시 */
+  const [hasNotice, setHasNotice] = useState<boolean>(true);
 
   const isFocused = useIsFocused();
 
@@ -58,6 +62,15 @@ function TimelineScreen() {
 
   return (
     <View style={screens.defaultScreenLayout}>
+      <NoticeModal
+        visible={hasNotice}
+        setModalVisible={setHasNotice}
+        pages={[
+          <Text>Hello</Text>,
+          <Text>This is</Text>,
+          <Text>a text test.</Text>,
+        ]}
+      />
       <VideoCardList
         videoData={videoDataList}
         onScrollEnded={getMoreVideoData}
