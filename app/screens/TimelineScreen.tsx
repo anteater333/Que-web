@@ -5,7 +5,9 @@ import QueResourceClient from "../api/QueResourceUtils";
 import notices from "../assets/notices/notices";
 import VideoCardList from "../components/lists/VideoCardList";
 import NoticeModal from "../components/modals/NoticeModal";
+import { useAuth } from "../hooks/useAuth";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
+import { useNotice } from "../hooks/useNotice";
 import screens from "../styles/screens";
 import VideoType from "../types/Video";
 
@@ -20,11 +22,22 @@ function TimelineScreen() {
   const [noMoreData, setNoMoreData] = useState<boolean>(false);
 
   /** 서비스 공지사항 존재 시 안내 메세지 표시 */
-  const [hasNotice, setHasNotice] = useState<boolean>(true);
+  const [hasNotice, setHasNotice] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
 
   const loading = useLoadingIndicator();
+
+  const { user } = useAuth();
+  const { noticeList, addUser } = useNotice("ALPHA01"); // !! 공지 수정 시 아이디 변경
+
+  /** 공지 표출 여부 판단 */
+  useEffect(() => {
+    if (user.userId && !noticeList[user.userId]) {
+      setHasNotice(true);
+      addUser(user.userId);
+    }
+  }, [user.userId, noticeList]);
 
   /** 초기 데이터 설정 */
   useEffect(() => {
