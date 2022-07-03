@@ -2,6 +2,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import QueResourceClient from "../api/QueResourceUtils";
+import notices from "../assets/notices/notices";
 import VideoCardList from "../components/lists/VideoCardList";
 import NoticeModal from "../components/modals/NoticeModal";
 import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
@@ -65,11 +66,7 @@ function TimelineScreen() {
       <NoticeModal
         visible={hasNotice}
         setModalVisible={setHasNotice}
-        pages={[
-          <Text>Hello</Text>,
-          <Text>This is</Text>,
-          <Text>a text test.</Text>,
-        ]}
+        pages={notices}
       />
       <VideoCardList
         videoData={videoDataList}
