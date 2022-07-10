@@ -92,7 +92,7 @@ export async function signInWithGoogle(
     } else {
       // 로그인 불가
       // TBD 사용자 설정에서 계정 연동하도록 유도 or firebase에서 이메일당 계정 연동 가능하도록 설정 후 로그인
-      console.log("no google account");
+      console.error("no google account");
 
       return { status: QueAuthResponse.AlreadyExist };
     }

@@ -116,9 +116,6 @@ export default function SetUserDescriptionScreen() {
           accessibilityRole="text"
           textContentType="none"
           onChangeText={updateDescriptionInput}
-          onContentSizeChange={(event) => {
-            console.log(event.nativeEvent.contentSize);
-          }}
           value={description}
         />
         <Text

@@ -114,23 +114,26 @@ export default function SetUserProfileScreen() {
       return;
     }
 
-    /** TBD profileURL 기반 storage에 업로드 후 storage URL 가져오기 */
-
     const updateData = {
       // 프로필 사진 경로는 고정
-      profilePictureUrl: `users/${currentUser.userId}/images/profilePic`,
+      profilePictureUrl: !profileLocalURL
+        ? ""
+        : `users/${currentUser.userId}/images/profilePic`,
       nickname: userNickname,
     };
 
     // 프로필 사진과 닉네임 등록하기
-    const imageUploadResult = await QueResourceClient.uploadUserProfileImage(
-      profileLocalURL
-    );
-    if (!imageUploadResult.success) {
-      alert(
-        `프로필 사진 업로드 중 문제가 발생했습니다.\n${imageUploadResult.errorType}`
+    if (profileLocalURL) {
+      const imageUploadResult = await QueResourceClient.uploadUserProfileImage(
+        profileLocalURL
       );
+      if (!imageUploadResult.success) {
+        alert(
+          `프로필 사진 업로드 중 문제가 발생했습니다.\n${imageUploadResult.errorType}`
+        );
+      }
     }
+    //
     const updateResult = await QueResourceClient.updateUserProfile(updateData);
 
     /** 회원가입 과정 중 context 변화 */
@@ -168,8 +171,6 @@ export default function SetUserProfileScreen() {
       const saved = await QueResourceClient.getUserProfileData(
         currentUser.userId!
       );
-      console.log(currentUser);
-      console.log(saved);
       if (saved.success) {
         setUserNickname(saved.payload!.nickname ? saved.payload!.nickname : "");
       }

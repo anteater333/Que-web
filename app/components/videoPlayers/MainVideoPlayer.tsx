@@ -227,7 +227,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
 
       if (rt.success) setLikeDataArray(rt.payload!);
       else {
-        console.log(rt.errorType);
+        console.error(rt.errorType);
       }
     };
 

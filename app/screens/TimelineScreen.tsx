@@ -10,6 +10,7 @@ import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
 import { useNotice } from "../hooks/useNotice";
 import screens from "../styles/screens";
 import VideoType from "../types/Video";
+import { useFocusEffect } from "@react-navigation/native";
 
 /**
  * 영상 타임라인 스크린
@@ -24,24 +25,25 @@ function TimelineScreen() {
   /** 서비스 공지사항 존재 시 안내 메세지 표시 */
   const [hasNotice, setHasNotice] = useState<boolean>(false);
 
-  const isFocused = useIsFocused();
-
   const loading = useLoadingIndicator();
 
   const { user } = useAuth();
   const { noticeList, addUser } = useNotice("ALPHA01"); // !! 공지 수정 시 아이디 변경
 
   /** 공지 표출 여부 판단 */
-  useEffect(() => {
-    if (user.userId && !noticeList[user.userId]) {
-      setHasNotice(true);
-      addUser(user.userId);
-    }
-  }, [user.userId, noticeList]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log(user.userId, noticeList);
+      if (user.userId && !noticeList[user.userId]) {
+        setHasNotice(true);
+        addUser(user.userId);
+      }
+    }, [user.userId, noticeList])
+  );
 
   /** 초기 데이터 설정 */
-  useEffect(() => {
-    if (isFocused) {
+  useFocusEffect(
+    useCallback(() => {
       async function getInitialData() {
         loading.showLoading("영상 목록을 불러오고 있습니다.");
         const initialDataLength = 5;
@@ -58,8 +60,8 @@ function TimelineScreen() {
       }
 
       getInitialData();
-    }
-  }, [isFocused]);
+    }, [])
+  );
 
   /** 스크롤 시 비디오 더 가져오기 */
   const getMoreVideoData = useCallback(async () => {

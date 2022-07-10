@@ -66,7 +66,7 @@ export const useSignWithGoogle = () => {
             // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
             const curNavState = onBoardingNavigator.getState();
             if (curNavState.routes[curNavState.index].name !== "CatchPhrase")
-              onBoardingNavigator.navigate("CatchPhrase");
+              onBoardingNavigator.reset({ routes: [{ name: "CatchPhrase" }] });
 
             break;
           }
@@ -76,13 +76,15 @@ export const useSignWithGoogle = () => {
               description: "Google 계정을 통해 새 Que 계정을 생성합니다.",
             });
 
-            // 로그인 정보 설정
-            dispatch(setCredential({ user: loginResult.user }));
-
             hideLoading();
 
             // 네비게이션
-            onBoardingNavigator.navigate("SignUp", { hasProvider: true });
+            onBoardingNavigator.reset({
+              routes: [{ name: "SignUp", params: { hasProvider: true } }],
+            });
+
+            // 로그인 정보 설정
+            dispatch(setCredential({ user: loginResult.user }));
 
             break;
           }
@@ -132,8 +134,6 @@ export const useSignInWithQue = (navigateAfter?: boolean) => {
       /** 에러 발생 시 토스트에 표시할 메세지 */
       let errMsg: string | undefined;
 
-      console.log(loginResult, userEmail, password);
-
       switch (loginResult.status) {
         case QueAuthResponse.OK: {
           // 로그인 정보 설정
@@ -181,7 +181,7 @@ export const useSignOut = () => {
 
         dispatch(clearCredential());
 
-        rootNavigator.navigate("OnBoarding");
+        rootNavigator.reset({ routes: [{ name: "OnBoarding" }] });
       } catch (error) {
         alert(`로그아웃 중 에러가 발생했습니다. ${error}`);
       }
