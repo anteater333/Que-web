@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, LogBox, SafeAreaView } from "react-native";
+import { StyleSheet, LogBox, SafeAreaView, Platform } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Entypo } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
@@ -9,6 +9,13 @@ import { bColors } from "./styles/base";
 import RootScreen from "./screens/RootScreen";
 import { useAuth } from "./hooks/useAuth";
 import QueAuthClient from "./api/QueAuthUtils";
+import { useNotice } from "./hooks/useNotice";
+import { useAppDispatch } from "./hooks/useAppDispatch";
+import { useSelector } from "react-redux";
+import {
+  initializeNoticeList,
+  selectNoticeList,
+} from "./reducers/noticeReducer";
 
 /**
  * 어플리케이션 프로그램 최상단 컴포넌트, 엔트리 포인트
@@ -18,6 +25,8 @@ export default function AppContainer() {
   const [appIsReady, setAppIsReady] = useState(false);
   /** 저장된 계정 정보가 있는지 확인 용도 */
   const { isSigned } = useAuth();
+
+  const dispatch = useAppDispatch();
 
   /**
    * 빈 배열을 전달한 useEffect는 최초 렌더링에서만 실행된다.
@@ -34,6 +43,8 @@ export default function AppContainer() {
         // 여기다가 원하는 API콜을 만들 수 있음
         /** 폰트 미리 로드 */
         await Font.loadAsync(Entypo.font);
+
+        dispatch(initializeNoticeList({ noticeId: "ALPHA01" }));
 
         /** 자동 로그인 */
         if (isSigned) {
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
   rootContainer: {
     width: "100%",
     flex: 1,
-    maxWidth: 720,
+    maxWidth: Platform.OS === "web" ? 720 : undefined,
     shadowColor: bColors.black,
     shadowOffset: {
       width: 0,
