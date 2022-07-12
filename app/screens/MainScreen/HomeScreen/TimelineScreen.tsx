@@ -1,15 +1,15 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import QueResourceClient from "../api/QueResourceUtils";
-import notices from "../assets/notices/notices";
-import VideoCardList from "../components/lists/VideoCardList";
-import NoticeModal from "../components/modals/NoticeModal";
-import { useAuth } from "../hooks/useAuth";
-import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
-import { useNotice } from "../hooks/useNotice";
-import screens from "../styles/screens";
-import VideoType from "../types/Video";
+import QueResourceClient from "../../../api/QueResourceUtils";
+import notices from "../../../assets/notices/notices";
+import VideoCardList from "../../../components/lists/VideoCardList";
+import NoticeModal from "../../../components/modals/NoticeModal";
+import { useAuth } from "../../../hooks/useAuth";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
+import { useNotice } from "../../../hooks/useNotice";
+import screens from "../../../styles/screens";
+import VideoType from "../../../types/Video";
 import { useFocusEffect } from "@react-navigation/native";
 
 /**

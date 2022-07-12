@@ -7,10 +7,10 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import screens from "../../styles/screens";
+import screens from "../../../styles/screens";
 import { uploadScreenStyle } from "./UploadScreen.style";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { UploadStackNavigationProp } from "../../navigators/UploadNavigator";
+import { UploadStackNavigationProp } from "../../../navigators/UploadNavigator";
 import { useCallback, useContext, useEffect } from "react";
 import { UploadContext } from "./UploadContext";
 import * as ImagePicker from "expo-image-picker";
@@ -18,13 +18,13 @@ import {
   checkFileSize,
   checkSizeLimitMB,
   checkVideoLengthManually,
-} from "../../utils/file";
+} from "../../../utils/file";
 import { useToast } from "native-base";
 import { getThumbnails } from "video-metadata-thumbnails";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import { blobToDataURL } from "../../utils/converter";
-import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
-import { useNotImplementedWarning } from "../../hooks/useWarning";
+import { blobToDataURL } from "../../../utils/converter";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
+import { useNotImplementedWarning } from "../../../hooks/useWarning";
 
 const SIZE_LIMIT = 20; // MB
 

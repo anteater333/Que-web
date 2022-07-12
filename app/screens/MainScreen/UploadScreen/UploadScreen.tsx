@@ -2,19 +2,19 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
-import QueResourceClient from "../../api/QueResourceUtils";
-import CommonHeader from "../../components/headers/CommonHeader";
-import { useConfirm } from "../../hooks/useConfirm";
-import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
-import { MainStackNavigationProp } from "../../navigators/MainNavigator";
+import QueResourceClient from "../../../api/QueResourceUtils";
+import CommonHeader from "../../../components/headers/CommonHeader";
+import { useConfirm } from "../../../hooks/useConfirm";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
+import { MainStackNavigationProp } from "../../../navigators/MainNavigator";
 import {
   UploadStackNavigationProp,
   UploadStackParamList,
-} from "../../navigators/UploadNavigator";
-import screens from "../../styles/screens";
-import PlaceType from "../../types/Place";
-import SongType from "../../types/Song";
-import VideoType from "../../types/Video";
+} from "../../../navigators/UploadNavigator";
+import screens from "../../../styles/screens";
+import PlaceType from "../../../types/Place";
+import SongType from "../../../types/Song";
+import VideoType from "../../../types/Video";
 import InputVideoDataScreen from "./InputDataScreen";
 import SelectTypeScreen from "./SelectTypeScreen";
 import { UploadContext } from "./UploadContext";

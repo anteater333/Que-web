@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { bColors, bFont, bSpace } from "../../styles/base";
+import { bColors, bFont, bSpace } from "../../../styles/base";
 
 /** 비디오 업로드 화면 네비게이션 내부 스타일 모음 */
 export const uploadScreenStyle = StyleSheet.create({

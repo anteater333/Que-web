@@ -1,15 +1,15 @@
 import React, { useContext, useEffect } from "react";
 import { SafeAreaView, Text, View } from "react-native";
-import screens from "../../styles/screens";
+import screens from "../../../styles/screens";
 import { uploadScreenStyle as styles } from "./UploadScreen.style";
 import { UploadContext } from "./UploadContext";
 import { ScrollView } from "native-base";
-import CommonTextInput from "../../components/inputs/CommonTextInput";
-import SimplifiedVideoPlayer from "../../components/videoPlayers/SimplifiedVideoPlayer";
+import CommonTextInput from "../../../components/inputs/CommonTextInput";
+import SimplifiedVideoPlayer from "../../../components/videoPlayers/SimplifiedVideoPlayer";
 import { useIsFocused } from "@react-navigation/native";
-import VideoType from "../../types/Video";
-import SongType from "../../types/Song";
-import PlaceType from "../../types/Place";
+import VideoType from "../../../types/Video";
+import SongType from "../../../types/Song";
+import PlaceType from "../../../types/Place";
 
 type InputDataScreenPropType =
   | {

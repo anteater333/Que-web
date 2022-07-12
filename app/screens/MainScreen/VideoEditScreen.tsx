@@ -7,17 +7,17 @@ import React, {
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import QueResourceClient, {
   getVideoDownloadURL,
-} from "../api/QueResourceUtils";
-import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
-import { MainStackScreenProp } from "../navigators/MainNavigator";
-import screens from "../styles/screens";
-import CommonHeader from "../components/headers/CommonHeader";
+} from "../../api/QueResourceUtils";
+import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
+import { MainStackScreenProp } from "../../navigators/MainNavigator";
+import screens from "../../styles/screens";
+import CommonHeader from "../../components/headers/CommonHeader";
 import { VideoDataInputFieldSet } from "./UploadScreen/InputDataScreen";
-import SongType from "../types/Song";
-import PlaceType from "../types/Place";
-import RoundedButton from "../components/buttons/RoundedButton";
-import { bFont, bSpace } from "../styles/base";
-import { useConfirm } from "../hooks/useConfirm";
+import SongType from "../../types/Song";
+import PlaceType from "../../types/Place";
+import RoundedButton from "../../components/buttons/RoundedButton";
+import { bFont, bSpace } from "../../styles/base";
+import { useConfirm } from "../../hooks/useConfirm";
 import { Toast } from "native-base";
 
 /**

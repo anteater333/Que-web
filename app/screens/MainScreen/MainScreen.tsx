@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
-import DummyComponent from "../components/common/DummyComponent";
-import MainScreenHeader from "../components/headers/MainScreenHeader";
-import { MainStackParamList } from "../navigators/MainNavigator";
-import screens from "../styles/screens";
+import DummyComponent from "../../components/common/DummyComponent";
+import MainScreenHeader from "../../components/headers/MainScreenHeader";
+import { MainStackParamList } from "../../navigators/MainNavigator";
+import screens from "../../styles/screens";
 import HomeScreen from "./HomeScreen";
 import UploadScreen from "./UploadScreen/UploadScreen";
 import UserPageScreen from "./UserPageScreen";

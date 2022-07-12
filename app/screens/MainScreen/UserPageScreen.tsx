@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import QueResourceClient, { getUserProfileData } from "../api/QueResourceUtils";
-import MainScreenHeader from "../components/headers/MainScreenHeader";
-import VideoCardList from "../components/lists/VideoCardList";
-import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
-import { MainStackScreenProp } from "../navigators/MainNavigator";
-import { bColors, bFont, bSpace } from "../styles/base";
-import screens from "../styles/screens";
-import UserType from "../types/User";
-import VideoType from "../types/Video";
+import QueResourceClient, {
+  getUserProfileData,
+} from "../../api/QueResourceUtils";
+import MainScreenHeader from "../../components/headers/MainScreenHeader";
+import VideoCardList from "../../components/lists/VideoCardList";
+import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
+import { MainStackScreenProp } from "../../navigators/MainNavigator";
+import { bColors, bFont, bSpace } from "../../styles/base";
+import screens from "../../styles/screens";
+import UserType from "../../types/User";
+import VideoType from "../../types/Video";
 
 /**
  * 사용자 프로필 화면, 스튜디오

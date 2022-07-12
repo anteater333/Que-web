@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction } from "react";
-import SongType from "../../types/Song";
-import PlaceType from "../../types/Place";
+import SongType from "../../../types/Song";
+import PlaceType from "../../../types/Place";
 
 type UploadContextType = {
   /** 상단 바 버튼 활성화 여부 */

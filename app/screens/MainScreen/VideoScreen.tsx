@@ -3,13 +3,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import QueResourceClient, {
   getVideoDownloadURL,
-} from "../api/QueResourceUtils";
-import MainVideoPlayer from "../components/videoPlayers/MainVideoPlayer";
-import { useLoadingIndicator } from "../hooks/useLoadingIndicator";
-import { useViewList } from "../hooks/useViewList";
-import { MainStackScreenProp } from "../navigators/MainNavigator";
-import { bColors } from "../styles/base";
-import VideoType from "../types/Video";
+} from "../../api/QueResourceUtils";
+import MainVideoPlayer from "../../components/videoPlayers/MainVideoPlayer";
+import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
+import { useViewList } from "../../hooks/useViewList";
+import { MainStackScreenProp } from "../../navigators/MainNavigator";
+import { bColors } from "../../styles/base";
+import VideoType from "../../types/Video";
 
 /**
  * 비디오 재생 화면
