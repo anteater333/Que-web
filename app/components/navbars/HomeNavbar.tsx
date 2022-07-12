@@ -99,9 +99,6 @@ function HomeNavBar(props: BottomTabBarProps) {
         if (route.name === "Upload") {
           // 업로드 화면의 경우 상위의 main stack navigator 사용
           props.navigation.getParent()?.navigate(route.name, { merge: true });
-        } else if (route.name === "Preference") {
-          // TBD NotImplemented
-          notImplemented();
         } else {
           // `merge: true` 옵션은 탭 스크린 안의 파라미터가 보존되도록 한다.
           props.navigation.navigate(route.name, { merge: true });

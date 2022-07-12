@@ -62,13 +62,13 @@ function MainScreenHeader(props: NativeStackHeaderProps) {
           </TouchableOpacity>
         </View>
       )}
-      <HomeHeaderButtonGroup hideLogout={!!props.back} />
+      <HomeHeaderButtonGroup />
     </SafeAreaView>
   );
 }
 
 /** 버튼 묶음 코드 분리 */
-function HomeHeaderButtonGroup({ hideLogout }: { hideLogout: boolean }) {
+function HomeHeaderButtonGroup() {
   /** 메인 네비게이터 사용 */
   const navigation = useNavigation<MainStackNavigationProp>();
 
@@ -93,15 +93,6 @@ function HomeHeaderButtonGroup({ hideLogout }: { hideLogout: boolean }) {
 
   return (
     <View style={styles.buttonsContainer} testID="homeHeaderButtonsContainer">
-      {hideLogout ? null : (
-        <TouchableOpacity style={styles.headerButtonView}>
-          <MaterialIcons
-            style={styles.headerButtonIcon}
-            onPress={signOut}
-            name="exit-to-app"
-          />
-        </TouchableOpacity>
-      )}
       <TouchableOpacity
         style={styles.headerButtonView}
         onPress={handleOnPressSearch}

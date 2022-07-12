@@ -4,7 +4,7 @@ import DummyComponent from "../../components/common/DummyComponent";
 import MainScreenHeader from "../../components/headers/MainScreenHeader";
 import { MainStackParamList } from "../../navigators/MainNavigator";
 import screens from "../../styles/screens";
-import HomeScreen from "./HomeScreen";
+import HomeScreen from "./HomeScreen/HomeScreen";
 import UploadScreen from "./UploadScreen/UploadScreen";
 import UserPageScreen from "./UserPageScreen";
 import VideoEditScreen from "./VideoEditScreen";
