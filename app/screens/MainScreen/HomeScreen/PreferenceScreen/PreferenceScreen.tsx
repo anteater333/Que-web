@@ -4,13 +4,45 @@ import { useSignOut } from "../../../../hooks/useSign";
 import screens from "../../../../styles/screens";
 import { MaterialIcons } from "@expo/vector-icons";
 import { bColors, bFont, bSpace } from "../../../../styles/base";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  PreferenceStackNavigationProp,
+  PreferenceStackParamList,
+} from "../../../../navigators/PreferenceNavigator";
+import { DevInfoScreen } from "./DevInfoScreen";
+import { useNavigation } from "@react-navigation/native";
+
+const PreferenceStack = createNativeStackNavigator<PreferenceStackParamList>();
 
 /**
- * 어플리케이션 설정 화면
+ * 어플리케이션 설정 화면 (네비게이터)
  */
 function PreferenceScreen() {
+  return (
+    <View style={screens.defaultScreenLayout}>
+      <PreferenceStack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <PreferenceStack.Screen
+          name="MainMenu"
+          component={PreferenceMainMenuScreen}
+        />
+        <PreferenceStack.Screen name="DevInfo" component={DevInfoScreen} />
+      </PreferenceStack.Navigator>
+    </View>
+  );
+}
+
+/**
+ * 어플리케이션 설정 화면 (설정 메인메뉴)
+ */
+function PreferenceMainMenuScreen() {
   /** 로그아웃 기능 */
   const signOut = useSignOut();
+
+  const preferenceNavigator = useNavigation<PreferenceStackNavigationProp>();
 
   const [preferenceMenuData, _] = useState<PreferenceMenuItemType[]>([
     {
@@ -20,7 +52,9 @@ function PreferenceScreen() {
     },
     {
       menuName: "개발자 정보",
-      onPress: () => {},
+      onPress: useCallback(() => {
+        preferenceNavigator.navigate("DevInfo");
+      }, []),
       iconName: "info-outline",
     },
   ]);

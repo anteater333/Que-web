@@ -39,7 +39,8 @@ export interface RoundedButtonProps extends TextProps {
 
 /**
  * Que 어플리케이션에서 기본적으로 자주 사용하게 될 끝이 둥근 네모난 버튼 컴포넌트
- * <Text> 처럼 사용할 수 있습니다.
+ * `<Text>` 처럼 사용할 수 있습니다.
+ * TBD 버그수정 - StyleSheet.create로 생성한 텍스트 스타일을 프로퍼티로 전달할 시 제대로 반영되지 않음
  */
 function RoundedButton(props: RoundedButtonProps) {
   const insideStyles = buttonInsideStyles(props);
