@@ -144,6 +144,10 @@ function SelectTypeScreen() {
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
+      <Text style={uploadScreenStyle.warningText}>
+        알파 버전 동안 영상의 크기가{`\n`}
+        <Text style={{ fontWeight: "bold" }}>20MB</Text>로 제한됩니다.
+      </Text>
       <View style={uploadScreenStyle.largeButtonsContainer}>
         <TouchableOpacity
           style={[uploadScreenStyle.largeButton]}

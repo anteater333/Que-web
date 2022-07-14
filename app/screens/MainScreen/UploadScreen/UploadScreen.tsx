@@ -82,7 +82,7 @@ function UploadScreen() {
       if (uploadResult.success) {
         alert("영상이 성공적으로 업로드됐습니다.");
         hideLoading();
-        mainNavigator.navigate("Home");
+        mainNavigator.reset({ routes: [{ name: "Home" }] });
       } else {
         // TBD 좀 더 정교한 에러 처리
         alert(

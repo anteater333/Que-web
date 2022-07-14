@@ -60,26 +60,30 @@ function UserPageScreen({
 
   const loading = useLoadingIndicator();
 
+  /** 영상 목록을 처음부터 불러옵니다. 화면 최초 렌더링 시, 리스트 새로고침 시 호출됩니다. */
+  const getInitialData = useCallback(async () => {
+    setNoMoreData(false);
+
+    const initialDataLength = 5;
+    const initialData = await QueResourceClient.getVideoCardDataByUserId(
+      route.params.userId,
+      initialDataLength,
+      0
+    );
+    setVideoDataList(initialData);
+
+    if (initialData.length < initialDataLength) {
+      setNoMoreData(true);
+    }
+  }, []);
+
   /** 초기 데이터 설정 */
   useEffect(() => {
     if (route.params.userId) {
-      async function getInitialData() {
-        loading.showLoading("영상 목록을 불러오고 있습니다.");
-        const initialDataLength = 5;
-        const initialData = await QueResourceClient.getVideoCardDataByUserId(
-          route.params.userId,
-          initialDataLength,
-          0
-        );
-        setVideoDataList(initialData);
-
-        if (initialData.length < initialDataLength) {
-          setNoMoreData(true);
-        }
+      loading.showLoading();
+      getInitialData().finally(() => {
         loading.hideLoading();
-      }
-
-      getInitialData();
+      });
     }
   }, [route.params.userId]);
 
@@ -114,6 +118,7 @@ function UserPageScreen({
           onScrollEnded={getMoreVideoData}
           noMoreData={noMoreData}
           hideNoMoreDataIndicator
+          onRefresh={getInitialData}
         />
       </View>
     </View>

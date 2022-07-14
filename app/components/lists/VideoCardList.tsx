@@ -19,6 +19,7 @@ type VideoCardListProps = {
   noMoreData?: boolean;
   hideNoMoreDataIndicator?: boolean;
   onScrollEnded: () => Promise<void>;
+  onRefresh: () => Promise<void>;
 };
 
 /**
@@ -74,6 +75,19 @@ export default function VideoCardList(props: VideoCardListProps) {
     }
   }, [isLoading, props.noMoreData, props.onScrollEnded]);
 
+  /**
+   * 리스트 새로고침 시 처리 함수
+   */
+  const handleRefresh = useCallback(async () => {
+    if (!isLoading) {
+      setIsLoading(true);
+
+      await props.onRefresh();
+
+      setIsLoading(false);
+    }
+  }, [isLoading, props.onRefresh]);
+
   return (
     <FlatList
       showsHorizontalScrollIndicator={false}
@@ -87,6 +101,8 @@ export default function VideoCardList(props: VideoCardListProps) {
       renderItem={handleRenderItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.2}
+      onRefresh={props.onRefresh}
+      refreshing={isLoading}
       keyExtractor={(listItem) => {
         if ((listItem as VideoType).videoId)
           return (listItem as VideoType).videoId!;

@@ -1,6 +1,5 @@
-import { useIsFocused } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import { View } from "react-native";
 import QueResourceClient from "../../../api/QueResourceUtils";
 import notices from "../../../assets/notices/notices";
 import VideoCardList from "../../../components/lists/VideoCardList";
@@ -25,10 +24,13 @@ function TimelineScreen() {
   /** 서비스 공지사항 존재 시 안내 메세지 표시 */
   const [hasNotice, setHasNotice] = useState<boolean>(false);
 
-  const loading = useLoadingIndicator();
+  /** 최초 영상 목록 로드 여부 */
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const { user } = useAuth();
   const { noticeList, addUser } = useNotice("ALPHA01"); // !! 공지 수정 시 아이디 변경
+
+  const loading = useLoadingIndicator();
 
   /** 공지 표출 여부 판단 */
   useFocusEffect(
@@ -40,26 +42,32 @@ function TimelineScreen() {
     }, [user.userId, noticeList])
   );
 
+  /** 영상 목록을 처음부터 불러옵니다. 화면 최초 렌더링 시, 리스트 새로고침 시 호출됩니다. */
+  const getInitialData = useCallback(async () => {
+    setNoMoreData(false);
+    const initialDataLength = 5;
+    const initialData = await QueResourceClient.getVideoCardData(
+      initialDataLength,
+      0
+    );
+    setVideoDataList(initialData);
+
+    if (initialData.length < initialDataLength) {
+      setNoMoreData(true);
+    }
+  }, []);
+
   /** 초기 데이터 설정 */
   useFocusEffect(
     useCallback(() => {
-      async function getInitialData() {
-        loading.showLoading("영상 목록을 불러오고 있습니다.");
-        const initialDataLength = 5;
-        const initialData = await QueResourceClient.getVideoCardData(
-          initialDataLength,
-          0
-        );
-        setVideoDataList(initialData);
-
-        if (initialData.length < initialDataLength) {
-          setNoMoreData(true);
-        }
-        loading.hideLoading();
+      if (!isInitialized) {
+        loading.showLoading();
+        getInitialData().finally(() => {
+          setIsInitialized(true);
+          loading.hideLoading();
+        });
       }
-
-      getInitialData();
-    }, [])
+    }, [isInitialized])
   );
 
   /** 스크롤 시 비디오 더 가져오기 */
@@ -86,6 +94,7 @@ function TimelineScreen() {
         videoData={videoDataList}
         onScrollEnded={getMoreVideoData}
         noMoreData={noMoreData}
+        onRefresh={getInitialData}
       />
     </View>
   );

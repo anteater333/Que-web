@@ -13,6 +13,11 @@ export const uploadScreenStyle = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  warningText: {
+    textAlign: "center",
+    fontSize: bFont.middle,
+    color: bColors.primary,
+  },
   largeButton: {
     alignItems: "center",
     justifyContent: "center",
