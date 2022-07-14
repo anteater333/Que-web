@@ -54,6 +54,7 @@ const menuModalStyles = StyleSheet.create({
     height: "80%",
     borderRadius: 10,
     paddingHorizontal: bSpace.middle,
+    overflow: "hidden",
   },
   noticeModalHeader: {
     flexDirection: "row",

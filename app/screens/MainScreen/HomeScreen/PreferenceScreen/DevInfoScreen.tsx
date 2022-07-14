@@ -1,4 +1,4 @@
-import Clipboard from "@react-native-clipboard/clipboard";
+import * as Clipboard from "expo-clipboard";
 import { useAssets } from "expo-asset";
 import { useToast } from "native-base";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import {
   Linking,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -31,16 +32,18 @@ export function DevInfoScreen() {
     require("../../../../assets/dev/profile.jpg"),
     require("../../../../assets/dev/graph.png"),
     require("../../../../assets/socials/github-small.png"),
+    require("../../../../assets/dev/sylye.jpg"),
   ]);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(true);
   const [isFollowed, setIsFollowed] = useState<boolean>(false);
+  const [myMailAddr, _] = useState<string>("anteater1056@gmail.com");
 
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
 
   const toast = useToast();
 
   return (
-    <View style={screens.defaultScreenLayout}>
+    <ScrollView style={screens.defaultScreenLayout}>
       <MenuModal
         visible={menuModalVisible}
         setModalVisible={setMenuModalVisible}
@@ -50,11 +53,20 @@ export function DevInfoScreen() {
         <MenuModalItem menuText="그리고 여긴" onMenuPress={() => {}} />
         <MenuModalItem
           menuText="여러 기능들이 포함될 예정입니다."
-          onMenuPress={() => {}}
+          onMenuPress={() => {
+            alert("눌러도 별 거 없어요..");
+          }}
         />
       </MenuModal>
       <View style={style.rootContainer}>
-        <View style={style.menuContainer}>
+        <View
+          onTouchEnd={() => {
+            toast.show({
+              description: "죄송하지만 준비한 페이지가 하나밖에 없어요.",
+            });
+          }}
+          style={style.menuContainer}
+        >
           <Text style={[style.menuText, style.menuTextSelected]}>홈</Text>
           <Text style={style.menuText}>영상</Text>
           <Text style={style.menuText}>리액션</Text>
@@ -70,9 +82,17 @@ export function DevInfoScreen() {
             ) : null}
             <View style={style.profileLevelIconContainer}>
               <View style={style.profileLevelIconDeco} />
-              <Text selectable={false} style={style.profileLevelIcon}>
-                🔰
-              </Text>
+              <Pressable
+                onPress={() => {
+                  toast.show({
+                    description: "이거는 그.. 레벨 같은 겁니다.",
+                  });
+                }}
+              >
+                <Text selectable={false} style={style.profileLevelIcon}>
+                  🔰
+                </Text>
+              </Pressable>
               <View style={style.profileLevelIconDeco} />
             </View>
           </View>
@@ -105,7 +125,11 @@ export function DevInfoScreen() {
               });
               setIsFollowed(!isFollowed);
             }}
-            style={{ flex: 1, fontSize: bFont.xlarge }}
+            style={{
+              flex: 1,
+              fontSize: bFont.large,
+              textAlignVertical: "center",
+            }}
             buttonType={isFollowed ? "enabledBorder" : "enabledDark"}
           >
             {isFollowed ? "언팔로우" : "팔로우"}
@@ -227,20 +251,34 @@ export function DevInfoScreen() {
             <Text
               style={style.linkText}
               onPress={() => {
-                if (Platform.OS === "android")
-                  Clipboard.setString("anteater1056@gmail.com");
-                else {
-                  navigator.clipboard.writeText("anteater1056@gmail.com");
-                }
+                Clipboard.setString(myMailAddr);
+
                 toast.show({ description: "복사되었습니다." });
               }}
             >
-              anteater1056@gmail.com
+              {myMailAddr}
             </Text>
+          </View>
+          <View style={style.tasteSection}>
+            <Text style={style.tasteTextTop}>실례가 안된다면</Text>
+            <Text style={style.tasteTextMiddle}>커피 한 잔만 사주십시오.</Text>
+            <Pressable
+              style={style.linkButton}
+              onPress={() => {
+                Linking.openURL("https://www.buymeacoffee.com/anteater333");
+              }}
+            >
+              {assets ? (
+                <Image
+                  style={style.linkButton}
+                  source={assets[3] as ImageSourcePropType}
+                />
+              ) : null}
+            </Pressable>
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -275,6 +313,7 @@ const style = StyleSheet.create({
     borderRadius: (bFont.middle * 10) / 2,
   },
   profileLevelIconContainer: {
+    flex: 1,
     flexDirection: "row",
     marginTop: bSpace.middle,
     height: bFont.large,
@@ -320,7 +359,6 @@ const style = StyleSheet.create({
     backgroundColor: bColors.greyTetiary,
     width: bSpace.small / 2,
     height: "100%",
-    marginHorizontal: bSpace.large,
   },
   followTextContainer: {
     alignItems: "center",
@@ -347,17 +385,17 @@ const style = StyleSheet.create({
   },
   countContainer: {
     flex: 1.5,
+    justifyContent: "space-between",
   },
-  countSection: {
-    marginBottom: bSpace.xlarge,
-  },
+  countSection: {},
   countTextTop: {
-    fontSize: bFont.xlarge,
+    fontSize: bFont.large,
   },
   countTextBottom: {
     fontSize: bFont.large,
   },
   graphContainer: {
+    marginLeft: bSpace.xlarge,
     flex: 2,
   },
   graphPlaceholder: {
@@ -367,9 +405,10 @@ const style = StyleSheet.create({
   tasteContainer: {
     marginTop: bSpace.xlarge,
     paddingHorizontal: bSpace.xlarge,
+    resizeMode: "contain",
   },
   tasteSection: {
-    marginBottom: bSpace.xlarge * 2,
+    marginBottom: bSpace.xlarge,
   },
   tasteTextTop: {
     fontSize: bFont.xlarge,
@@ -377,7 +416,7 @@ const style = StyleSheet.create({
   },
   tasteTextMiddle: {
     fontSize: bFont.middle,
-    marginBottom: bSpace.xlarge,
+    marginBottom: bSpace.middle,
   },
   linkButton: {
     // 임시라서 그냥 하드코딩

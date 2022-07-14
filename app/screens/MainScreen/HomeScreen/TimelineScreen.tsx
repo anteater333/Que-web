@@ -33,7 +33,6 @@ function TimelineScreen() {
   /** 공지 표출 여부 판단 */
   useFocusEffect(
     useCallback(() => {
-      console.log(user.userId, noticeList);
       if (user.userId && !noticeList[user.userId]) {
         setHasNotice(true);
         addUser(user.userId);
