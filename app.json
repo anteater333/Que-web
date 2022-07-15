@@ -2,31 +2,39 @@
   "expo": {
     "name": "Que",
     "slug": "Que",
-    "version": "1.0.0",
+    "scheme": "queredirect",
+    "version": "0.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./app/assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./app/assets/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "bundleIdentifier": "com.que.que-ios-client",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.944223797321-btlbg3kqav2uicn03cpc0qvea1f0fq6j"
+        }
+      },
+      "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.que.queandroidclient",
+      "googleServicesFile": "./firebase/google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./app/assets/favicon.png"
     }
   }
 }
