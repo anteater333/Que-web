@@ -61,9 +61,9 @@ export function CatchPhraseScreen() {
   /** 로그인 여부 파악 완료되면 화면 전환 */
   useEffect(() => {
     if (isFocused && signed && !!user.userId) {
-      Toast.show({ description: `안녕하세요. ${user.nickname}님.` });
+      // Toast.show({ description: `안녕하세요. ${user.nickname}님.` });
       // 로그인 되어 있다면 메인 화면으로
-      rootNavigator.navigate("Main");
+      rootNavigator.reset({ routes: [{ name: "Main" }] });
     }
   }, [isFocused, signed, user.userId]);
 

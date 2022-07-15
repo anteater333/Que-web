@@ -1,10 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAssets } from "expo-asset";
-import { useCallback, useEffect } from "react";
+import Avvvatars from "avvvatars-react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Image,
-  ImageSourcePropType,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
@@ -12,6 +10,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import QueResourceClient from "../../api/QueResourceUtils";
 import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 import profilePictureStyles from "./ProfilePictureButton.style";
 
@@ -22,17 +21,38 @@ interface ProfilePictureProps extends TouchableOpacityProps {
   style?: StyleProp<ViewStyle & { fontSize?: number }>;
 }
 
-// TBD 프로퍼티로 userProfilePictureURL을 받아 표시. 해당속성이 없으면 userEmail or userId로 Avvvatars or Boring-avatars 생성해서 임시 프로필 보여주기
-
 /** 프로필 사진을 포함한 버튼, 누르면 사용자 페이지로 이동합니다. TouchableOpacity 처럼 작동합니다. */
 function ProfilePicture(props: ProfilePictureProps) {
   /** 페이지 전환을 위한 메인 네비게이터 사용 */
   const mainNavigator = useNavigation<MainStackNavigationProp>();
 
-  /** 임시 프로필 사진Placeholder */
-  const [assets, error] = useAssets([
-    require("../../../potato/placeholders/profilePic.png"),
-  ]);
+  /** 프로필 사진 URL */
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>("");
+
+  /** 프로필 로딩 중 여부 */
+  const [profileLoading, setProfileLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function getDownloadUrl() {
+      setProfileLoading(true);
+      if (props.userId) {
+        const downloadUrlResult = await QueResourceClient.getUserProfilePicture(
+          props.userId
+        );
+
+        if (downloadUrlResult.success) {
+          setProfilePictureUrl(downloadUrlResult.payload!);
+        } else {
+          setProfilePictureUrl("");
+        }
+      } else {
+        setProfilePictureUrl("");
+      }
+      setProfileLoading(false);
+    }
+
+    getDownloadUrl();
+  }, [props.userId]);
 
   /**
    * 카드 컴포넌트의 프로필 사진 영역을 눌렀을 때 실행됩니다.
@@ -60,12 +80,16 @@ function ProfilePicture(props: ProfilePictureProps) {
       onPress={navigateToUserPage}
       style={[props.style, styles.default]}
     >
-      {assets ? (
+      {profileLoading ? null : profilePictureUrl ? (
         <Image
           style={[styles.profilePic]}
-          source={assets[0] as ImageSourcePropType}
+          source={{ uri: profilePictureUrl }}
         />
-      ) : null}
+      ) : (
+        <View style={[styles.profilePic]}>
+          <Avvvatars value={props.userId} style="shape" />
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

@@ -6,18 +6,20 @@ import {
   Text,
   View,
 } from "react-native";
-import mockVideoCardData from "../../../potato/mockData/VideoCardData";
-import VideoCard, { VideoCardProps } from "../cards/VideoCard";
+import VideoCard from "../cards/VideoCard";
 
-import { Asset, useAssets } from "expo-asset";
+import { useAssets } from "expo-asset";
 import styles from "./VideoCardList.style";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import VideoType from "../../types/Video";
-import { getVideoCardData } from "../../api/QueResourceUtils";
 import { bColors } from "../../styles/base";
 
 type VideoCardListProps = {
-  initialData?: VideoType[];
+  videoData: VideoType[];
+  noMoreData?: boolean;
+  hideNoMoreDataIndicator?: boolean;
+  onScrollEnded: () => Promise<void>;
+  onRefresh: () => Promise<void>;
 };
 
 /**
@@ -27,22 +29,7 @@ type VideoCardListProps = {
  * @returns
  */
 export default function VideoCardList(props: VideoCardListProps) {
-  const [cardItemData, setCardItemData] = useState<(VideoType | Indicator)[]>(
-    []
-  );
-  const [noMoreData, setNoMoreData] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {}, [cardItemData]);
-
-  /**
-   * 최초 데이터 설정
-   */
-  const handleLayout = useCallback(async () => {
-    setIsLoading(false);
-    setNoMoreData(false);
-    setCardItemData(await getVideoCardData(5, 0));
-  }, [cardItemData]);
 
   /**
    * 카드 리스트 아이템 렌더링 함수
@@ -60,59 +47,62 @@ export default function VideoCardList(props: VideoCardListProps) {
           />
         );
       } else {
-        // 로딩중 표시
+        // 인디케이터 컴포넌트 처리
         if ((item as Indicator).indicatorType == "isLoading")
-          return <LoadingIndicator />;
-        // 더 이상 데이터가 없는 경우 데이터 없음 표시
+          // 로딩중 표시
+          return isLoading ? <LoadingIndicator /> : null;
         else if ((item as Indicator).indicatorType == "noMoreData")
-          return <NoMoreDataIndicator />;
-        else return null;
+          // 더 이상 데이터가 없는 경우 데이터 없음 표시
+          return props.noMoreData && !props.hideNoMoreDataIndicator ? (
+            <NoMoreDataIndicator />
+          ) : null;
       }
+      return null;
     },
-    [cardItemData, isLoading, noMoreData]
+    [props.noMoreData, isLoading]
   );
 
   /**
    * 스크롤이 끝까지 내려갔을 때 처리 함수
-   * 데이터를 더 불러온다.
    */
   const handleEndReached = useCallback(async () => {
-    if (!noMoreData && !isLoading) {
-      // 한 번에 가져올 데이터 수 (서비스가 가진 데이터 수에 따라 적절하게 늘리자)
-      const cardPerPage = 3;
-
+    if (!isLoading && !props.noMoreData) {
       setIsLoading(true);
-      setCardItemData((prev) => [...prev, { indicatorType: "isLoading" }]);
-      // 데이터 가져오기
-      const newAppendData = await getVideoCardData(cardPerPage, 1);
-      setIsLoading(false);
-      setCardItemData([...cardItemData.slice(0, -1)]);
 
-      if (newAppendData.length == cardPerPage) {
-        // 추가 데이터가 있는 경우
-        setCardItemData((prev) => [...prev, ...newAppendData]);
-      } else {
-        // 데이터가 더 없는 경우
-        setNoMoreData(true);
-        setCardItemData((prev) => [
-          ...prev,
-          ...newAppendData,
-          { indicatorType: "noMoreData" },
-        ]);
-      }
+      await props.onScrollEnded();
+
+      setIsLoading(false);
     }
-  }, [cardItemData]);
+  }, [isLoading, props.noMoreData, props.onScrollEnded]);
+
+  /**
+   * 리스트 새로고침 시 처리 함수
+   */
+  const handleRefresh = useCallback(async () => {
+    if (!isLoading) {
+      setIsLoading(true);
+
+      await props.onRefresh();
+
+      setIsLoading(false);
+    }
+  }, [isLoading, props.onRefresh]);
 
   return (
     <FlatList
       showsHorizontalScrollIndicator={false}
       testID="videoCardList"
-      data={cardItemData}
-      onLayout={handleLayout}
+      data={[
+        ...props.videoData,
+        { indicatorType: "isLoading" },
+        { indicatorType: "noMoreData" },
+      ]}
       contentContainerStyle={styles.cardListConatiner}
       renderItem={handleRenderItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.2}
+      onRefresh={props.onRefresh}
+      refreshing={isLoading}
       keyExtractor={(listItem) => {
         if ((listItem as VideoType).videoId)
           return (listItem as VideoType).videoId!;
@@ -146,7 +136,9 @@ function NoMoreDataIndicator() {
           source={assets[0] as ImageSourcePropType}
         />
       ) : null}
-      <Text style={styles.easterMessage}>QUE는 아직 자라나는 중이에요 ;)</Text>
+      <Text
+        style={styles.easterMessage}
+      >{`QUE는 아직 자라나는 중이에요 ;)`}</Text>
     </View>
   );
 }

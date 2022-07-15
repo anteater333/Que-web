@@ -16,6 +16,10 @@ import LikeType from "../../types/Like";
 import { MAX_VIDEO_LIKE_LIMIT } from "../../api/interfaces";
 import { useToast } from "native-base";
 import UserType from "../../types/User";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
+import { MainStackNavigationProp } from "../../navigators/MainNavigator";
 
 /** 조작하지 않을 시 컨트롤러 사라지는 시간 */
 const CONTROL_HIDE_TIMER = 2000;
@@ -37,7 +41,17 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   // const [videoPlayableBuffer, setVideoPlayableBuffer] = useState<number>(0);
   const [isControlHidden, setIsControlHidden] = useState<boolean>(false);
   const [isInfoHidden, setIsInfoHidden] = useState<boolean>(false);
-  const [uploaderData, setUploaderData] = useState<UserType>({});
+
+  /** 현재 로그인한 사용자의 영상인지 확인 */
+  const [isMyVideo, setIsMyVideo] = useState<boolean>(false);
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user.userId === (props.videoData.uploader as UserType).userId) {
+      setIsMyVideo(true);
+    } else {
+      setIsMyVideo(false);
+    }
+  }, [user.userId, props.videoData.uploader]);
 
   /** 에러 표시용 */
   const toast = useToast();
@@ -151,7 +165,18 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   /** 좋아요 추가 가능 여부 */
   const [noMoreLike, setNoMoreLike] = useState<boolean>(false);
 
+  // 영상 수정 관련 기능 영역
+  /** 네비게이션 객체 사용 */
+  const navigation = useNavigation<MainStackNavigationProp>();
+  const handleOnEditPressed = useCallback(() => {
+    navigation.navigate("VideoEdit", { videoData: props.videoData });
+  }, [props.videoData]);
+
+  // 아직 미구현 표시
+  const notImplemented = useNotImplementedWarning();
+
   /** 좋아요 버튼 터치 시 API 호출 함수 */
+  // TBD 좋아요 / 좋아요 취소 시 화면상의 좋아요 개수 반영하기, (숫자 증감, 좋아요 개수를 state로 만들기)
   const likeThisVideo = useCallback(async () => {
     if (props.videoData.videoId && !noMoreLike) {
       // videoPosition status를 사용하면 즉각적으로 위치가 업데이트 되지 않습니다.
@@ -193,7 +218,6 @@ function MainVideoPlayer(props: VideoPlayerProps) {
   }, []);
 
   /** 화면 최초 로드 시 영상 데이터 불러오기 */
-  // TBD 이 코드 참고해서 video 화면 처음 로드됐을때 video에 대한 모든 정보 가져오기
   useEffect(() => {
     const getLikes = async () => {
       const rt = await QueResourceClient.getMyLikeReactions(
@@ -203,7 +227,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
 
       if (rt.success) setLikeDataArray(rt.payload!);
       else {
-        console.log(rt.errorType);
+        console.error(rt.errorType);
       }
     };
 
@@ -338,14 +362,30 @@ function MainVideoPlayer(props: VideoPlayerProps) {
                     ? (props.videoData.uploader as UserType).nickname
                     : "placeholderUser"}
                 </Text>
-                <Pressable>
-                  <MaterialIcons
-                    selectable={false}
-                    name="person-add"
-                    color={iconStyles.color}
-                    size={iconStyles.sizeXlarge}
-                  />
-                </Pressable>
+                {isMyVideo ? (
+                  <Pressable onPress={handleOnEditPressed}>
+                    <MaterialIcons
+                      selectable={false}
+                      name="create"
+                      color={iconStyles.color}
+                      size={iconStyles.sizeXlarge}
+                    />
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    onPress={() => {
+                      // TBD 팔로우 기능
+                      notImplemented();
+                    }}
+                  >
+                    <MaterialIcons
+                      selectable={false}
+                      name="person-add"
+                      color={iconStyles.color}
+                      size={iconStyles.sizeXlarge}
+                    />
+                  </Pressable>
+                )}
               </View>
               <View style={styles.videoInfoRow}>
                 {/* {TBD 더보기 누르면 description 표시} */}
@@ -390,6 +430,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
               <Pressable
                 onPress={() => {
                   /** TBD 평가하기 */
+                  notImplemented();
                 }}
               >
                 <MaterialIcons
@@ -416,7 +457,7 @@ function MainVideoPlayer(props: VideoPlayerProps) {
           useLikes
           onLike={likeThisVideo}
           onDislike={dislikeThisVideo}
-          likesData={/** 임시데이터 */ likeDataArray}
+          likesData={likeDataArray}
           noMoreLike={noMoreLike}
         />
       </View>

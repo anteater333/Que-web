@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -7,14 +7,19 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./MenuModal.style";
+import styles from "./Modal.style";
+
+// TBD Ionicons => MaterialIcon으로 변경하기
 
 /**
  * 메뉴 모달 컴포넌트
  * @param props
  */
 export default function MenuModal(props: MenuModalProps) {
-  const onCloseRequested = () => props.setModalVisible(!props.visible);
+  const onCloseRequested = useCallback(
+    () => props.setModalVisible(!props.visible),
+    [props.visible]
+  );
 
   return (
     <Modal

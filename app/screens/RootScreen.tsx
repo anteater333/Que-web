@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
 import screens from "../styles/screens";
 import { RootStackParamList } from "../navigators/RootNavigator";
-import MainScreen from "./MainScreen";
+import MainScreen from "./MainScreen/MainScreen";
 import OnBoardingScreen from "./OnBoardingScreen/OnBoardingScreen";
 
 /** 최상단 네비게이터 */

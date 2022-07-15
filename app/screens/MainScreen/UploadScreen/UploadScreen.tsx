@@ -2,20 +2,20 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
-import QueResourceClient from "../../api/QueResourceUtils";
-import CommonHeader from "../../components/headers/CommonHeader";
-import { useConfirm } from "../../hooks/useConfirm";
-import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
-import { MainStackNavigationProp } from "../../navigators/MainNavigator";
+import QueResourceClient from "../../../api/QueResourceUtils";
+import CommonHeader from "../../../components/headers/CommonHeader";
+import { useConfirm } from "../../../hooks/useConfirm";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
+import { MainStackNavigationProp } from "../../../navigators/MainNavigator";
 import {
   UploadStackNavigationProp,
   UploadStackParamList,
-} from "../../navigators/UploadNavigator";
-import screens from "../../styles/screens";
-import PlaceType from "../../types/Place";
-import SongType from "../../types/Song";
-import VideoType from "../../types/Video";
-import InputDataScreen from "./InputDataScreen";
+} from "../../../navigators/UploadNavigator";
+import screens from "../../../styles/screens";
+import PlaceType from "../../../types/Place";
+import SongType from "../../../types/Song";
+import VideoType from "../../../types/Video";
+import InputVideoDataScreen from "./InputDataScreen";
 import SelectTypeScreen from "./SelectTypeScreen";
 import { UploadContext } from "./UploadContext";
 
@@ -45,7 +45,7 @@ function UploadScreen() {
   const mainNavigator = useNavigation<MainStackNavigationProp>();
   const uploadNavigator = useNavigation<UploadStackNavigationProp>();
 
-  const { hideLoading, setLoadingMessage, showLoading } = useLoadingIndicator();
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /**
    * 업로드 확인 버튼 눌렀을 때 실행되는 콜백함수
@@ -55,10 +55,9 @@ function UploadScreen() {
     // TBD 업로드 API 함수 호출 및 업로드 진행률 표시 방법론 구상
     // TBD 업로드 하시겠습니까? 질문하기.
     if (await asyncAlert("업로드 하시겠습니까?")) {
-      setLoadingMessage(
+      showLoading(
         `영상을 업로드 중입니다.\n제발 종료하지 말아주세요...\n로딩은 개선 예정입니다.`
       );
-      showLoading();
 
       const newVideoData: VideoType = {
         title: videoTitle,
@@ -83,7 +82,7 @@ function UploadScreen() {
       if (uploadResult.success) {
         alert("영상이 성공적으로 업로드됐습니다.");
         hideLoading();
-        mainNavigator.navigate("Home");
+        mainNavigator.reset({ routes: [{ name: "Home" }] });
       } else {
         // TBD 좀 더 정교한 에러 처리
         alert(
@@ -158,7 +157,7 @@ function UploadScreen() {
           <UploadStack.Screen
             options={{ headerShown: true }}
             name="InputData"
-            component={InputDataScreen}
+            component={InputVideoDataScreen}
           />
           {/* TBD 음악 검색 시스템 개발하기 (장기계획) */}
           {/* <UploadStack.Screen

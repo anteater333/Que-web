@@ -27,7 +27,7 @@ export function dataURLToBlob(dataURL: string): Promise<Blob> {
       resolve(xhr.response as Blob);
     };
     xhr.onerror = function (e) {
-      console.log(e);
+      console.error(e);
       reject(new TypeError("Network request failed"));
     };
     xhr.responseType = "blob";

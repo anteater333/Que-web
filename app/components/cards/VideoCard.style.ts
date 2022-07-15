@@ -29,13 +29,21 @@ const videoCardStyles = StyleSheet.create({
     height: "100%",
     backgroundColor: bColors.black + bColors.tpPrimary,
   },
+  videoThumbnailText: {
+    backgroundColor: bColors.black + bColors.tpPrimary,
+    color: bColors.white,
+    fontSize: bFont.small,
+  },
+  videoDate: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    paddingHorizontal: bSpace.small,
+  },
   videoTime: {
     position: "absolute",
     bottom: 8,
     right: 8,
-    backgroundColor: bColors.black + bColors.tpPrimary,
-    color: bColors.white,
-    fontSize: bFont.small,
     paddingHorizontal: bSpace.small,
   },
   optionButton: {
@@ -58,7 +66,7 @@ const videoCardStyles = StyleSheet.create({
     height: infoViewHeight,
     backgroundColor: bColors.white,
     flexDirection: "row",
-    alignContent: "center",
+    justifyContent: "space-between",
   },
   profilePic: {
     alignSelf: "center",
@@ -66,8 +74,9 @@ const videoCardStyles = StyleSheet.create({
     margin: bSpace.middle,
   },
   infoTitleView: {
-    flexGrow: 2,
-    marginTop: bSpace.large,
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "center",
   },
   infoTitleText: {
     height: bFont.middle + bFont.small / 2,
@@ -81,6 +90,8 @@ const videoCardStyles = StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: bSpace.middle,
     marginTop: bSpace.large,
+    marginLeft: bSpace.xlarge,
+    justifyContent: "flex-end",
   },
   reactionChildView: {
     marginRight: bSpace.large,
@@ -91,6 +102,7 @@ const videoCardStyles = StyleSheet.create({
     fontSize: bFont.middle + 2,
     marginBottom: bSpace.small,
     lineHeight: 16,
+    maxWidth: bSpace.xlarge * 5,
   },
   reactionButtonEnabled: {
     color: bColors.primary,

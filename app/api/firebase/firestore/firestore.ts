@@ -11,7 +11,9 @@ import {
   setDoc,
   increment,
   deleteField,
-  Timestamp,
+  deleteDoc,
+  where,
+  QueryConstraint,
 } from "firebase/firestore";
 
 import { VideoCollection, UserCollection } from "./collections";
@@ -33,34 +35,26 @@ let lastDocument: QueryDocumentSnapshot<VideoType>;
 
 // TBD ID로 비디오 정보 불러오는 API
 
-/**
- * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
- * Firestore Client side SDK는 offset 기능을 지원하지 않기 때문에 page 변수는 제대로 작동하지 않습니다.
- * @param per 한 번에 가저올 데이터 수
- * @param page 페이지 수(0일 경우 초기화, 1일 경우 다음 페이지)
- * @returns
- */
-export async function getVideoCardDataFromFirestore(
+export async function getVideoCardDataByUserIdFromFirestore(
+  userId: string,
   per: number,
   page: number
-): Promise<VideoType[]> {
-  let videoCardQuery;
-  if (page == 0) {
-    // pagination 초기화
-    videoCardQuery = query(
-      VideoCollection,
-      orderBy("uploadedAt", "desc"),
-      limit(per)
-    );
-  } else {
-    // 다음 페이지
-    videoCardQuery = query(
-      VideoCollection,
-      orderBy("uploadedAt", "desc"),
-      limit(per),
-      startAfter(lastDocument)
-    );
+) {
+  /** Building queries */
+  const queryConstraintsArray: QueryConstraint[] = [
+    orderBy("uploadedAt", "desc"),
+    limit(per),
+  ];
+
+  if (page == 1) {
+    queryConstraintsArray.push(startAfter(lastDocument));
   }
+  if (userId) {
+    const userDocRef = doc(UserCollection, userId);
+    queryConstraintsArray.push(where("uploader", "==", userDocRef));
+  }
+
+  const videoCardQuery = query(VideoCollection, ...queryConstraintsArray);
 
   try {
     // 쿼리를 통해 문서 스냅샷 생성
@@ -71,7 +65,13 @@ export async function getVideoCardDataFromFirestore(
     // 반환할 데이터셋 제작
     const rtDataset: VideoType[] = [];
     for await (const doc of querySnapshot.docs) {
-      const filteredData = { ...doc.data() };
+      const wholeData = doc.data();
+
+      /** 비디오 카드에 필요한 데이터만 추출 */
+      const filteredData: VideoType = {
+        ...doc.data(),
+        uploadedAt: timestampToDate(wholeData.uploadedAt),
+      };
       filteredData.videoId = doc.id;
 
       // 사용자 데이터 생성
@@ -99,24 +99,47 @@ export async function getVideoCardDataFromFirestore(
 }
 
 /**
+ * 파이어스토어에 접근해 비디오 카드에 사용할 데이터를 가져옴.
+ * Firestore Client side SDK는 offset 기능을 지원하지 않기 때문에 page 변수는 제대로 작동하지 않습니다.
+ * @param per 한 번에 가저올 데이터 수
+ * @param page 페이지 수(0일 경우 초기화, 1일 경우 다음 페이지)
+ * @returns
+ */
+export async function getVideoCardDataFromFirestore(
+  per: number,
+  page: number
+): Promise<VideoType[]> {
+  return await getVideoCardDataByUserIdFromFirestore("", per, page);
+}
+
+/**
  * userId를 입력받아 특정 유저에 대한 프로필 데이터를 가져옴
  * @param userId
  * @returns
  */
 export async function getUserProfile(
   userId: string
-): Promise<{ user: UserType; errorType?: QueResourceResponseErrorType }> {
+): Promise<QueResourceResponse<UserType>> {
   try {
     const userDataSnap = await getDoc<UserType>(doc(UserCollection, userId));
 
     if (!userDataSnap.exists()) {
-      return { user: {}, errorType: QueResourceResponseErrorType.NotFound };
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
     } else {
-      return { user: { userId: userId, ...userDataSnap.data() } };
+      return {
+        success: true,
+        payload: { userId: userId, ...userDataSnap.data() },
+      };
     }
   } catch (error) {
     console.error(error);
-    return { user: {}, errorType: QueResourceResponseErrorType.UndefinedError };
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -142,8 +165,10 @@ export async function updateCurrentUserProfile(
       !updateData.description ||
       !updateData.nickname ||
       !updateData.profilePictureUrl
-    )
-      savedDoc = (await getUserProfile(currentUid)).user;
+    ) {
+      const docResult = await getUserProfile(currentUid);
+      savedDoc = docResult.payload ? docResult.payload : {};
+    }
 
     await updateDoc<UserType>(doc(UserCollection, currentUid), {
       description: updateData.description
@@ -200,29 +225,68 @@ export async function setUserDocument(
  * 비디오 메타 정보를 입력합니다.
  * TBD 필요하지 않은 데이터가 초기에 생성되는지 파악하기
  * @param videoData 비디오 정보
+ * @param videoId 비디오 아이디, 비디오 아이디가 전달되지 않으면 새 문서 생성
  */
-export async function setVideoDocument(videoData: VideoType): Promise<string> {
+export async function setVideoDocument(
+  videoData: VideoType,
+  videoId?: string
+): Promise<string> {
   try {
-    const currentUid = getCurrentUID();
-    const newDocRef = doc(VideoCollection);
-    const videoId = newDocRef.id;
+    if (!videoId) {
+      const currentUid = getCurrentUID();
+      const videoDocRef = doc(VideoCollection);
+      const videoId = videoDocRef.id;
 
-    const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
-    await setDoc<VideoType>(newDocRef, {
-      ...videoData,
-      sourceUrl:
-        storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
-      thumbnailUrl:
-        storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
-      uploadedAt: new Date(),
-      uploadDone: false,
-      uploader: doc(UserCollection, currentUid),
-    });
+      const storagePathPrefix = "gs://" + firebaseConfig.storageBucket + "/";
+      await setDoc<VideoType>(videoDocRef, {
+        ...videoData,
+        sourceUrl:
+          storagePathPrefix + `users/${currentUid}/videos/${videoId}/video`,
+        thumbnailUrl:
+          storagePathPrefix + `users/${currentUid}/videos/${videoId}/thumbnail`,
+        uploadedAt: new Date(),
+        uploadDone: false,
+        uploader: doc(UserCollection, currentUid),
+      });
 
-    return newDocRef.id;
+      return videoDocRef.id;
+    } else {
+      // TBD 인증 blocking, 내 영상만 수정할 수 있도록 하기
+      const videoDocRef = doc(VideoCollection, videoId);
+      await setDoc<VideoType>(videoDocRef, videoData, { merge: true });
+
+      return videoDocRef.id;
+    }
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+/** 별 큰 의미 없는 래핑 함수 */
+export async function updateVideoDocument(
+  videoId: string,
+  newVideoData: VideoType
+): Promise<QueResourceResponse> {
+  const currentUid = getCurrentUID();
+  if (!currentUid) {
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.SignInRequired,
+    };
+  }
+
+  try {
+    await setVideoDocument(newVideoData, videoId);
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      errorType: QueResourceResponseErrorType.UndefinedError,
+    };
   }
 }
 
@@ -265,6 +329,52 @@ export async function getVideoDocument(
       success: false,
       errorType: QueResourceResponseErrorType.UndefinedError,
     };
+  }
+}
+
+/** 비디오 문서를 삭제합니다. */
+export async function deleteVideoDocument(
+  videoId: string
+): Promise<QueResourceResponse> {
+  try {
+    /** 비디오 도큐먼트 레퍼런스 */
+    const videoDocRef = doc(VideoCollection, videoId);
+    /** 비디오 도큐먼트 스냅샷 */
+    const videoDocSnap = await getDoc<VideoType>(videoDocRef);
+    if (!videoDocSnap.exists()) {
+      // 해당 영상 정보 없음
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.NotFound,
+      };
+    }
+    /** 스냅샷으로부터 추출한 데이터 */
+    const snapData = videoDocSnap.data();
+
+    const currentUid = getCurrentUID();
+    if (!currentUid) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.SignInRequired,
+      };
+    }
+
+    // 사용자의 영상이 맞는지 판단
+    const uploaderDataSnap = await getDoc<UserType>(snapData.uploader);
+    if (currentUid !== uploaderDataSnap.id) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.Wrong, // Not my video
+      };
+    }
+
+    await deleteDoc(videoDocRef);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    throw error;
   }
 }
 

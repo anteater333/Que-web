@@ -1,17 +1,13 @@
 import React, {
-  ContextType,
   createContext,
   Dispatch,
   SetStateAction,
   useCallback,
   useContext,
-  useMemo,
   useState,
 } from "react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import ScreenCoverLoadingSpinner from "../components/common/ScreenCoverLoadingIndicator";
-import { selectIsSigned, selectCurrentUser } from "../reducers/authReducer";
 
 type LoadingIndicatorContextType = {
   /** 로딩 표시 */
@@ -66,18 +62,22 @@ export const useLoadingIndicator = (message?: string) => {
     if (message) setLoadingMessage(message);
   }, []);
 
-  const showLoading = useCallback(() => {
+  const showLoading = useCallback((message?: string) => {
+    if (message) {
+      setLoadingMessage(message);
+    } else {
+      setLoadingMessage("");
+    }
     setIsLoading(true);
   }, []);
 
   /** 로딩 표시를 숨깁니다. */
   const hideLoading = useCallback(() => {
+    setLoadingMessage("");
     setIsLoading(false);
   }, []);
 
   return {
-    /** 로딩 표시 아래에 출력할 메세지를 설정합니다. */
-    setLoadingMessage,
     /** 로딩을 표시를 나타냅니다. */
     showLoading,
     /** 로딩 표시를 숨깁니다. */

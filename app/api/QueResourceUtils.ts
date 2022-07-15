@@ -14,40 +14,31 @@ import TestApiClient from "./testApi/testApiClient";
  */
 let QueResourceClient: QueResourceAPI;
 if (process.env.NODE_ENV !== "test") {
-  // // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
+  // 백엔드 구현체에 따라 메소드를 조립하면 됩니다.
   const resourceClient = FirebaseResourceClient;
-  // QueResourceClient = {
-  //   getImageDownloadURL: resourceClient.getImageDownloadURL,
-  //   getVideoCardData: resourceClient.getVideoCardData,
-  //   getVideoDownloadURL: resourceClient.getVideoDownloadURL
-  // }
+
+  QueResourceClient = resourceClient;
 
   // 개발중이니까 일단은 테스트로
-  QueResourceClient = {
-    getImageDownloadURL: TestApiClient.getImageDownloadURL,
-    getVideoCardData: TestApiClient.getVideoCardData,
-    getVideoData: resourceClient.getVideoData,
-    getVideoDownloadURL: resourceClient.getVideoDownloadURL,
-    getUserProfileData: resourceClient.getUserProfileData,
-    updateUserProfile: resourceClient.updateUserProfile,
-    uploadUserProfileImage: resourceClient.uploadUserProfileImage,
-    uploadVideo: resourceClient.uploadVideo,
-    getMyLikeReactions: resourceClient.getMyLikeReactions,
-    dislikeVideo: resourceClient.dislikeVideo,
-    increaseVideoViewCount: resourceClient.increaseVideoViewCount,
-    likeVideo: resourceClient.likeVideo,
-  };
+  // QueResourceClient = {
+  //   ...resourceClient,
+  //   getImageDownloadURL: TestApiClient.getImageDownloadURL,
+  //   getVideoCardData: TestApiClient.getVideoCardData,
+  // };
 } else {
   // 테스트용 Mock API
   QueResourceClient = {
     getImageDownloadURL: TestApiClient.getImageDownloadURL,
     getVideoCardData: TestApiClient.getVideoCardData,
     getVideoDownloadURL: TestApiClient.getVideoDownloadURL,
+    getVideoCardDataByUserId: () => {
+      throw new Error("Not Implemented");
+    },
     updateUserProfile: async (user) => {
       return { success: true };
     },
     getUserProfileData: async (userId) => {
-      return { user: {} };
+      return { success: true };
     },
     uploadUserProfileImage: async (filePath) => {
       return { success: true };
@@ -70,6 +61,15 @@ if (process.env.NODE_ENV !== "test") {
     getVideoData: () => {
       throw new Error("Not Implemented");
     },
+    getUserProfilePicture: () => {
+      throw new Error("Not Implemented");
+    },
+    deleteVideo: () => {
+      throw new Error("Not Implemented");
+    },
+    updateVideoData: () => {
+      throw new Error("Not Implemented");
+    },
   };
 }
 
@@ -81,4 +81,14 @@ export const {
   getVideoCardData,
   getVideoDownloadURL,
   updateUserProfile,
+  deleteVideo,
+  dislikeVideo,
+  getMyLikeReactions,
+  getUserProfilePicture,
+  getVideoData,
+  increaseVideoViewCount,
+  likeVideo,
+  updateVideoData,
+  uploadUserProfileImage,
+  uploadVideo,
 } = QueResourceClient;

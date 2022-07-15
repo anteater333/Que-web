@@ -1,3 +1,4 @@
+import { getApps, initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -13,7 +14,12 @@ import {
   QueSignInFailed,
   QueSignInSucceeded,
 } from "../../interfaces";
+import firebaseConfig from "../config";
 import { getUserProfile, setUserDocument } from "../firestore/firestore";
+
+if (!getApps().length) {
+  initializeApp(firebaseConfig);
+}
 
 /** Access token을 통해 사용자 email 확인 */
 async function fetchUserEmail(token: string): Promise<string> {
@@ -77,7 +83,7 @@ export async function signInWithGoogle(
       const signInResult = await signInWithCredential(auth, credential);
 
       // 유저 정보 생성
-      const signedUser = (await getUserProfile(signInResult.user.uid)).user;
+      const signedUser = (await getUserProfile(signInResult.user.uid)).payload!;
 
       return {
         status: QueAuthResponse.OK,
@@ -86,7 +92,7 @@ export async function signInWithGoogle(
     } else {
       // 로그인 불가
       // TBD 사용자 설정에서 계정 연동하도록 유도 or firebase에서 이메일당 계정 연동 가능하도록 설정 후 로그인
-      console.log("no google account");
+      console.error("no google account");
 
       return { status: QueAuthResponse.AlreadyExist };
     }
@@ -134,7 +140,7 @@ export async function signInWithEmail(
 
     // 로그인 여부 저장
     // 유저 정보 생성
-    const signedUser = (await getUserProfile(signInResult.user.uid)).user;
+    const signedUser = (await getUserProfile(signInResult.user.uid)).payload!;
 
     return { status: QueAuthResponse.OK, user: signedUser };
   } catch (error) {

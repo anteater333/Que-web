@@ -66,7 +66,7 @@ export const useSignWithGoogle = () => {
             // 온보딩 화면 첫 화면으로 넘긴 뒤 로그인 여부 파악 후 메인 화면으로 보내기
             const curNavState = onBoardingNavigator.getState();
             if (curNavState.routes[curNavState.index].name !== "CatchPhrase")
-              onBoardingNavigator.navigate("CatchPhrase");
+              onBoardingNavigator.reset({ routes: [{ name: "CatchPhrase" }] });
 
             break;
           }
@@ -76,13 +76,15 @@ export const useSignWithGoogle = () => {
               description: "Google 계정을 통해 새 Que 계정을 생성합니다.",
             });
 
-            // 로그인 정보 설정
-            dispatch(setCredential({ user: loginResult.user }));
-
             hideLoading();
 
             // 네비게이션
-            onBoardingNavigator.navigate("SignUp", { hasProvider: true });
+            onBoardingNavigator.reset({
+              routes: [{ name: "SignUp", params: { hasProvider: true } }],
+            });
+
+            // 로그인 정보 설정
+            dispatch(setCredential({ user: loginResult.user }));
 
             break;
           }
@@ -114,18 +116,14 @@ export const useSignWithGoogle = () => {
 /**
  * 외부 OAuth Provider 사용 없이 이메일과 비밀번호를 통해 로그인합니다.
  */
-export const useSignInWithQue = (
-  userEmail: string,
-  password: string,
-  navigateAfter?: boolean
-) => {
+export const useSignInWithQue = (navigateAfter?: boolean) => {
   const dispatch = useAppDispatch();
 
   const onBoardingNavigator = useNavigation<OnBoardingStackNavigationProp>();
 
   const { hideLoading, showLoading } = useLoadingIndicator("");
 
-  return useCallback(async () => {
+  return useCallback(async (userEmail: string, password: string) => {
     showLoading();
     try {
       const loginResult = await QueAuthClient.signInWithQueSelfManaged(
@@ -160,7 +158,7 @@ export const useSignInWithQue = (
     }
 
     hideLoading();
-  }, [userEmail, password]);
+  }, []);
 };
 
 /**
@@ -175,9 +173,7 @@ export const useSignOut = () => {
   const rootNavigator = useNavigation<RootStackNavigationProp>();
 
   return useCallback(async () => {
-    // TBD 정말 로그아웃 하시겠습니까? 물어보기 Modal 등을 통해
-
-    if (await asyncAlert("정말 로그아웃 하시겠습니까?")) {
+    if (await asyncAlert("로그아웃 하시겠습니까?")) {
       try {
         await QueAuthClient.signOut();
 
@@ -185,7 +181,7 @@ export const useSignOut = () => {
 
         dispatch(clearCredential());
 
-        rootNavigator.navigate("OnBoarding");
+        rootNavigator.reset({ routes: [{ name: "OnBoarding" }] });
       } catch (error) {
         alert(`로그아웃 중 에러가 발생했습니다. ${error}`);
       }

@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { bColors, bFont, bSpace } from "../../styles/base";
 
 const sharedSize = bFont.xlarge;
@@ -20,6 +20,11 @@ export const mainScreenHeaderStyle = StyleSheet.create({
     marginLeft: bSpace.xlarge,
     marginVertical: bSpace.middle,
   },
+  titleText: {
+    fontSize: bFont.large,
+    paddingVertical: bSpace.middle,
+    flex: 1,
+  },
   titleLogo: {
     height: sharedSize,
     width: Math.ceil((sharedSize * 187) / 75), // 러프한 방법으로 로고 크기 지정 하였음
@@ -37,6 +42,9 @@ export const mainScreenHeaderStyle = StyleSheet.create({
   },
   headerButtonIcon: {
     fontSize: sharedSize,
+  },
+  headerProfilePicSize: {
+    fontSize: sharedSize + bFont.small,
   },
 });
 

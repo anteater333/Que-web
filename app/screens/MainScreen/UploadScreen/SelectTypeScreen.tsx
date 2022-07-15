@@ -7,10 +7,10 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import screens from "../../styles/screens";
+import screens from "../../../styles/screens";
 import { uploadScreenStyle } from "./UploadScreen.style";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { UploadStackNavigationProp } from "../../navigators/UploadNavigator";
+import { UploadStackNavigationProp } from "../../../navigators/UploadNavigator";
 import { useCallback, useContext, useEffect } from "react";
 import { UploadContext } from "./UploadContext";
 import * as ImagePicker from "expo-image-picker";
@@ -18,12 +18,13 @@ import {
   checkFileSize,
   checkSizeLimitMB,
   checkVideoLengthManually,
-} from "../../utils/file";
+} from "../../../utils/file";
 import { useToast } from "native-base";
 import { getThumbnails } from "video-metadata-thumbnails";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import { blobToDataURL } from "../../utils/converter";
-import { useLoadingIndicator } from "../../hooks/useLoadingIndicator";
+import { blobToDataURL } from "../../../utils/converter";
+import { useLoadingIndicator } from "../../../hooks/useLoadingIndicator";
+import { useNotImplementedWarning } from "../../../hooks/useWarning";
 
 const SIZE_LIMIT = 20; // MB
 
@@ -42,7 +43,7 @@ function SelectTypeScreen() {
   const { setButtonHidden, setThumbnailPath, setVideoPath, setVideoLength } =
     useContext(UploadContext);
 
-  const { hideLoading, setLoadingMessage, showLoading } = useLoadingIndicator();
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /** 사용자가 이미 가지고 있는 영상을 업로드 하는 함수 */
   const uploadExistingVideo = useCallback(async () => {
@@ -71,7 +72,7 @@ function SelectTypeScreen() {
     });
 
     if (!pickerResult.cancelled) {
-      showLoading();
+      showLoading(`영상을 가져오는 중입니다.`);
       const fileSize = await checkFileSize(pickerResult.uri);
       if (!fileSize) {
         // TBD 이런 경우 파악해서 에러 처리
@@ -127,22 +128,26 @@ function SelectTypeScreen() {
     }
   }, []);
 
+  const notImplemented = useNotImplementedWarning();
   /** 새 영상을 촬영하고 그 영상을 업로드 하는 함수 */
   const recordThenUploadVideo = useCallback(async () => {
     // TBD 영상 촬영 기능 및 uploadExistingVideo 함수와 겹치는 부분 분리하기
-    alert("개발중입니다. 아임 쏘리");
+    notImplemented();
   }, []);
 
   /** 버튼 숨기기 */
   useEffect(() => {
     if (isFocused) {
-      setLoadingMessage(`영상을 가져오는 중입니다.`);
       setButtonHidden(true);
     }
   }, [isFocused]);
 
   return (
     <SafeAreaView style={screens.defaultScreenLayout}>
+      <Text style={uploadScreenStyle.warningText}>
+        알파 버전 동안 영상의 크기가{`\n`}
+        <Text style={{ fontWeight: "bold" }}>20MB</Text>로 제한됩니다.
+      </Text>
       <View style={uploadScreenStyle.largeButtonsContainer}>
         <TouchableOpacity
           style={[uploadScreenStyle.largeButton]}

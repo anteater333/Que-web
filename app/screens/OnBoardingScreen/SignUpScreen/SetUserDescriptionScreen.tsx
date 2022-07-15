@@ -40,8 +40,7 @@ export default function SetUserDescriptionScreen() {
   const { setButtonAction, setButtonEnabled, setHideButton, newUserProfile } =
     useContext(SignUpContext);
 
-  const { hideLoading, setLoadingMessage, showLoading } =
-    useLoadingIndicator("");
+  const { hideLoading, showLoading } = useLoadingIndicator();
 
   /** Description 길이 제한 */
   const updateDescriptionInput = useCallback(
@@ -117,9 +116,6 @@ export default function SetUserDescriptionScreen() {
           accessibilityRole="text"
           textContentType="none"
           onChangeText={updateDescriptionInput}
-          onContentSizeChange={(event) => {
-            console.log(event.nativeEvent.contentSize);
-          }}
           value={description}
         />
         <Text

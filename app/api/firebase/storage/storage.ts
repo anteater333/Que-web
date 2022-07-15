@@ -1,13 +1,23 @@
-import { getAuth } from "firebase/auth";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import VideoType from "../../../types/Video";
+import { getApps, initializeApp } from "firebase/app";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  StorageError,
+  deleteObject,
+} from "firebase/storage";
 import { dataURLToBlob } from "../../../utils/converter";
 import {
   QueResourceResponse,
   QueResourceResponseErrorType,
 } from "../../interfaces";
 import { getCurrentUID } from "../auth/auth";
-import { getUserProfile } from "../firestore/firestore";
+import firebaseConfig from "../config";
+
+if (!getApps().length) {
+  initializeApp(firebaseConfig);
+}
 
 /**
  * firebase storage에 접근해 파일을 다운받을 수 있는 url을 반환받습니다.
@@ -115,4 +125,54 @@ export async function uploadVideoSource(
   }
 
   return rtStatus;
+}
+
+/**
+ * 비디오 영상을 Firebase storage에서 삭제합니다.
+ */
+export async function deleteVideoSource(
+  videoId: string
+): Promise<QueResourceResponse> {
+  try {
+    const currentUid = getCurrentUID();
+    if (!currentUid) {
+      return {
+        success: false,
+        errorType: QueResourceResponseErrorType.SignInRequired,
+      };
+    }
+
+    /** storage instance */
+    const storage = getStorage();
+
+    /** storage 내의 영상 경로 */
+    const videoStoragePath = `users/${currentUid}/videos/${videoId}/video`;
+
+    const videoStorageRef = ref(storage, videoStoragePath);
+    await deleteObject(videoStorageRef);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/** 사용자 Id를 기반으로 프로필 사진을 가져옵니다. */
+export async function getProfilePicByUserId(
+  userId: string
+): Promise<QueResourceResponse<string>> {
+  const storageUrl = `gs://${firebaseConfig.storageBucket}/users/${userId}/images/profilePic`;
+
+  try {
+    const downloadUrl = await getMediaFromStorage(storageUrl);
+
+    return { success: true, payload: downloadUrl };
+  } catch (error) {
+    if ((error as StorageError).code === "storage/object-not-found") {
+      // Do Nothing
+    } else console.error(error);
+    return { success: false };
+  }
 }

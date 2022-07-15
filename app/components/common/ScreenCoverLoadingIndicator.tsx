@@ -14,6 +14,7 @@ export default function ScreenCoverLoadingSpinner(props: { message?: string }) {
         backgroundColor: bColors.black + bColors.tpTetiary,
         alignItems: "center",
         justifyContent: "center",
+        elevation: 5,
       }}
     >
       <ActivityIndicator size={bFont.xlarge * 2} color={bColors.primary} />

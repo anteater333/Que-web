@@ -1,10 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import DummyComponent from "../components/common/DummyComponent";
-import HomeNavBar from "../components/navbars/HomeNavbar";
-import { HomeTabParamList } from "../navigators/HomeNavigator";
-import PreferenceScreen from "./PreferenceScreen";
+import DummyComponent from "../../../components/common/DummyComponent";
+import HomeNavBar from "../../../components/navbars/HomeNavbar";
+import { HomeTabParamList } from "../../../navigators/HomeNavigator";
+import PreferenceScreen from "./PreferenceScreen/PreferenceScreen";
 import TimelineScreen from "./TimelineScreen";
 
 /** 홈 네비게이터 객체 */

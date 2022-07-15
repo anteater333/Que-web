@@ -23,6 +23,7 @@ const persistConfig = {
   version: 1,
   storage: AsyncStorage,
 };
+
 /**
  * redux-persist
  * 새로고침 시에도 redux state가 유지되도록 합니다.

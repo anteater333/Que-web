@@ -9,6 +9,7 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import navBarStyle, { iconStyles } from "./navbar.style";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 
 /** 스타일 객체 */
 const styles = navBarStyle;
@@ -75,6 +76,8 @@ function HomeNavBar(props: BottomTabBarProps) {
 
     return dict[name];
   };
+
+  const notImplemented = useNotImplementedWarning();
 
   /**
    * 네비게이션 바 버튼 컴포넌트 매핑

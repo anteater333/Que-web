@@ -2,7 +2,7 @@
  * Que 어플리케이션 글로벌 스타일 객체
  */
 
-import { Dimensions } from "react-native";
+import { Dimensions, Platform } from "react-native";
 
 /**
  * 실행 화면 기반 높이 / 너비
@@ -54,13 +54,26 @@ export const bSpace = {
 /**
  * 폰트 크기 단위
  */
-export const bFont = {
-  /** 8 */
-  small: 8,
-  /** 12 */
-  middle: 12,
-  /** 16 */
-  large: 16,
-  /** 24 */
-  xlarge: 24,
-};
+export const bFont: {
+  /** web 12, mobile 8 */
+  small: number;
+  /** web 16, mobile 12 */
+  middle: number;
+  /** web 20, mobile 16 */
+  large: number;
+  /** web 24, mobile 24 */
+  xlarge: number;
+} =
+  Platform.OS === "web"
+    ? {
+        small: 12,
+        middle: 16,
+        large: 20,
+        xlarge: 24,
+      }
+    : {
+        small: 8,
+        middle: 12,
+        large: 16,
+        xlarge: 24,
+      };

@@ -23,11 +23,8 @@ import VideoType from "../../types/Video";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HEART_COLOR_TIMER } from "./VideoPlayer.global";
 import LikeType from "../../types/Like";
-import RoundedButton from "../buttons/RoundedButton";
 import { formatTimer } from "../../utils/formatter";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
-import { useToast } from "native-base";
-import QueResourceClient from "../../api/QueResourceUtils";
 import { useToggleTimer } from "../../hooks/useTimer";
 
 /** 비디오 플레이어 프로퍼티 타입 */

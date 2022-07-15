@@ -25,7 +25,7 @@ export const useViewList = () => {
           );
           if (result.success) dispatch(addViewedVideo({ videoId: videoId }));
         } catch (error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       }

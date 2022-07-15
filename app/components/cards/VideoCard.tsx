@@ -15,17 +15,22 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import styles from "./VideoCard.style";
-import { MainStackParamList } from "../../navigators/MainNavigator";
+import {
+  MainStackNavigationProp,
+  MainStackParamList,
+} from "../../navigators/MainNavigator";
 import MenuModal, { MenuModalItem } from "../modals/MenuModal";
 import VideoType from "../../types/Video";
-import { formatCount, formatTimer } from "../../utils/formatter";
+import {
+  formatCount,
+  formatDateByDifference,
+  formatTimer,
+} from "../../utils/formatter";
 import { getImageDownloadURL } from "../../api/QueResourceUtils";
 import UserType from "../../types/User";
-import { useAssets } from "expo-asset";
 import ProfilePicture from "../buttons/ProfilePictureButton";
-
-/** 메인 네비게이션 프로퍼티 */
-type MainNavProps = NativeStackNavigationProp<MainStackParamList>;
+import { useAuth } from "../../hooks/useAuth";
+import { useNotImplementedWarning } from "../../hooks/useWarning";
 
 export type VideoCardProps = {
   videoInfo: VideoType;
@@ -61,10 +66,19 @@ export default function VideoCard(props: VideoCardProps) {
   // 상위 컴포넌트의 UnitTest를 위한 testID가 주어진 경우
   let inheritedTestID = props.testID ? props.testID : "videoCard";
 
-  useEffect(() => {}, []);
+  /** 내가 올린 영상인지 여부 확인 */
+  const [isMyVideo, setIsMyVideo] = useState<boolean>(false);
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user.userId === (props.videoInfo.uploader as UserType).userId) {
+      setIsMyVideo(true);
+    } else {
+      setIsMyVideo(false);
+    }
+  }, [user.userId, props.videoInfo.uploader]);
 
   /** 네비게이션 객체 사용 */
-  const navigation = useNavigation<MainNavProps>();
+  const navigation = useNavigation<MainStackNavigationProp>();
 
   /**
    * 카드 컴포넌트 영역을 눌렀을 때 실행됩니다.
@@ -92,6 +106,8 @@ export default function VideoCard(props: VideoCardProps) {
     setVideoLiked(!videoLiked);
   }, [videoLiked]);
 
+  const notImplemented = useNotImplementedWarning();
+
   return (
     <TouchableOpacity
       testID={inheritedTestID}
@@ -105,17 +121,29 @@ export default function VideoCard(props: VideoCardProps) {
         <MenuModalItem
           iconName="share"
           menuText="공유"
-          onMenuPress={() => alert("menu1")}
+          onMenuPress={() => notImplemented()}
         />
-        <MenuModalItem
-          iconName="flag"
-          menuText="신고"
-          onMenuPress={() => alert("menu2")}
-        />
+        {isMyVideo ? (
+          <MenuModalItem
+            iconName="create-outline"
+            menuText="수정"
+            onMenuPress={() => {
+              setMenuModalVisible(false);
+              navigation.navigate("VideoEdit", { videoData: props.videoInfo });
+            }}
+          />
+        ) : (
+          <MenuModalItem
+            iconName="flag"
+            menuText="신고"
+            onMenuPress={() => notImplemented()}
+          />
+        )}
       </MenuModal>
       <CardThumbnailView
         uri={props.videoInfo.thumbnailUrl!}
         length={props.videoInfo.length!}
+        uploadedAt={props.videoInfo.uploadedAt!}
         direction="vertical"
         onPressMenuButton={() => setMenuModalVisible(true)}
       />
@@ -138,6 +166,7 @@ export default function VideoCard(props: VideoCardProps) {
 type CardThumbnailProps = {
   uri: string;
   length: number;
+  uploadedAt: Date;
   direction: "horizontal" | "vertical";
   onPressMenuButton: () => void;
 };
@@ -149,8 +178,12 @@ type CardThumbnailProps = {
  */
 function CardThumbnailView(props: CardThumbnailProps) {
   /** 영상 길이 */
-  const [modifiedVideoLength, setModifiedLength] = useState<String>(
+  const [modifiedVideoLength, setModifiedLength] = useState<string>(
     props.length ? formatTimer(props.length) : "0:00"
+  );
+  /** 영상 업로드 날짜 */
+  const [modifiedVideoDate, setModifiedVideoDate] = useState<string>(
+    props.uploadedAt ? formatDateByDifference(props.uploadedAt) : "알 수 없음"
   );
   /** 썸네일 주소 TBD : firebase 다운로드 api 사용 메소드 구현 */
   const [thumbnail, setThumbnail] = useState<ImageSourcePropType>({});
@@ -176,7 +209,7 @@ function CardThumbnailView(props: CardThumbnailProps) {
 
     // clean-up
     return () => setIsLoading(false);
-  }, []);
+  }, [props.uri]);
 
   return (
     <View style={styles.thumbnailView} testID="cardThumbnailView">
@@ -192,7 +225,16 @@ function CardThumbnailView(props: CardThumbnailProps) {
         resizeMode={resizeMode}
         source={thumbnail}
       />
-      <Text testID="cardThumbnailTime" style={styles.videoTime}>
+      <Text
+        testID="cardThumbnailDate"
+        style={[styles.videoThumbnailText, styles.videoDate]}
+      >
+        {modifiedVideoDate}
+      </Text>
+      <Text
+        testID="cardThumbnailTime"
+        style={[styles.videoThumbnailText, styles.videoTime]}
+      >
         {modifiedVideoLength}
       </Text>
       <TouchableOpacity
@@ -275,10 +317,18 @@ function CardInfoView(props: VideoCardInfoProps) {
         userId={props.uploaderId!}
       />
       <View style={styles.infoTitleView}>
-        <Text testID="cardInfoTitleText" style={styles.infoTitleText}>
+        <Text
+          testID="cardInfoTitleText"
+          style={styles.infoTitleText}
+          numberOfLines={1}
+        >
           {props.title}
         </Text>
-        <Text testID="cardInfoSingerText" style={styles.infoSingerText}>
+        <Text
+          testID="cardInfoSingerText"
+          style={styles.infoSingerText}
+          numberOfLines={1}
+        >
           {props.uploaderName}
         </Text>
       </View>
@@ -287,23 +337,33 @@ function CardInfoView(props: VideoCardInfoProps) {
       <TouchableWithoutFeedback>
         <View style={styles.reactionView}>
           <View style={styles.reactionChildView}>
-            <TouchableOpacity onPress={props.onPressLike}>
-              {likeButton}
-              <Text testID="cardInfoLikeCount" style={styles.lowerCountText}>
-                {props.likeCount}
-              </Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={props.onPressLike}> */}
+            {likeButton}
+            <Text
+              testID="cardInfoLikeCount"
+              style={styles.lowerCountText}
+              numberOfLines={1}
+            >
+              {props.likeCount}
+            </Text>
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.reactionChildView}>
-            <TouchableOpacity onPress={props.onPressStar}>
-              {starButton}
-              <Text testID="cardInfoStarCount" style={styles.lowerCountText}>
-                {props.starCount}
-              </Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={props.onPressStar}> */}
+            {starButton}
+            <Text
+              testID="cardInfoStarCount"
+              style={styles.lowerCountText}
+              numberOfLines={1}
+            >
+              {props.starCount}
+            </Text>
+            {/* </TouchableOpacity> */}
           </View>
           <View style={styles.reactionChildView}>
-            <Text style={styles.upperCountText}>{props.viewCount}</Text>
+            <Text style={styles.upperCountText} numberOfLines={1}>
+              {props.viewCount}
+            </Text>
             <Text testID="cardInfoViewCount" style={styles.lowerCountText}>
               Views
             </Text>
