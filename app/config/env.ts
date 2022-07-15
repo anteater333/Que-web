@@ -30,14 +30,13 @@ const prodEnv: Configuration = {
     PREFIX: "/api/v1",
   },
   FIREBASE: {
-    // TBD 본 서비스용도 Firebase 만들기
-    apiKey: "AIzaSyBegKpJPoze-yVHlWc9FC0vOKeHmDOckbk",
-    authDomain: "que-backend-dev.firebaseapp.com",
-    projectId: "que-backend-dev",
-    storageBucket: "que-backend-dev.appspot.com",
-    messagingSenderId: "944223797321",
-    appId: "1:944223797321:web:31d1b5e50baec0c6a83f98",
-    measurementId: "G-Z16F7Q50GY",
+    apiKey: "AIzaSyCOz2G9IfEWv2oWkJkn6oKSm1CkZ9KwxDM",
+    authDomain: "que-production.firebaseapp.com",
+    projectId: "que-production",
+    storageBucket: "que-production.appspot.com",
+    messagingSenderId: "1092820632181",
+    appId: "1:1092820632181:web:6fea9e37c52b5c5ccc6e3c",
+    measurementId: "G-34J4MB0M1L",
   },
 };
 
