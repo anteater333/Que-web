@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/Que-web/static/js/app.a0c548f1.chunk.js",
-    "app.js.map": "/Que-web/static/js/app.a0c548f1.chunk.js.map",
+    "app.js": "/Que-web/static/js/app.f3587e71.chunk.js",
+    "app.js.map": "/Que-web/static/js/app.f3587e71.chunk.js.map",
     "runtime~app.js": "/Que-web/static/js/runtime~app.673230c9.js",
     "runtime~app.js.map": "/Que-web/static/js/runtime~app.673230c9.js.map",
     "static/js/2.d3748699.chunk.js": "/Que-web/static/js/2.d3748699.chunk.js",
@@ -47,6 +47,6 @@
   "entrypoints": [
     "static/js/runtime~app.673230c9.js",
     "static/js/2.d3748699.chunk.js",
-    "static/js/app.a0c548f1.chunk.js"
+    "static/js/app.f3587e71.chunk.js"
   ]
 }
