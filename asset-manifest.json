@@ -1,11 +1,11 @@
 {
   "files": {
-    "app.js": "/Que-web/static/js/app.f3587e71.chunk.js",
-    "app.js.map": "/Que-web/static/js/app.f3587e71.chunk.js.map",
+    "app.js": "/Que-web/static/js/app.25a1662b.chunk.js",
+    "app.js.map": "/Que-web/static/js/app.25a1662b.chunk.js.map",
     "runtime~app.js": "/Que-web/static/js/runtime~app.673230c9.js",
     "runtime~app.js.map": "/Que-web/static/js/runtime~app.673230c9.js.map",
-    "static/js/2.d3748699.chunk.js": "/Que-web/static/js/2.d3748699.chunk.js",
-    "static/js/2.d3748699.chunk.js.map": "/Que-web/static/js/2.d3748699.chunk.js.map",
+    "static/js/2.7216c55f.chunk.js": "/Que-web/static/js/2.7216c55f.chunk.js",
+    "static/js/2.7216c55f.chunk.js.map": "/Que-web/static/js/2.7216c55f.chunk.js.map",
     "fonts/AntDesign.ttf": "/Que-web/./fonts/AntDesign.ttf",
     "fonts/Entypo.ttf": "/Que-web/./fonts/Entypo.ttf",
     "fonts/Feather.ttf": "/Que-web/./fonts/Feather.ttf",
@@ -24,7 +24,7 @@
     "index.html": "/Que-web/index.html",
     "manifest.json": "/Que-web/manifest.json",
     "serve.json": "/Que-web/serve.json",
-    "static/js/2.d3748699.chunk.js.LICENSE.txt": "/Que-web/static/js/2.d3748699.chunk.js.LICENSE.txt",
+    "static/js/2.7216c55f.chunk.js.LICENSE.txt": "/Que-web/static/js/2.7216c55f.chunk.js.LICENSE.txt",
     "static/media/favicon.png": "/Que-web/static/media/favicon.fa4783d1.png",
     "static/media/github-small.png": "/Que-web/static/media/github-small.bf4e9d58.png",
     "static/media/google-icon.png": "/Que-web/static/media/google-icon.76d40c96.png",
@@ -46,7 +46,7 @@
   },
   "entrypoints": [
     "static/js/runtime~app.673230c9.js",
-    "static/js/2.d3748699.chunk.js",
-    "static/js/app.f3587e71.chunk.js"
+    "static/js/2.7216c55f.chunk.js",
+    "static/js/app.25a1662b.chunk.js"
   ]
 }
